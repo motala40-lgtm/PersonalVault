@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name">ARVIO</string>
+
+    <!-- Common -->
+    <string name="back">بازگشت</string>
+    <string name="cancel">انصراف</string>
+    <string name="save">ذخیره</string>
+    <string name="delete">حذف</string>
+    <string name="create">ساخت</string>
+
+    <!-- Navigation / section titles -->
+    <string name="nav_favorites">علاقه‌مندی‌ها</string>
+    <string name="nav_reminders">یادآوری‌ها</string>
+    <string name="nav_trash">سطل زباله</string>
+    <string name="nav_settings">تنظیمات</string>
+    <string name="folders_title">پوشه‌ها</string>
+    <string name="search_placeholder">جستجو در عنوان، متن، نام فایل...</string>
+    <string name="search_results">نتایج جستجو</string>
+
+    <!-- Folder -->
+    <string name="new_folder">پوشه جدید</string>
+    <string name="folder_name_label">نام پوشه</string>
+
+    <!-- Lock screen -->
+    <string name="vault_locked">آرشیو قفل است</string>
+    <string name="password_label">رمز عبور</string>
+    <string name="wrong_password">رمز اشتباه است</string>
+    <string name="wrong_password_attempts_left">رمز اشتباه است — %1$d تلاش دیگر باقی مانده</string>
+    <string name="locked_out_message">به‌خاطر تلاش‌های ناموفق زیاد، ورود موقتاً مسدود شده. %1$s دیگر دوباره امتحان کن.</string>
+    <string name="seconds_format">%1$d ثانیه</string>
+    <string name="minutes_seconds_format">%1$d دقیقه و %2$d ثانیه</string>
+    <string name="support_label">پشتیبانی</string>
+    <string name="privacy_policy_label">سیاست حریم خصوصی</string>
+    <string name="login">ورود</string>
+    <string name="biometric_login">ورود با اثر انگشت</string>
+
+    <!-- Folder screen (composer) -->
+    <string name="attach_image">پیوست عکس</string>
+    <string name="attach_file">پیوست فایل</string>
+    <string name="scan_document">اسکن سند</string>
+    <string name="note_placeholder">یادداشت بنویس...</string>
+    <string name="send">ارسال</string>
+
+    <!-- Reminders -->
+    <string name="new_reminder">یادآوری جدید</string>
+    <string name="yearly_suffix"> (سالانه)</string>
+    <string name="event_title_label">عنوان مناسبت</string>
+    <string name="pick_date_time">انتخاب تاریخ و ساعت</string>
+    <string name="pick_date">انتخاب تاریخ (روز/ماه/سال)</string>
+    <string name="pick_time">انتخاب ساعت و دقیقه</string>
+    <string name="date_not_selected">تاریخی انتخاب نشده</string>
+    <string name="time_not_selected">ساعتی انتخاب نشده</string>
+    <string name="reminder_past_error">این زمان گذشته؛ یک تاریخ و ساعت در آینده انتخاب کن</string>
+    <string name="reminder_missing_fields_error">اول تاریخ و ساعت رو انتخاب کن</string>
+    <string name="exact_alarm_permission_notice">برای اینکه یادآوری‌ها دقیقاً سر وقت زنگ بزنن، باید اجازه‌ی «هشدار و یادآوری دقیق» رو در تنظیمات گوشی فعال کنی.</string>
+    <string name="open_settings">باز کردن تنظیمات</string>
+    <string name="repeat_yearly">تکرار هر سال</string>
+    <string name="sound_label">زنگ</string>
+    <string name="vibrate_label">ویبره</string>
+
+    <!-- Trash -->
+    <string name="trash_auto_delete_notice">موارد بعد از ۳۰ روز به صورت خودکار برای همیشه حذف می‌شوند.</string>
+    <string name="restore">بازیابی</string>
+    <string name="delete_permanently">حذف قطعی</string>
+
+    <!-- Entry item -->
+    <string name="generic_file">فایل</string>
+    <string name="pin_label">پین</string>
+    <string name="favorite_label">علاقه‌مندی</string>
+    <string name="share">اشتراک‌گذاری</string>
+
+    <!-- Settings -->
+    <string name="appearance">ظاهر</string>
+    <string name="theme_system">پیش‌فرض سیستم</string>
+    <string name="theme_light">روشن</string>
+    <string name="theme_dark">تیره</string>
+    <string name="app_language">زبان اپ</string>
+    <string name="language_fa">فارسی</string>
+    <string name="language_en">English</string>
+    <string name="security">امنیت</string>
+    <string name="lock_with_password">قفل با رمز عبور</string>
+    <string name="change_password">تغییر رمز عبور</string>
+    <string name="block_screenshot">جلوگیری از اسکرین‌شات</string>
+    <string name="set_password_title">تنظیم رمز عبور</string>
+    <string name="password_min_digits_label">رمز عبور (حداقل ۴ رقم)</string>
+    <string name="confirm_password_label">تکرار رمز عبور</string>
+    <string name="password_min_error">رمز باید حداقل ۴ رقم باشد</string>
+    <string name="passwords_mismatch_error">رمزها یکسان نیستند</string>
+
+    <!-- Notifications -->
+    <string name="reminder_channel_description">یادآوری مناسبت‌ها و قرارها</string>
+    <string name="reminder_notification_title">یادآوری</string>
+</resources>

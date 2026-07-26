@@ -1,0 +1,99 @@
+package com.example.personalvault.viewmodel
+
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.personalvault.data.Entry
+import com.example.personalvault.data.EntryType
+import com.example.personalvault.data.Folder
+import com.example.personalvault.data.Reminder
+import com.example.personalvault.repository.VaultRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+
+class VaultViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = VaultRepository(application)
+
+    val folders: StateFlow<List<Folder>> = repository.getAllFolders()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val favorites: StateFlow<List<Entry>> = repository.getFavorites()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val trash: StateFlow<List<Entry>> = repository.getTrash()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val reminders: StateFlow<List<Reminder>> = repository.getAllReminders()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery
+
+    private val _searchResults = MutableStateFlow<List<Entry>>(emptyList())
+    val searchResults: StateFlow<List<Entry>> = _searchResults
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+        if (query.isBlank()) {
+            _searchResults.value = emptyList()
+            return
+        }
+        viewModelScope.launch {
+            repository.search(query).collect { _searchResults.value = it }
+        }
+    }
+
+    fun entriesForFolder(folderId: Long) = repository.getEntriesForFolder(folderId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun createFolder(name: String, colorHex: String, iconName: String) {
+        viewModelScope.launch { repository.createFolder(name, colorHex, iconName) }
+    }
+
+    fun deleteFolder(folder: Folder) {
+        viewModelScope.launch { repository.deleteFolder(folder) }
+    }
+
+    fun addTextEntry(folderId: Long, text: String) {
+        if (text.isBlank()) return
+        viewModelScope.launch { repository.addTextEntry(folderId, text) }
+    }
+
+    fun addFileEntry(folderId: Long, type: EntryType, path: String, fileName: String) {
+        viewModelScope.launch { repository.addFileEntry(folderId, type, path, fileName) }
+    }
+
+    fun togglePin(entry: Entry) {
+        viewModelScope.launch { repository.togglePin(entry) }
+    }
+
+    fun toggleFavorite(entry: Entry) {
+        viewModelScope.launch { repository.toggleFavorite(entry) }
+    }
+
+    fun moveToTrash(entry: Entry) {
+        viewModelScope.launch { repository.moveToTrash(entry) }
+    }
+
+    fun restoreFromTrash(entry: Entry) {
+        viewModelScope.launch { repository.restoreFromTrash(entry) }
+    }
+
+    fun deletePermanently(entry: Entry) {
+        viewModelScope.launch { repository.deleteEntryPermanently(entry) }
+    }
+
+    fun addReminder(reminder: Reminder, onCreated: (Reminder) -> Unit) {
+        viewModelScope.launch {
+            val id = repository.addReminder(reminder)
+            onCreated(reminder.copy(id = id))
+        }
+    }
+
+    fun deleteReminder(reminder: Reminder) {
+        viewModelScope.launch { repository.deleteReminder(reminder) }
+    }
+}

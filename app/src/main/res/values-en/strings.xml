@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name">ARVIO</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="create">Create</string>
+
+    <!-- Navigation / section titles -->
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_reminders">Reminders</string>
+    <string name="nav_trash">Trash</string>
+    <string name="nav_settings">Settings</string>
+    <string name="folders_title">Folders</string>
+    <string name="search_placeholder">Search title, text, file name...</string>
+    <string name="search_results">Search results</string>
+
+    <!-- Folder -->
+    <string name="new_folder">New Folder</string>
+    <string name="folder_name_label">Folder name</string>
+
+    <!-- Lock screen -->
+    <string name="vault_locked">Vault is locked</string>
+    <string name="password_label">Password</string>
+    <string name="wrong_password">Incorrect password</string>
+    <string name="wrong_password_attempts_left">Incorrect password — %1$d attempt(s) left</string>
+    <string name="locked_out_message">Too many failed attempts. Try again in %1$s.</string>
+    <string name="seconds_format">%1$d sec</string>
+    <string name="minutes_seconds_format">%1$d min %2$d sec</string>
+    <string name="support_label">Support</string>
+    <string name="privacy_policy_label">Privacy Policy</string>
+    <string name="login">Unlock</string>
+    <string name="biometric_login">Sign in with fingerprint</string>
+
+    <!-- Folder screen (composer) -->
+    <string name="attach_image">Attach image</string>
+    <string name="attach_file">Attach file</string>
+    <string name="scan_document">Scan document</string>
+    <string name="note_placeholder">Write a note...</string>
+    <string name="send">Send</string>
+
+    <!-- Reminders -->
+    <string name="new_reminder">New Reminder</string>
+    <string name="yearly_suffix"> (Yearly)</string>
+    <string name="event_title_label">Event title</string>
+    <string name="pick_date_time">Pick date and time</string>
+    <string name="pick_date">Pick date (day/month/year)</string>
+    <string name="pick_time">Pick time (hour/minute)</string>
+    <string name="date_not_selected">No date selected</string>
+    <string name="time_not_selected">No time selected</string>
+    <string name="reminder_past_error">That time is in the past; pick a future date and time</string>
+    <string name="reminder_missing_fields_error">Pick a date and time first</string>
+    <string name="exact_alarm_permission_notice">To make reminders ring at the exact time, allow \"Alarms &amp; reminders\" for this app in system settings.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="repeat_yearly">Repeat yearly</string>
+    <string name="sound_label">Sound</string>
+    <string name="vibrate_label">Vibrate</string>
+
+    <!-- Trash -->
+    <string name="trash_auto_delete_notice">Items are permanently deleted automatically after 30 days.</string>
+    <string name="restore">Restore</string>
+    <string name="delete_permanently">Delete permanently</string>
+
+    <!-- Entry item -->
+    <string name="generic_file">File</string>
+    <string name="pin_label">Pin</string>
+    <string name="favorite_label">Favorite</string>
+    <string name="share">Share</string>
+
+    <!-- Settings -->
+    <string name="appearance">Appearance</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="app_language">App language</string>
+    <string name="language_fa">فارسی</string>
+    <string name="language_en">English</string>
+    <string name="security">Security</string>
+    <string name="lock_with_password">Lock with password</string>
+    <string name="change_password">Change password</string>
+    <string name="block_screenshot">Block screenshots</string>
+    <string name="set_password_title">Set password</string>
+    <string name="password_min_digits_label">Password (at least 4 digits)</string>
+    <string name="confirm_password_label">Confirm password</string>
+    <string name="password_min_error">Password must be at least 4 digits</string>
+    <string name="passwords_mismatch_error">Passwords do not match</string>
+
+    <!-- Notifications -->
+    <string name="reminder_channel_description">Reminders for events and appointments</string>
+    <string name="reminder_notification_title">Reminder</string>
+</resources>
