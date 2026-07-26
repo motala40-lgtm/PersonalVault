@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.personalvault.R
 import com.example.personalvault.ui.components.EntryItem
 import com.example.personalvault.viewmodel.VaultViewModel
