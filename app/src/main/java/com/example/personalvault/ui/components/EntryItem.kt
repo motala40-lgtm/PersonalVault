@@ -1,11 +1,14 @@
 package com.example.personalvault.ui.components
 
 import android.content.Intent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
@@ -25,6 +29,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Row-style entry, kept for screens with a simple flat list (Favorites, Trash, search results).
+ */
 @Composable
 fun EntryItem(
     entry: Entry,
@@ -36,7 +43,6 @@ fun EntryItem(
     onDeletePermanently: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    var showMenu by remember { mutableStateOf(false) }
     val timeString = remember(entry.createdAt) {
         SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(entry.createdAt))
     }
@@ -99,8 +105,9 @@ fun EntryItem(
                     } else {
                         IconButton(onClick = onTogglePin) {
                             Icon(
-                                if (entry.isPinned) Icons.Default.PushPin else Icons.Outlined.PushPin,
-                                contentDescription = stringResource(R.string.pin_label)
+                                Icons.Default.PushPin,
+                                contentDescription = stringResource(R.string.pin_label),
+                                tint = if (entry.isPinned) MaterialTheme.colorScheme.primary else LocalContentColor.current
                             )
                         }
                         IconButton(onClick = onToggleFavorite) {
@@ -124,6 +131,194 @@ fun EntryItem(
                 }
             }
         }
+    }
+}
+
+/**
+ * Modern grid-style card used by FolderScreen: big centered thumbnail, three-dot menu,
+ * file name + date footer, and a selection checkbox overlay for multi-select mode.
+ */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@Composable
+fun EntryGridCard(
+    entry: Entry,
+    imageHeight: androidx.compose.ui.unit.Dp,
+    selectionMode: Boolean,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    onTogglePin: () -> Unit,
+    onToggleFavorite: () -> Unit,
+    onDelete: () -> Unit,
+    onRename: (String) -> Unit
+) {
+    val context = LocalContext.current
+    var menuExpanded by remember { mutableStateOf(false) }
+    var showRenameDialog by remember { mutableStateOf(false) }
+    val timeString = remember(entry.createdAt) {
+        SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date(entry.createdAt))
+    }
+    val genericFileText = stringResource(R.string.generic_file)
+    val shareText = stringResource(R.string.share)
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .combinedClickable(onClick = onClick, onLongClick = onLongClick),
+        shape = RoundedCornerShape(18.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
+    ) {
+        Box {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(imageHeight)
+                ) {
+                    when (entry.type) {
+                        EntryType.TEXT -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    text = entry.content,
+                                    maxLines = 6,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = androidx.compose.ui.text.TextStyle(textDirection = TextDirection.Content)
+                                )
+                            }
+                        }
+                        EntryType.IMAGE -> {
+                            AsyncImage(
+                                model = File(entry.content),
+                                contentDescription = entry.fileName,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        EntryType.FILE, EntryType.PDF_SCAN -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = if (entry.type == EntryType.PDF_SCAN) Icons.Default.PictureAsPdf else Icons.Default.InsertDriveFile,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Three-dot menu, top-right of the thumbnail.
+                    if (!selectionMode) {
+                        Box(modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)) {
+                            Surface(
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+                            ) {
+                                IconButton(onClick = { menuExpanded = true }, modifier = Modifier.size(32.dp)) {
+                                    Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_options))
+                                }
+                            }
+                            DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.pin_label)) },
+                                    leadingIcon = { Icon(Icons.Default.PushPin, contentDescription = null) },
+                                    onClick = { menuExpanded = false; onTogglePin() }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.favorite_label)) },
+                                    leadingIcon = { Icon(Icons.Default.Favorite, contentDescription = null) },
+                                    onClick = { menuExpanded = false; onToggleFavorite() }
+                                )
+                                if (entry.type != EntryType.TEXT) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.rename)) },
+                                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                                        onClick = { menuExpanded = false; showRenameDialog = true }
+                                    )
+                                    DropdownMenuItem(
+                                        text = { Text(shareText) },
+                                        leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                                        onClick = { menuExpanded = false; shareEntry(context, entry, shareText) }
+                                    )
+                                }
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.delete)) },
+                                    leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
+                                    onClick = { menuExpanded = false; onDelete() }
+                                )
+                            }
+                        }
+                    }
+
+                    // Selection checkbox, top-left, only shown once selection mode is active.
+                    if (selectionMode) {
+                        Checkbox(
+                            checked = isSelected,
+                            onCheckedChange = { onClick() },
+                            modifier = Modifier.align(Alignment.TopStart)
+                        )
+                    }
+
+                    if (entry.isPinned) {
+                        Icon(
+                            Icons.Default.PushPin,
+                            contentDescription = stringResource(R.string.pin_label),
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(6.dp)
+                                .size(18.dp)
+                        )
+                    }
+                }
+
+                Column(Modifier.padding(10.dp)) {
+                    if (entry.type != EntryType.TEXT) {
+                        Text(
+                            text = entry.fileName ?: genericFileText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Text(timeString, style = MaterialTheme.typography.labelSmall)
+                }
+            }
+        }
+    }
+
+    if (showRenameDialog) {
+        var newName by remember { mutableStateOf(entry.fileName ?: "") }
+        AlertDialog(
+            onDismissRequest = { showRenameDialog = false },
+            title = { Text(stringResource(R.string.rename_title)) },
+            text = {
+                OutlinedTextField(
+                    value = newName,
+                    onValueChange = { newName = it },
+                    label = { Text(stringResource(R.string.rename_label)) },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onRename(newName)
+                    showRenameDialog = false
+                }) { Text(stringResource(R.string.save)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRenameDialog = false }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
     }
 }
 

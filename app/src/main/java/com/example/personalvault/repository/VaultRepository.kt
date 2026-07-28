@@ -48,8 +48,17 @@ class VaultRepository(private val appContext: Context) {
     suspend fun togglePin(entry: Entry) = entryDao.updateEntry(entry.copy(isPinned = !entry.isPinned))
     suspend fun toggleFavorite(entry: Entry) = entryDao.updateEntry(entry.copy(isFavorite = !entry.isFavorite))
 
+    suspend fun renameEntry(entry: Entry, newName: String) =
+        entryDao.updateEntry(entry.copy(fileName = newName))
+
     suspend fun moveToTrash(entry: Entry) =
         entryDao.updateEntry(entry.copy(isDeleted = true, deletedAt = System.currentTimeMillis()))
+
+    // Bulk version used by multi-selection in a folder — moves every given entry to trash at once.
+    suspend fun moveEntriesToTrash(entries: List<Entry>) {
+        val now = System.currentTimeMillis()
+        entries.forEach { entryDao.updateEntry(it.copy(isDeleted = true, deletedAt = now)) }
+    }
 
     suspend fun restoreFromTrash(entry: Entry) =
         entryDao.updateEntry(entry.copy(isDeleted = false, deletedAt = null))

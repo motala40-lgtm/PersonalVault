@@ -4,11 +4,13 @@ import android.content.Context
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 enum class AppLanguage { FA, EN }
+enum class GridColumns(val count: Int) { ONE(1), TWO(2), THREE(3) }
 
 object AppPreferences {
     private const val PREFS_NAME = "app_prefs"
     private const val KEY_THEME = "theme_mode"
     private const val KEY_LANGUAGE = "app_language"
+    private const val KEY_GRID_COLUMNS = "grid_columns"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -24,5 +26,23 @@ object AppPreferences {
 
     fun setLanguage(context: Context, language: AppLanguage) {
         prefs(context).edit().putString(KEY_LANGUAGE, language.name).apply()
+    }
+
+    fun getGridColumns(context: Context): GridColumns =
+        GridColumns.valueOf(prefs(context).getString(KEY_GRID_COLUMNS, GridColumns.TWO.name) ?: GridColumns.TWO.name)
+
+    fun setGridColumns(context: Context, columns: GridColumns) {
+        prefs(context).edit().putString(KEY_GRID_COLUMNS, columns.name).apply()
+    }
+
+    /** Cycles 1 -> 2 -> 3 -> 1 ... used by the grid-size toggle button. */
+    fun cycleGridColumns(context: Context): GridColumns {
+        val next = when (getGridColumns(context)) {
+            GridColumns.ONE -> GridColumns.TWO
+            GridColumns.TWO -> GridColumns.THREE
+            GridColumns.THREE -> GridColumns.ONE
+        }
+        setGridColumns(context, next)
+        return next
     }
 }

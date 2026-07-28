@@ -74,8 +74,18 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { repository.toggleFavorite(entry) }
     }
 
+    fun renameEntry(entry: Entry, newName: String) {
+        if (newName.isBlank()) return
+        viewModelScope.launch { repository.renameEntry(entry, newName) }
+    }
+
     fun moveToTrash(entry: Entry) {
         viewModelScope.launch { repository.moveToTrash(entry) }
+    }
+
+    fun moveEntriesToTrash(entries: List<Entry>) {
+        if (entries.isEmpty()) return
+        viewModelScope.launch { repository.moveEntriesToTrash(entries) }
     }
 
     fun restoreFromTrash(entry: Entry) {

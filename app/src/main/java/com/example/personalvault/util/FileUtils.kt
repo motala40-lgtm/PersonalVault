@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
+import android.provider.OpenableColumns
 import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
@@ -15,6 +16,25 @@ object FileUtils {
         val dir = File(context.filesDir, "vault_files")
         if (!dir.exists()) dir.mkdirs()
         return dir
+    }
+
+    /**
+     * Looks up the real display name (e.g. "vacation.jpg") of a content:// uri.
+     * uri.lastPathSegment is NOT reliable for this — for MediaStore/content uris it
+     * usually returns a numeric row id, not the actual file name, which is why
+     * saved entries were showing numbers instead of real file names.
+     */
+    fun getDisplayName(context: Context, uri: Uri): String? {
+        if (uri.scheme == "content") {
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex >= 0 && cursor.moveToFirst()) {
+                    val name = cursor.getString(nameIndex)
+                    if (!name.isNullOrBlank()) return name
+                }
+            }
+        }
+        return uri.lastPathSegment
     }
 
     /** Copies any picked content:// uri (image or generic file) into app-private storage. */

@@ -7,6 +7,7 @@
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="create">Create</string>
+    <string name="more_options">More options</string>
 
     <!-- Navigation / section titles -->
     <string name="nav_favorites">Favorites</string>
@@ -16,6 +17,7 @@
     <string name="folders_title">Folders</string>
     <string name="search_placeholder">Search title, text, file name...</string>
     <string name="search_results">Search results</string>
+    <string name="no_folders_yet">No folders yet — tap + to create one</string>
 
     <!-- Folder -->
     <string name="new_folder">New Folder</string>
@@ -25,12 +27,6 @@
     <string name="vault_locked">Vault is locked</string>
     <string name="password_label">Password</string>
     <string name="wrong_password">Incorrect password</string>
-    <string name="wrong_password_attempts_left">Incorrect password — %1$d attempt(s) left</string>
-    <string name="locked_out_message">Too many failed attempts. Try again in %1$s.</string>
-    <string name="seconds_format">%1$d sec</string>
-    <string name="minutes_seconds_format">%1$d min %2$d sec</string>
-    <string name="support_label">Support</string>
-    <string name="privacy_policy_label">Privacy Policy</string>
     <string name="login">Unlock</string>
     <string name="biometric_login">Sign in with fingerprint</string>
 
@@ -39,7 +35,21 @@
     <string name="attach_file">Attach file</string>
     <string name="scan_document">Scan document</string>
     <string name="note_placeholder">Write a note...</string>
+    <string name="note_label">Note</string>
     <string name="send">Send</string>
+    <string name="add_content">Add</string>
+    <string name="change_grid_size">Change display size</string>
+    <string name="no_entries_yet">This folder is empty — tap + to start</string>
+
+    <!-- Multi-selection -->
+    <string name="selected_count_format">%1$d selected</string>
+    <string name="cancel_selection">Cancel selection</string>
+    <string name="delete_selected">Delete selected</string>
+
+    <!-- Rename -->
+    <string name="rename">Rename</string>
+    <string name="rename_title">Rename file</string>
+    <string name="rename_label">New name</string>
 
     <!-- Reminders -->
     <string name="new_reminder">New Reminder</string>

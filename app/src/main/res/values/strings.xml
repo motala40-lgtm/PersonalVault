@@ -7,6 +7,7 @@
     <string name="save">ذخیره</string>
     <string name="delete">حذف</string>
     <string name="create">ساخت</string>
+    <string name="more_options">گزینه‌های بیشتر</string>
 
     <!-- Navigation / section titles -->
     <string name="nav_favorites">علاقه‌مندی‌ها</string>
@@ -16,6 +17,7 @@
     <string name="folders_title">پوشه‌ها</string>
     <string name="search_placeholder">جستجو در عنوان، متن، نام فایل...</string>
     <string name="search_results">نتایج جستجو</string>
+    <string name="no_folders_yet">هنوز پوشه‌ای نساختی؛ با دکمه‌ی + یکی بساز</string>
 
     <!-- Folder -->
     <string name="new_folder">پوشه جدید</string>
@@ -25,12 +27,6 @@
     <string name="vault_locked">آرشیو قفل است</string>
     <string name="password_label">رمز عبور</string>
     <string name="wrong_password">رمز اشتباه است</string>
-    <string name="wrong_password_attempts_left">رمز اشتباه است — %1$d تلاش دیگر باقی مانده</string>
-    <string name="locked_out_message">به‌خاطر تلاش‌های ناموفق زیاد، ورود موقتاً مسدود شده. %1$s دیگر دوباره امتحان کن.</string>
-    <string name="seconds_format">%1$d ثانیه</string>
-    <string name="minutes_seconds_format">%1$d دقیقه و %2$d ثانیه</string>
-    <string name="support_label">پشتیبانی</string>
-    <string name="privacy_policy_label">سیاست حریم خصوصی</string>
     <string name="login">ورود</string>
     <string name="biometric_login">ورود با اثر انگشت</string>
 
@@ -39,7 +35,21 @@
     <string name="attach_file">پیوست فایل</string>
     <string name="scan_document">اسکن سند</string>
     <string name="note_placeholder">یادداشت بنویس...</string>
+    <string name="note_label">یادداشت</string>
     <string name="send">ارسال</string>
+    <string name="add_content">افزودن</string>
+    <string name="change_grid_size">تغییر اندازه نمایش</string>
+    <string name="no_entries_yet">این پوشه هنوز خالیه؛ از دکمه‌ی + شروع کن</string>
+
+    <!-- Multi-selection -->
+    <string name="selected_count_format">%1$d مورد انتخاب شد</string>
+    <string name="cancel_selection">لغو انتخاب</string>
+    <string name="delete_selected">حذف موارد انتخابی</string>
+
+    <!-- Rename -->
+    <string name="rename">تغییر نام</string>
+    <string name="rename_title">تغییر نام فایل</string>
+    <string name="rename_label">نام جدید</string>
 
     <!-- Reminders -->
     <string name="new_reminder">یادآوری جدید</string>

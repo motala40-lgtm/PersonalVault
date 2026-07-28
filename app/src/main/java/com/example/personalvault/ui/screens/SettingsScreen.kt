@@ -147,30 +147,6 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
                     }
                 )
             }
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
-
-            TextButton(onClick = {
-                val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
-                    data = android.net.Uri.parse("mailto:")
-                    putExtra(android.content.Intent.EXTRA_EMAIL, arrayOf("Newlifetech25@hotmail.com"))
-                    putExtra(android.content.Intent.EXTRA_SUBJECT, "ARVIO - Support")
-                }
-                context.startActivity(intent)
-            }) {
-                Text(stringResource(R.string.support_label))
-            }
-
-            TextButton(onClick = {
-                val intent = android.content.Intent(
-                    android.content.Intent.ACTION_VIEW,
-                    android.net.Uri.parse("https://github.com/motala40-lgtm/PersonalVault/blob/main/PRIVACY_POLICY.md")
-                )
-                context.startActivity(intent)
-            }) {
-                Text(stringResource(R.string.privacy_policy_label))
-            }
         }
     }
 
