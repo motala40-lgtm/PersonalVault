@@ -1,12 +1,39 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Bright, modern rounded-square background with a soft violet-to-teal gradient -->
+    <path android:pathData="M0,24 C0,10.7 10.7,0 24,0 H84 C97.3,0 108,10.7 108,24 V84 C108,97.3 97.3,108 84,108 H24 C10.7,108 0,97.3 0,84 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="108"
+                android:endY="108"
+                android:startColor="#8A7CFF"
+                android:endColor="#33D6C7" />
+        </aapt:attr>
+    </path>
+
+    <!-- Soft translucent highlight for extra depth -->
     <path
-        android:fillColor="#6750A4"
-        android:pathData="M0,0h108v108h-108z" />
+        android:fillColor="#33FFFFFF"
+        android:pathData="M24,0 H84 C97.3,0 108,10.7 108,24 V40 C70,10 30,10 0,40 V24 C0,10.7 10.7,0 24,0 Z" />
+
+    <!-- Folder glyph -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M24,34 h60 v10 h-60 z M24,50 h60 v10 h-60 z M24,66 h40 v10 h-40 z" />
+        android:pathData="M26,40 C26,36.7 28.7,34 32,34 H46 L52,42 H76 C79.3,42 82,44.7 82,48 V74 C82,77.3 79.3,80 76,80 H32 C28.7,80 26,77.3 26,74 Z" />
+
+    <!-- Small lock glyph on the folder to signal a private vault -->
+    <path
+        android:fillColor="#8A7CFF"
+        android:pathData="M49,54 C49,50.7 51.7,48 55,48 C58.3,48 61,50.7 61,54 V58 H49 Z" />
+    <path
+        android:fillColor="#8A7CFF"
+        android:pathData="M46,58 H64 C65.7,58 67,59.3 67,61 V70 C67,71.7 65.7,73 64,73 H46 C44.3,73 43,71.7 43,70 V61 C43,59.3 44.3,58 46,58 Z" />
 </vector>

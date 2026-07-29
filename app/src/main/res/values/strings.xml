@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ARVIO</string>
+    <string name="app_name">ایزی آرشیو</string>
 
     <!-- Common -->
     <string name="back">بازگشت</string>
@@ -18,6 +18,9 @@
     <string name="search_placeholder">جستجو در عنوان، متن، نام فایل...</string>
     <string name="search_results">نتایج جستجو</string>
     <string name="no_folders_yet">هنوز پوشه‌ای نساختی؛ با دکمه‌ی + یکی بساز</string>
+    <string name="app_title">ایزی آرشیو</string>
+    <string name="support">پشتیبانی</string>
+    <string name="contact_support">تماس با پشتیبانی</string>
 
     <!-- Folder -->
     <string name="new_folder">پوشه جدید</string>

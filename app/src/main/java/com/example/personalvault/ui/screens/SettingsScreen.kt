@@ -1,9 +1,12 @@
 package com.example.personalvault.ui.screens
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,6 +18,8 @@ import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.util.ThemeMode
+
+private const val SUPPORT_EMAIL = "newlifetech25@hotmail.com"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,8 +80,6 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
                             if (language != lang) {
                                 language = lang
                                 AppPreferences.setLanguage(context, lang)
-                                // A locale change only takes effect on resource lookups after
-                                // attachBaseContext runs again, so the Activity must be recreated.
                                 (context as? Activity)?.recreate()
                             }
                         }
@@ -143,9 +146,26 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
                     onCheckedChange = {
                         screenshotBlocked = it
                         SecurityManager.setScreenshotBlockEnabled(context, it)
-                        onThemeOrLanguageChanged() // reuse to trigger activity to re-apply FLAG_SECURE
+                        onThemeOrLanguageChanged()
                     }
                 )
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Divider()
+            Spacer(Modifier.height(16.dp))
+
+            Text(stringResource(R.string.support), style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:$SUPPORT_EMAIL")
+                }
+                runCatching { context.startActivity(intent) }
+            }) {
+                Icon(Icons.Default.Email, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.contact_support))
             }
         }
     }

@@ -30,6 +30,7 @@ private val FolderColors = listOf(
     "#6750A4", "#386641", "#BC4749", "#1D4E89", "#C08552", "#457B9D"
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FolderListScreen(
     viewModel: VaultViewModel,
@@ -45,93 +46,111 @@ fun FolderListScreen(
     var showAddDialog by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf("") }
 
-    // Surface here (rather than a bare Column) is what makes this screen react to
-    // theme/color changes — without it the background stayed whatever the static
-    // window background was, regardless of the light/dark choice in Settings.
+    // Surface (rather than a bare Column) is what makes this screen react to theme/color
+    // changes — without it the background stayed whatever the static window background was.
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(Modifier.fillMaxSize()) {
-            OutlinedTextField(
-                value = query,
-                onValueChange = {
-                    query = it
-                    onSearch(it)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                placeholder = { Text(stringResource(R.string.search_placeholder)) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                shape = RoundedCornerShape(16.dp),
-                singleLine = true
-            )
-
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                NavShortcut(Icons.Default.Favorite, stringResource(R.string.nav_favorites), Color(0xFFEF5DA8), onOpenFavorites)
-                NavShortcut(Icons.Default.Alarm, stringResource(R.string.nav_reminders), Color(0xFF4C8DFF), onOpenReminders)
-                NavShortcut(Icons.Default.Delete, stringResource(R.string.nav_trash), Color(0xFF9E9E9E), onOpenTrash)
-                NavShortcut(Icons.Default.Settings, stringResource(R.string.nav_settings), Color(0xFF6750A4), onOpenSettings)
-            }
-
-            Spacer(Modifier.height(12.dp))
-
-            if (query.isNotBlank()) {
-                Text(
-                    stringResource(R.string.search_results),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+        Scaffold(
+            containerColor = androidx.compose.ui.graphics.Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = { Text(stringResource(R.string.app_title)) }
                 )
-                Spacer(Modifier.height(8.dp))
-                LazyColumn(Modifier.weight(1f).padding(horizontal = 8.dp)) {
-                    items(searchResults, key = { it.id }) { entry ->
-                        EntryItem(
-                            entry = entry,
-                            onTogglePin = { viewModel.togglePin(entry) },
-                            onToggleFavorite = { viewModel.toggleFavorite(entry) },
-                            onDelete = { viewModel.moveToTrash(entry) }
-                        )
+            },
+            bottomBar = {
+                BottomAppBar(
+                    actions = {
+                        IconButton(onClick = onOpenFavorites) {
+                            Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.nav_favorites))
+                        }
+                        IconButton(onClick = onOpenReminders) {
+                            Icon(Icons.Default.Alarm, contentDescription = stringResource(R.string.nav_reminders))
+                        }
+                        IconButton(onClick = onOpenTrash) {
+                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.nav_trash))
+                        }
+                        IconButton(onClick = onOpenSettings) {
+                            Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.nav_settings))
+                        }
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = { showAddDialog = true }) {
+                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.new_folder))
+                        }
                     }
-                }
-            } else {
-                Row(
-                    Modifier
+                )
+            }
+        ) { padding ->
+            Column(
+                Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+            ) {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = {
+                        query = it
+                        onSearch(it)
+                    },
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(stringResource(R.string.folders_title), style = MaterialTheme.typography.titleLarge)
-                    FilledTonalIconButton(onClick = { showAddDialog = true }) {
-                        Icon(Icons.Default.CreateNewFolder, contentDescription = stringResource(R.string.new_folder))
-                    }
-                }
-                Spacer(Modifier.height(8.dp))
+                        .padding(16.dp),
+                    placeholder = { Text(stringResource(R.string.search_placeholder)) },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    shape = RoundedCornerShape(16.dp),
+                    singleLine = true
+                )
 
-                if (folders.isEmpty()) {
-                    Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text(
-                            stringResource(R.string.no_folders_yet),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                if (query.isNotBlank()) {
+                    Text(
+                        stringResource(R.string.search_results),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    LazyColumn(Modifier.weight(1f).padding(horizontal = 8.dp)) {
+                        items(searchResults, key = { it.id }) { entry ->
+                            EntryItem(
+                                entry = entry,
+                                onTogglePin = { viewModel.togglePin(entry) },
+                                onToggleFavorite = { viewModel.toggleFavorite(entry) },
+                                onDelete = { viewModel.moveToTrash(entry) }
+                            )
+                        }
                     }
                 } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        items(folders, key = { it.id }) { folder ->
-                            FolderCard(folder = folder, onClick = { onOpenFolder(folder) })
+                        Text(stringResource(R.string.folders_title), style = MaterialTheme.typography.titleLarge)
+                    }
+                    Spacer(Modifier.height(8.dp))
+
+                    if (folders.isEmpty()) {
+                        Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            Text(
+                                stringResource(R.string.no_folders_yet),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier.weight(1f).fillMaxWidth(),
+                            contentPadding = PaddingValues(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(folders, key = { it.id }) { folder ->
+                                FolderCard(folder = folder, onClick = { onOpenFolder(folder) })
+                            }
                         }
                     }
                 }
@@ -147,28 +166,6 @@ fun FolderListScreen(
                 showAddDialog = false
             }
         )
-    }
-}
-
-@Composable
-private fun NavShortcut(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, tint: Color, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .clickable(onClick = onClick)
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Surface(
-            shape = CircleShape,
-            color = tint.copy(alpha = 0.15f),
-            modifier = Modifier.size(48.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                Icon(icon, contentDescription = label, tint = tint)
-            }
-        }
-        Spacer(Modifier.height(4.dp))
-        Text(label, style = MaterialTheme.typography.labelSmall, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
