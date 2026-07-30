@@ -57,6 +57,10 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { repository.deleteFolder(folder) }
     }
 
+    fun updateFolder(folder: Folder) {
+        viewModelScope.launch { repository.updateFolder(folder) }
+    }
+
     fun addTextEntry(folderId: Long, text: String) {
         if (text.isBlank()) return
         viewModelScope.launch { repository.addTextEntry(folderId, text) }

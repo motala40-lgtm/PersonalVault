@@ -32,6 +32,19 @@
     <string name="wrong_password">رمز اشتباه است</string>
     <string name="login">ورود</string>
     <string name="biometric_login">ورود با اثر انگشت</string>
+    <string name="forgot_password">رمز رو فراموش کردم؟</string>
+    <string name="reset_password_title">بازنشانی رمز</string>
+    <string name="no_security_question_set">هنوز سوال امنیتی تنظیم نکردی. برای کمک به newlifetech25@hotmail.com ایمیل بزن.</string>
+    <string name="security_answer_label">پاسخ</string>
+    <string name="wrong_security_answer">پاسخ اشتباه است</string>
+    <string name="confirm_action">تایید</string>
+
+    <!-- Folder lock -->
+    <string name="enter_folder_password">رمز این پوشه رو وارد کن</string>
+    <string name="lock_folder">قفل کردن پوشه</string>
+    <string name="remove_folder_lock">حذف قفل پوشه</string>
+    <string name="change_folder_password">تغییر رمز پوشه</string>
+    <string name="set_folder_password_title">تنظیم رمز پوشه</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">پیوست عکس</string>
@@ -99,6 +112,9 @@
     <string name="confirm_password_label">تکرار رمز عبور</string>
     <string name="password_min_error">رمز باید حداقل ۴ رقم باشد</string>
     <string name="passwords_mismatch_error">رمزها یکسان نیستند</string>
+    <string name="security_question_hint">این سوال بعداً برای «رمز رو فراموش کردم؟» استفاده می‌شه</string>
+    <string name="security_question_label">سوال امنیتی</string>
+    <string name="security_question_required_error">برای اولین بار، سوال و پاسخ امنیتی لازمه</string>
 
     <!-- Notifications -->
     <string name="reminder_channel_description">یادآوری مناسبت‌ها و قرارها</string>

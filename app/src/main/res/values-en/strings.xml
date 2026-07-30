@@ -32,6 +32,19 @@
     <string name="wrong_password">Incorrect password</string>
     <string name="login">Unlock</string>
     <string name="biometric_login">Sign in with fingerprint</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="reset_password_title">Reset password</string>
+    <string name="no_security_question_set">No security question set yet. Email newlifetech25@hotmail.com for help.</string>
+    <string name="security_answer_label">Answer</string>
+    <string name="wrong_security_answer">Incorrect answer</string>
+    <string name="confirm_action">Confirm</string>
+
+    <!-- Folder lock -->
+    <string name="enter_folder_password">Enter this folder\'s password</string>
+    <string name="lock_folder">Lock folder</string>
+    <string name="remove_folder_lock">Remove folder lock</string>
+    <string name="change_folder_password">Change folder password</string>
+    <string name="set_folder_password_title">Set folder password</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">Attach image</string>
@@ -99,6 +112,9 @@
     <string name="confirm_password_label">Confirm password</string>
     <string name="password_min_error">Password must be at least 4 digits</string>
     <string name="passwords_mismatch_error">Passwords do not match</string>
+    <string name="security_question_hint">Used later for \"Forgot password?\"</string>
+    <string name="security_question_label">Security question</string>
+    <string name="security_question_required_error">A security question and answer are required the first time</string>
 
     <!-- Notifications -->
     <string name="reminder_channel_description">Reminders for events and appointments</string>

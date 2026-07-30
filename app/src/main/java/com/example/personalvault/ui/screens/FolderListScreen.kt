@@ -1,7 +1,9 @@
 package com.example.personalvault.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -19,11 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.personalvault.R
 import com.example.personalvault.data.Folder
 import com.example.personalvault.ui.components.EntryItem
+import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.viewmodel.VaultViewModel
 
 private val FolderColors = listOf(
@@ -45,6 +51,14 @@ fun FolderListScreen(
     val searchResults by viewModel.searchResults.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf("") }
+
+    // Per-folder lock flow. Each holds the folder currently going through that step;
+    // "changingPasswordFor" verifies the old PIN first, then hands off to "settingLockFor"
+    // to collect the new one — reusing the same set-pin dialog for both lock and re-lock.
+    var openingFolder by remember { mutableStateOf<Folder?>(null) }
+    var settingLockFor by remember { mutableStateOf<Folder?>(null) }
+    var removingLockFor by remember { mutableStateOf<Folder?>(null) }
+    var changingPasswordFor by remember { mutableStateOf<Folder?>(null) }
 
     // Surface (rather than a bare Column) is what makes this screen react to theme/color
     // changes — without it the background stayed whatever the static window background was.
@@ -149,7 +163,15 @@ fun FolderListScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(folders, key = { it.id }) { folder ->
-                                FolderCard(folder = folder, onClick = { onOpenFolder(folder) })
+                                FolderCard(
+                                    folder = folder,
+                                    onClick = {
+                                        if (folder.isLocked) openingFolder = folder else onOpenFolder(folder)
+                                    },
+                                    onLockFolder = { settingLockFor = folder },
+                                    onRemoveLock = { removingLockFor = folder },
+                                    onChangePassword = { changingPasswordFor = folder }
+                                )
                             }
                         }
                     }
@@ -167,41 +189,234 @@ fun FolderListScreen(
             }
         )
     }
+
+    openingFolder?.let { folder ->
+        VerifyFolderPinDialog(
+            folder = folder,
+            onDismiss = { openingFolder = null },
+            onVerified = {
+                openingFolder = null
+                onOpenFolder(folder)
+            }
+        )
+    }
+
+    removingLockFor?.let { folder ->
+        VerifyFolderPinDialog(
+            folder = folder,
+            onDismiss = { removingLockFor = null },
+            onVerified = {
+                viewModel.updateFolder(folder.copy(isLocked = false, pinHash = null))
+                removingLockFor = null
+            }
+        )
+    }
+
+    changingPasswordFor?.let { folder ->
+        VerifyFolderPinDialog(
+            folder = folder,
+            onDismiss = { changingPasswordFor = null },
+            onVerified = {
+                changingPasswordFor = null
+                settingLockFor = folder
+            }
+        )
+    }
+
+    settingLockFor?.let { folder ->
+        SetFolderPinDialog(
+            onDismiss = { settingLockFor = null },
+            onConfirm = { pin ->
+                viewModel.updateFolder(folder.copy(isLocked = true, pinHash = SecurityManager.hashValue(pin)))
+                settingLockFor = null
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@Composable
+private fun FolderCard(
+    folder: Folder,
+    onClick: () -> Unit,
+    onLockFolder: () -> Unit,
+    onRemoveLock: () -> Unit,
+    onChangePassword: () -> Unit
+) {
+    var showMenu by remember { mutableStateOf(false) }
+
+    Box {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(onClick = onClick, onLongClick = { showMenu = true }),
+            shape = RoundedCornerShape(20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                        .background(Color(android.graphics.Color.parseColor(folder.colorHex))),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Default.Folder,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                    if (folder.isLocked) {
+                        Icon(
+                            Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(6.dp)
+                                .size(18.dp)
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        folder.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 12.dp, top = 12.dp, bottom = 12.dp)
+                    )
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_options))
+                    }
+                }
+            }
+        }
+
+        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+            if (folder.isLocked) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.change_folder_password)) },
+                    onClick = { showMenu = false; onChangePassword() }
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.remove_folder_lock)) },
+                    onClick = { showMenu = false; onRemoveLock() }
+                )
+            } else {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.lock_folder)) },
+                    onClick = { showMenu = false; onLockFolder() }
+                )
+            }
+        }
+    }
 }
 
 @Composable
-private fun FolderCard(folder: Folder, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .background(Color(android.graphics.Color.parseColor(folder.colorHex))),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    Icons.Default.Folder,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
+private fun VerifyFolderPinDialog(
+    folder: Folder,
+    onDismiss: () -> Unit,
+    onVerified: () -> Unit
+) {
+    var pin by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+    val wrongPasswordText = stringResource(R.string.wrong_password)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(folder.name) },
+        text = {
+            Column {
+                Text(stringResource(R.string.enter_folder_password))
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = pin,
+                    onValueChange = { pin = it; error = null },
+                    label = { Text(stringResource(R.string.password_label)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    singleLine = true
                 )
+                error?.let {
+                    Spacer(Modifier.height(4.dp))
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                }
             }
-            Text(
-                folder.name,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(12.dp)
-            )
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (folder.pinHash != null && folder.pinHash == SecurityManager.hashValue(pin)) {
+                    onVerified()
+                } else {
+                    error = wrongPasswordText
+                }
+            }) { Text(stringResource(R.string.login)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
-    }
+    )
+}
+
+@Composable
+private fun SetFolderPinDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var pin by remember { mutableStateOf("") }
+    var confirmPin by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+    val minDigitsError = stringResource(R.string.password_min_error)
+    val mismatchError = stringResource(R.string.passwords_mismatch_error)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.set_folder_password_title)) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = pin,
+                    onValueChange = { pin = it },
+                    label = { Text(stringResource(R.string.password_min_digits_label)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    singleLine = true
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = confirmPin,
+                    onValueChange = { confirmPin = it },
+                    label = { Text(stringResource(R.string.confirm_password_label)) },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    singleLine = true
+                )
+                error?.let {
+                    Spacer(Modifier.height(4.dp))
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                when {
+                    pin.length < 4 -> error = minDigitsError
+                    pin != confirmPin -> error = mismatchError
+                    else -> onConfirm(pin)
+                }
+            }) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
 }
 
 @Composable

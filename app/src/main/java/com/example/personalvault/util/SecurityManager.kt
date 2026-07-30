@@ -11,6 +11,8 @@ object SecurityManager {
     private const val KEY_LOCK_ENABLED = "lock_enabled"
     private const val KEY_BIOMETRIC_ENABLED = "biometric_enabled"
     private const val KEY_SCREENSHOT_BLOCK = "screenshot_block"
+    private const val KEY_SECURITY_QUESTION = "security_question"
+    private const val KEY_SECURITY_ANSWER_HASH = "security_answer_hash"
 
     private fun prefs(context: Context) = EncryptedSharedPreferences.create(
         context,
@@ -20,10 +22,13 @@ object SecurityManager {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    private fun hash(pin: String): String {
-        val bytes = MessageDigest.getInstance("SHA-256").digest(pin.toByteArray())
+    private fun hash(text: String): String {
+        val bytes = MessageDigest.getInstance("SHA-256").digest(text.toByteArray())
         return bytes.joinToString("") { "%02x".format(it) }
     }
+
+    /** Exposed so folder-level PINs can be hashed the same way as the app-wide PIN. */
+    fun hashValue(text: String): String = hash(text)
 
     fun setPin(context: Context, pin: String) {
         prefs(context).edit().putString(KEY_PIN_HASH, hash(pin)).apply()
@@ -53,4 +58,23 @@ object SecurityManager {
     }
 
     fun isScreenshotBlockEnabled(context: Context): Boolean = prefs(context).getBoolean(KEY_SCREENSHOT_BLOCK, false)
+
+    // --- Forgot-PIN recovery: a security question set once alongside the PIN, used to
+    // let the user reset a forgotten PIN without needing a server or email. ---
+
+    fun setSecurityQuestion(context: Context, question: String, answer: String) {
+        prefs(context).edit()
+            .putString(KEY_SECURITY_QUESTION, question)
+            .putString(KEY_SECURITY_ANSWER_HASH, hash(answer.trim().lowercase()))
+            .apply()
+    }
+
+    fun getSecurityQuestion(context: Context): String? = prefs(context).getString(KEY_SECURITY_QUESTION, null)
+
+    fun hasSecurityQuestion(context: Context): Boolean = getSecurityQuestion(context) != null
+
+    fun verifySecurityAnswer(context: Context, answer: String): Boolean {
+        val stored = prefs(context).getString(KEY_SECURITY_ANSWER_HASH, null) ?: return false
+        return stored == hash(answer.trim().lowercase())
+    }
 }

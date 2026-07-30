@@ -173,8 +173,11 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
     if (showPinDialog) {
         SetPinDialog(
             onDismiss = { showPinDialog = false },
-            onConfirm = { pin ->
+            onConfirm = { pin, question, answer ->
                 SecurityManager.setPin(context, pin)
+                if (question != null && answer != null) {
+                    SecurityManager.setSecurityQuestion(context, question, answer)
+                }
                 SecurityManager.setLockEnabled(context, true)
                 lockEnabled = true
                 showPinDialog = false
@@ -184,12 +187,19 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
 }
 
 @Composable
-private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (pin: String, question: String?, answer: String?) -> Unit) {
+    val context = LocalContext.current
     var pin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
+    var question by remember { mutableStateOf(SecurityManager.getSecurityQuestion(context) ?: "") }
+    var answer by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
     val minDigitsError = stringResource(R.string.password_min_error)
     val mismatchError = stringResource(R.string.passwords_mismatch_error)
+    val securityRequiredError = stringResource(R.string.security_question_required_error)
+    // A security question is only mandatory the first time — once one exists, changing the
+    // password doesn't force the user to redo it (they can still edit it here if they want).
+    val needsSecuritySetup = !SecurityManager.hasSecurityQuestion(context)
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -211,6 +221,26 @@ private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
                     visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.NumberPassword)
                 )
+
+                Spacer(Modifier.height(16.dp))
+                Divider()
+                Spacer(Modifier.height(8.dp))
+                Text(stringResource(R.string.security_question_hint), style = MaterialTheme.typography.bodySmall)
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = question,
+                    onValueChange = { question = it },
+                    label = { Text(stringResource(R.string.security_question_label)) },
+                    singleLine = true
+                )
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = answer,
+                    onValueChange = { answer = it },
+                    label = { Text(stringResource(R.string.security_answer_label)) },
+                    singleLine = true
+                )
+
                 error?.let {
                     Spacer(Modifier.height(4.dp))
                     Text(it, color = MaterialTheme.colorScheme.error)
@@ -222,7 +252,8 @@ private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
                 when {
                     pin.length < 4 -> error = minDigitsError
                     pin != confirmPin -> error = mismatchError
-                    else -> onConfirm(pin)
+                    needsSecuritySetup && (question.isBlank() || answer.isBlank()) -> error = securityRequiredError
+                    else -> onConfirm(pin, question.takeIf { it.isNotBlank() }, answer.takeIf { it.isNotBlank() })
                 }
             }) { Text(stringResource(R.string.save)) }
         },
