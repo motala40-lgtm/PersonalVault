@@ -29,10 +29,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.personalvault.R
 import com.example.personalvault.data.Folder
 import com.example.personalvault.ui.components.EntryItem
@@ -55,6 +58,7 @@ fun FolderListScreen(
     onOpenFavorites: () -> Unit,
     onOpenTrash: () -> Unit,
     onOpenReminders: () -> Unit,
+    onOpenContacts: () -> Unit,
     onOpenSettings: () -> Unit,
     onSearch: (String) -> Unit
 ) {
@@ -113,20 +117,54 @@ fun FolderListScreen(
                     containerColor = bottomBarColor,
                     contentColor = bottomBarContentColor,
                     actions = {
+                        // Each icon keeps its own fixed color in light theme (as requested).
+                        // In dark theme, Settings falls back to a light neutral instead of pure
+                        // black, since black-on-dark would repeat the exact "text disappears"
+                        // problem this whole round of fixes is trying to solve.
                         IconButton(onClick = onOpenFavorites) {
-                            Icon(Icons.Rounded.Favorite, contentDescription = stringResource(R.string.nav_favorites))
+                            Icon(
+                                Icons.Rounded.Favorite,
+                                contentDescription = stringResource(R.string.nav_favorites),
+                                tint = Color(0xFFE53935)
+                            )
                         }
                         IconButton(onClick = onOpenReminders) {
-                            Icon(Icons.Rounded.NotificationsActive, contentDescription = stringResource(R.string.nav_reminders))
+                            Icon(
+                                Icons.Rounded.NotificationsActive,
+                                contentDescription = stringResource(R.string.nav_reminders),
+                                tint = Color(0xFFFFC107)
+                            )
+                        }
+                        IconButton(onClick = onOpenContacts) {
+                            Icon(
+                                Icons.Rounded.Phone,
+                                contentDescription = stringResource(R.string.nav_contacts),
+                                tint = Color(0xFF0D47A1)
+                            )
                         }
                         IconButton(onClick = onOpenTrash) {
-                            Icon(Icons.Rounded.DeleteOutline, contentDescription = stringResource(R.string.nav_trash))
+                            Icon(
+                                Icons.Rounded.DeleteOutline,
+                                contentDescription = stringResource(R.string.nav_trash),
+                                tint = Color(0xFFEC407A)
+                            )
                         }
                         IconButton(onClick = onOpenSettings) {
-                            Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.nav_settings))
+                            Icon(
+                                Icons.Rounded.Settings,
+                                contentDescription = stringResource(R.string.nav_settings),
+                                tint = if (isDarkTheme) bottomBarContentColor else Color.Black
+                            )
                         }
                         IconButton(onClick = { showLanguageDialog = true }) {
-                            Icon(Icons.Rounded.Language, contentDescription = stringResource(R.string.app_language))
+                            // A flat monochrome icon can't look "colorful" — a real emoji glyph
+                            // renders in full color on Android regardless of icon tint.
+                            val languageLabel = stringResource(R.string.app_language)
+                            Text(
+                                "\uD83C\uDF0D",
+                                fontSize = 22.sp,
+                                modifier = Modifier.semantics { contentDescription = languageLabel }
+                            )
                         }
                     },
                     floatingActionButton = {

@@ -3,6 +3,7 @@ package com.example.personalvault.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.personalvault.data.Contact
 import com.example.personalvault.data.Entry
 import com.example.personalvault.data.EntryType
 import com.example.personalvault.data.Folder
@@ -27,6 +28,9 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val reminders: StateFlow<List<Reminder>> = repository.getAllReminders()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val contacts: StateFlow<List<Contact>> = repository.getAllContacts()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _searchQuery = MutableStateFlow("")
@@ -109,5 +113,22 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     fun deleteReminder(reminder: Reminder) {
         viewModelScope.launch { repository.deleteReminder(reminder) }
+    }
+
+    fun addContact(contact: Contact) {
+        if (contact.name.isBlank()) return
+        viewModelScope.launch { repository.addContact(contact) }
+    }
+
+    fun updateContact(contact: Contact) {
+        viewModelScope.launch { repository.updateContact(contact) }
+    }
+
+    fun deleteContact(contact: Contact) {
+        viewModelScope.launch { repository.deleteContact(contact) }
+    }
+
+    fun toggleContactFavorite(contact: Contact) {
+        updateContact(contact.copy(isFavorite = !contact.isFavorite))
     }
 }

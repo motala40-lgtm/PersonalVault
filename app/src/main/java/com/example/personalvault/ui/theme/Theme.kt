@@ -35,7 +35,10 @@ private val LightColors = lightColorScheme(
 @Composable
 fun PersonalVaultTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    // Disabled by default: Android's per-device "Material You" dynamic color (derived from the
+    // wallpaper) was producing poor text contrast in dark mode on some devices/wallpapers —
+    // our own fixed Light/Dark color schemes below are guaranteed to stay readable.
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

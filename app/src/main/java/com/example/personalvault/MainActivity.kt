@@ -37,6 +37,7 @@ sealed class Screen {
     object Favorites : Screen()
     object Trash : Screen()
     object Reminders : Screen()
+    object Contacts : Screen()
     object Settings : Screen()
 }
 
@@ -101,6 +102,7 @@ class MainActivity : FragmentActivity() {
                             onOpenFavorites = { screen = Screen.Favorites },
                             onOpenTrash = { screen = Screen.Trash },
                             onOpenReminders = { screen = Screen.Reminders },
+                            onOpenContacts = { screen = Screen.Contacts },
                             onOpenSettings = { screen = Screen.Settings },
                             onSearch = { viewModel.onSearchQueryChanged(it) }
                         )
@@ -118,6 +120,10 @@ class MainActivity : FragmentActivity() {
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Reminders -> ReminderListScreen(
+                            viewModel = viewModel,
+                            onBack = { screen = Screen.FolderList }
+                        )
+                        is Screen.Contacts -> ContactsScreen(
                             viewModel = viewModel,
                             onBack = { screen = Screen.FolderList }
                         )

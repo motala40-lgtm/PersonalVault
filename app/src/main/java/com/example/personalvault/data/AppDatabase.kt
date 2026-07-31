@@ -17,12 +17,33 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     }
 }
 
-@Database(entities = [Folder::class, Entry::class, Reminder::class], version = 2, exportSchema = false)
+// Adds the "contacts" table for the phonebook mini-app.
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS contacts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                name TEXT NOT NULL,
+                phone TEXT,
+                phone2 TEXT,
+                email TEXT,
+                note TEXT,
+                isFavorite INTEGER NOT NULL DEFAULT 0,
+                createdAt INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+    }
+}
+
+@Database(entities = [Folder::class, Entry::class, Reminder::class, Contact::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun folderDao(): FolderDao
     abstract fun entryDao(): EntryDao
     abstract fun reminderDao(): ReminderDao
+    abstract fun contactDao(): ContactDao
 
     companion object {
         @Volatile
@@ -35,7 +56,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "personal_vault.db"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
                 instance
