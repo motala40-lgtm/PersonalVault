@@ -57,6 +57,16 @@
     <string name="folder_recovery_section_hint">این پاسخ‌ها برای همه‌ی پوشه‌های قفل‌شده مشترکه و اگه رمز یه پوشه رو فراموش کنی، ازت پرسیده می‌شه.</string>
     <string name="set_folder_recovery_button">تنظیم پاسخ‌های بازیابی</string>
     <string name="folder_recovery_answers_required_error">پر کردن هر دو پاسخ لازمه</string>
+    <string name="backup_section_title">پشتیبان‌گیری کامل</string>
+    <string name="backup_section_hint">یه فایل رمزگذاری‌شده از همه‌ی پوشه‌ها، یادداشت‌ها و فایل‌ها می‌سازه که می‌تونی هرجا (ایمیل، درایو، تلگرام) بفرستی و بعداً روی هر گوشی‌ای برگردونی.</string>
+    <string name="export_backup_button">خروجی گرفتن از همه‌ی اطلاعات</string>
+    <string name="restore_backup_button">بازیابی از فایل پشتیبان</string>
+    <string name="set_backup_password_title">یه رمز برای این فایل پشتیبان تنظیم کن</string>
+    <string name="enter_backup_password_title">رمز این فایل پشتیبان رو وارد کن</string>
+    <string name="backup_export_failed">خروجی گرفتن با خطا مواجه شد</string>
+    <string name="backup_restore_success">بازیابی انجام شد. لطفاً اپ رو کامل ببند و دوباره باز کن.</string>
+    <string name="backup_restore_wrong_password">رمز اشتباهه یا این فایل، فایل پشتیبان معتبری نیست</string>
+    <string name="backup_restore_invalid_file">این فایل، فایل پشتیبان معتبری نیست</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">پیوست عکس</string>
@@ -103,6 +113,7 @@
 
     <!-- Entry item -->
     <string name="generic_file">فایل</string>
+    <string name="no_app_to_open_file">اپی برای باز کردن این فایل روی گوشیت پیدا نشد</string>
     <string name="pin_label">پین</string>
     <string name="favorite_label">علاقه‌مندی</string>
     <string name="share">اشتراک‌گذاری</string>

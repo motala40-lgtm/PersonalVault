@@ -55,6 +55,16 @@
     <string name="folder_recovery_section_hint">These answers are shared across all locked folders — you\'ll be asked for them if you forget a folder\'s password.</string>
     <string name="set_folder_recovery_button">Set recovery answers</string>
     <string name="folder_recovery_answers_required_error">Both answers are required</string>
+    <string name="backup_section_title">Full backup</string>
+    <string name="backup_section_hint">Creates one encrypted file with all your folders, notes, and files, which you can send anywhere (email, Drive, Telegram) and restore later on any phone.</string>
+    <string name="export_backup_button">Export all data</string>
+    <string name="restore_backup_button">Restore from backup file</string>
+    <string name="set_backup_password_title">Set a password for this backup file</string>
+    <string name="enter_backup_password_title">Enter this backup file\'s password</string>
+    <string name="backup_export_failed">Export failed</string>
+    <string name="backup_restore_success">Restore complete. Please fully close and reopen the app.</string>
+    <string name="backup_restore_wrong_password">Wrong password, or this isn\'t a valid backup file</string>
+    <string name="backup_restore_invalid_file">This isn\'t a valid backup file</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">Attach image</string>
@@ -101,6 +111,7 @@
 
     <!-- Entry item -->
     <string name="generic_file">File</string>
+    <string name="no_app_to_open_file">No app found on your phone to open this file</string>
     <string name="pin_label">Pin</string>
     <string name="favorite_label">Favorite</string>
     <string name="share">Share</string>

@@ -1,7 +1,11 @@
 package com.example.personalvault.ui.screens
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,12 +24,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import com.example.personalvault.R
 import com.example.personalvault.ui.theme.accentScreenBackground
 import com.example.personalvault.util.AppPreferences
+import com.example.personalvault.util.BackupManager
 import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.util.ThemeMode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val SUPPORT_EMAIL = "newlifetech25@hotmail.com"
 
@@ -40,6 +49,20 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
     var showPinDialog by remember { mutableStateOf(false) }
     var accentHex by remember { mutableStateOf(AppPreferences.getAccentColorHex(context)) }
     var showFolderRecoveryDialog by remember { mutableStateOf(false) }
+    var showExportPasswordDialog by remember { mutableStateOf(false) }
+    var showRestorePasswordDialog by remember { mutableStateOf(false) }
+    var pendingRestoreUri by remember { mutableStateOf<Uri?>(null) }
+    var backupInProgress by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    val restorePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            pendingRestoreUri = uri
+            showRestorePasswordDialog = true
+        }
+    }
 
     // Same colored background as the folder list, so Settings doesn't feel like a
     // different, plainer app once the person has picked an accent color.
@@ -202,6 +225,34 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             Divider()
             Spacer(Modifier.height(16.dp))
 
+            Text(stringResource(R.string.backup_section_title), style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(4.dp))
+            Text(stringResource(R.string.backup_section_hint), style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { showExportPasswordDialog = true },
+                enabled = !backupInProgress,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.export_backup_button))
+            }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(
+                onClick = { restorePicker.launch(arrayOf("*/*")) },
+                enabled = !backupInProgress,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.restore_backup_button))
+            }
+            if (backupInProgress) {
+                Spacer(Modifier.height(8.dp))
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Divider()
+            Spacer(Modifier.height(16.dp))
+
             Text(stringResource(R.string.support), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = {
@@ -217,6 +268,67 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
         }
     }
     } // close Box(screenBackground)
+
+    if (showExportPasswordDialog) {
+        BackupPasswordDialog(
+            title = stringResource(R.string.set_backup_password_title),
+            confirmRequired = true,
+            onDismiss = { showExportPasswordDialog = false },
+            onConfirm = { password ->
+                showExportPasswordDialog = false
+                backupInProgress = true
+                coroutineScope.launch {
+                    val result = runCatching {
+                        withContext(Dispatchers.IO) { BackupManager.exportBackup(context, password) }
+                    }
+                    backupInProgress = false
+                    val file = result.getOrNull()
+                    if (file != null) {
+                        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "application/octet-stream"
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        context.startActivity(Intent.createChooser(intent, null))
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.backup_export_failed), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        )
+    }
+
+    if (showRestorePasswordDialog) {
+        BackupPasswordDialog(
+            title = stringResource(R.string.enter_backup_password_title),
+            confirmRequired = false,
+            onDismiss = {
+                showRestorePasswordDialog = false
+                pendingRestoreUri = null
+            },
+            onConfirm = { password ->
+                val uri = pendingRestoreUri
+                showRestorePasswordDialog = false
+                if (uri != null) {
+                    backupInProgress = true
+                    coroutineScope.launch {
+                        val restoreResult = withContext(Dispatchers.IO) {
+                            BackupManager.importBackup(context, uri, password)
+                        }
+                        backupInProgress = false
+                        pendingRestoreUri = null
+                        val messageRes = when (restoreResult) {
+                            is BackupManager.RestoreResult.Success -> R.string.backup_restore_success
+                            is BackupManager.RestoreResult.WrongPassword -> R.string.backup_restore_wrong_password
+                            is BackupManager.RestoreResult.InvalidFile -> R.string.backup_restore_invalid_file
+                        }
+                        Toast.makeText(context, context.getString(messageRes), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        )
+    }
 
     if (showFolderRecoveryDialog) {
         SetFolderRecoveryDialog(
@@ -242,6 +354,62 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             }
         )
     }
+}
+
+@Composable
+private fun BackupPasswordDialog(
+    title: String,
+    confirmRequired: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit
+) {
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+    val minLengthError = stringResource(R.string.password_min_error)
+    val mismatchError = stringResource(R.string.passwords_mismatch_error)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(stringResource(R.string.password_label)) },
+                    visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                    singleLine = true
+                )
+                if (confirmRequired) {
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        label = { Text(stringResource(R.string.confirm_password_label)) },
+                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                        singleLine = true
+                    )
+                }
+                error?.let {
+                    Spacer(Modifier.height(4.dp))
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                when {
+                    password.length < 4 -> error = minLengthError
+                    confirmRequired && password != confirmPassword -> error = mismatchError
+                    else -> onConfirm(password)
+                }
+            }) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
 }
 
 @Composable

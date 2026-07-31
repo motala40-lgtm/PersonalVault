@@ -1,25 +1,41 @@
 package com.example.personalvault.ui.screens
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.FileProvider
+import coil.compose.AsyncImage
 import com.example.personalvault.R
 import com.example.personalvault.data.Entry
 import com.example.personalvault.data.EntryType
@@ -49,6 +65,8 @@ fun FolderScreen(
 
     var selectionMode by remember { mutableStateOf(false) }
     var selectedIds by remember { mutableStateOf(setOf<Long>()) }
+    var viewingImageEntry by remember { mutableStateOf<Entry?>(null) }
+    var viewingTextEntry by remember { mutableStateOf<Entry?>(null) }
 
     fun exitSelectionMode() {
         selectionMode = false
@@ -213,6 +231,12 @@ fun FolderScreen(
                                     selectedIds + entry.id
                                 }
                                 if (selectedIds.isEmpty()) selectionMode = false
+                            } else {
+                                when (entry.type) {
+                                    EntryType.TEXT -> viewingTextEntry = entry
+                                    EntryType.IMAGE -> viewingImageEntry = entry
+                                    EntryType.FILE, EntryType.PDF_SCAN -> openEntryExternally(context, entry)
+                                }
                             }
                         },
                         onLongClick = {
@@ -255,4 +279,88 @@ fun FolderScreen(
             }
         )
     }
+
+    viewingImageEntry?.let { entry ->
+        ImageViewerDialog(entry = entry, onDismiss = { viewingImageEntry = null })
+    }
+
+    viewingTextEntry?.let { entry ->
+        TextViewerDialog(entry = entry, onDismiss = { viewingTextEntry = null })
+    }
+}
+
+/** Opens a FILE/PDF_SCAN entry in whatever external app the device has for its type. */
+private fun openEntryExternally(context: android.content.Context, entry: Entry) {
+    val file = File(entry.content)
+    val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+    val mime = context.contentResolver.getType(uri)
+        ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension.lowercase())
+        ?: "*/*"
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        setDataAndType(uri, mime)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+    runCatching { context.startActivity(intent) }
+        .onFailure {
+            Toast.makeText(context, context.getString(R.string.no_app_to_open_file), Toast.LENGTH_LONG).show()
+        }
+}
+
+/** Full-screen image viewer with pinch-to-zoom/pan — this is what makes tapping a photo "enlarge" it. */
+@Composable
+private fun ImageViewerDialog(entry: Entry, onDismiss: () -> Unit) {
+    var scale by remember { mutableStateOf(1f) }
+    var offsetX by remember { mutableStateOf(0f) }
+    var offsetY by remember { mutableStateOf(0f) }
+
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            AsyncImage(
+                model = File(entry.content),
+                contentDescription = entry.fileName,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) {
+                        detectTransformGestures { _, pan, zoom, _ ->
+                            scale = (scale * zoom).coerceIn(1f, 6f)
+                            offsetX += pan.x
+                            offsetY += pan.y
+                        }
+                    }
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offsetX,
+                        translationY = offsetY
+                    )
+            )
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier.align(Alignment.TopStart).padding(8.dp)
+            ) {
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel), tint = Color.White)
+            }
+        }
+    }
+}
+
+/** Full-text viewer for TEXT entries — the grid card only shows a truncated 6-line preview. */
+@Composable
+private fun TextViewerDialog(entry: Entry, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        text = {
+            Box(Modifier.verticalScroll(rememberScrollState())) {
+                Text(entry.content, style = TextStyle(textDirection = TextDirection.Content))
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.back)) }
+        }
+    )
 }

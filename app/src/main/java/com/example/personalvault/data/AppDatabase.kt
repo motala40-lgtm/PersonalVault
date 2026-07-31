@@ -41,5 +41,19 @@ abstract class AppDatabase : RoomDatabase() {
                 instance
             }
         }
+
+        /**
+         * Closes and drops the cached instance so the *next* [getInstance] call opens a fresh
+         * connection. Needed right before overwriting the underlying .db file during a backup
+         * restore — without this, the app would keep querying the old (now-replaced) database.
+         * The app still needs a restart afterward: anything already holding a reference to the
+         * old instance (e.g. an existing ViewModel) would otherwise keep using a closed database.
+         */
+        fun closeInstance() {
+            synchronized(this) {
+                INSTANCE?.close()
+                INSTANCE = null
+            }
+        }
     }
 }
