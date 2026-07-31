@@ -285,7 +285,11 @@ fun FolderScreen(
     }
 
     viewingTextEntry?.let { entry ->
-        TextViewerDialog(entry = entry, onDismiss = { viewingTextEntry = null })
+        TextViewerDialog(
+            entry = entry,
+            onSave = { newText -> viewModel.updateTextEntry(entry, newText) },
+            onDismiss = { viewingTextEntry = null }
+        )
     }
 }
 
@@ -349,18 +353,34 @@ private fun ImageViewerDialog(entry: Entry, onDismiss: () -> Unit) {
     }
 }
 
-/** Full-text viewer for TEXT entries — the grid card only shows a truncated 6-line preview. */
+/** Full-text editor for TEXT entries — the grid card only shows a truncated 6-line preview.
+ *  Doubles as the viewer: opening it always shows the editable field, and Save persists
+ *  whatever the person added or removed. */
 @Composable
-private fun TextViewerDialog(entry: Entry, onDismiss: () -> Unit) {
+private fun TextViewerDialog(entry: Entry, onSave: (String) -> Unit, onDismiss: () -> Unit) {
+    var text by remember { mutableStateOf(entry.content) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         text = {
-            Box(Modifier.verticalScroll(rememberScrollState())) {
-                Text(entry.content, style = TextStyle(textDirection = TextDirection.Content))
-            }
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 160.dp, max = 420.dp)
+                    .verticalScroll(rememberScrollState()),
+                textStyle = TextStyle(textDirection = TextDirection.Content)
+            )
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.back)) }
+            TextButton(onClick = {
+                onSave(text)
+                onDismiss()
+            }) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
     )
 }

@@ -24,6 +24,7 @@ class VaultRepository(private val appContext: Context) {
     suspend fun createFolder(name: String, colorHex: String, iconName: String) =
         folderDao.insertFolder(Folder(name = name, colorHex = colorHex, iconName = iconName))
     suspend fun updateFolder(folder: Folder) = folderDao.updateFolder(folder)
+    suspend fun updateEntry(entry: Entry) = entryDao.updateEntry(entry)
 
     // Deleting a folder also deletes every entry (and its file) that belongs to it,
     // including ones already in the trash, so nothing is left orphaned on disk or in the DB.
