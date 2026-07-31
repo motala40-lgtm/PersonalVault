@@ -61,7 +61,12 @@ fun FolderScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val entries by viewModel.entriesForFolder(folder.id).collectAsState()
+    // BUG FIX: entriesForFolder(id) calls .stateIn(...) internally, which starts a *new*
+    // coroutine and a *new* StateFlow every time it's called. Without `remember`, every
+    // recomposition called it again — creating StateFlow after StateFlow in an endless
+    // loop, which is what made icons look "frozen and blinking" after any DB update (like
+    // saving a note). Memoizing on folder.id means it's only created once per folder.
+    val entries by remember(folder.id) { viewModel.entriesForFolder(folder.id) }.collectAsState()
     var pendingCameraFile by remember { mutableStateOf<File?>(null) }
     var showAddMenu by remember { mutableStateOf(false) }
     var showNoteDialog by remember { mutableStateOf(false) }

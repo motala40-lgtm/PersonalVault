@@ -50,8 +50,16 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun entriesForFolder(folderId: Long) = repository.getEntriesForFolder(folderId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    // Cached per folderId so repeated calls (e.g. from a screen that forgets to `remember`
+    // the result) reuse the same StateFlow/coroutine instead of spawning a new one each
+    // time — that duplication was the root cause of the icon-freezing/blinking bug.
+    private val entriesByFolder = mutableMapOf<Long, StateFlow<List<Entry>>>()
+
+    fun entriesForFolder(folderId: Long): StateFlow<List<Entry>> =
+        entriesByFolder.getOrPut(folderId) {
+            repository.getEntriesForFolder(folderId)
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        }
 
     fun createFolder(name: String, colorHex: String, iconName: String) {
         viewModelScope.launch { repository.createFolder(name, colorHex, iconName) }
