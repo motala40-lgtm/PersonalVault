@@ -76,10 +76,11 @@ fun FolderScreen(
     var selectedIds by remember { mutableStateOf(setOf<Long>()) }
     var viewingImageIndex by remember { mutableStateOf<Int?>(null) }
     var viewingVideoEntry by remember { mutableStateOf<Entry?>(null) }
-    var viewingTextEntry by remember { mutableStateOf<Entry?>(null) }
-    // Only the images, in the same order they appear in the grid — this is what lets the
-    // full-screen viewer swipe through "the folder's photos" rather than every entry type.
+    var viewingTextIndex by remember { mutableStateOf<Int?>(null) }
+    // Only the images/notes, in grid order — this is what lets the full-screen viewers swipe
+    // through "the folder's photos" / "the folder's notes" rather than every entry type.
     val imageEntries = remember(entries) { entries.filter { it.type == EntryType.IMAGE } }
+    val textEntries = remember(entries) { entries.filter { it.type == EntryType.TEXT } }
 
     fun exitSelectionMode() {
         selectionMode = false
@@ -253,7 +254,10 @@ fun FolderScreen(
                                 if (selectedIds.isEmpty()) selectionMode = false
                             } else {
                                 when (entry.type) {
-                                    EntryType.TEXT -> viewingTextEntry = entry
+                                    EntryType.TEXT -> {
+                                        val idx = textEntries.indexOfFirst { it.id == entry.id }
+                                        if (idx >= 0) viewingTextIndex = idx
+                                    }
                                     EntryType.IMAGE -> {
                                         val idx = imageEntries.indexOfFirst { it.id == entry.id }
                                         if (idx >= 0) viewingImageIndex = idx
@@ -316,11 +320,12 @@ fun FolderScreen(
         VideoViewerDialog(entry = entry, onDismiss = { viewingVideoEntry = null })
     }
 
-    viewingTextEntry?.let { entry ->
+    viewingTextIndex?.let { idx ->
         TextViewerDialog(
-            entry = entry,
-            onSave = { newText -> viewModel.updateTextEntry(entry, newText) },
-            onDismiss = { viewingTextEntry = null }
+            notes = textEntries,
+            initialIndex = idx,
+            onSave = { entry, newText -> viewModel.updateTextEntry(entry, newText) },
+            onDismiss = { viewingTextIndex = null }
         )
     }
 }
@@ -434,63 +439,93 @@ private fun VideoViewerDialog(entry: Entry, onDismiss: () -> Unit) {
     }
 }
 
-/** Opens read-only by default (a clean, keyboard-free view for actually reading the note) —
- *  tapping the edit icon switches to an editable field. Save/Cancel return to read mode. */
+/** Full-screen (not a small popup) so long notes have real room to breathe — and, like the
+ *  photo gallery, swipe left/right to move between the folder's other notes. Each page opens
+ *  read-only by default; the pencil icon switches just that page into an editable field, and
+ *  the back/close icon in edit mode discards changes and returns to the read view. */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
-private fun TextViewerDialog(entry: Entry, onSave: (String) -> Unit, onDismiss: () -> Unit) {
-    var isEditing by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf(entry.content) }
+private fun TextViewerDialog(
+    notes: List<Entry>,
+    initialIndex: Int,
+    onSave: (Entry, String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val pagerState = rememberPagerState(initialPage = initialIndex) { notes.size }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        text = {
-            if (isEditing) {
-                OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 160.dp, max = 420.dp)
-                        .verticalScroll(rememberScrollState()),
-                    textStyle = TextStyle(textDirection = TextDirection.Content)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 420.dp)
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    Text(text, style = TextStyle(textDirection = TextDirection.Content))
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+                val entry = notes[page]
+                var isEditing by remember(entry.id) { mutableStateOf(false) }
+                var text by remember(entry.id) { mutableStateOf(entry.content) }
+
+                Column(Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = {
+                            if (isEditing) {
+                                text = entry.content
+                                isEditing = false
+                            } else {
+                                onDismiss()
+                            }
+                        }) {
+                            Icon(
+                                if (isEditing) Icons.Default.Close else Icons.Default.ArrowBack,
+                                contentDescription = stringResource(if (isEditing) R.string.cancel else R.string.back)
+                            )
+                        }
+                        Spacer(Modifier.weight(1f))
+                        if (notes.size > 1 && !isEditing) {
+                            Text(
+                                "${page + 1} / ${notes.size}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(Modifier.width(12.dp))
+                        }
+                        if (isEditing) {
+                            TextButton(onClick = {
+                                onSave(entry, text)
+                                isEditing = false
+                            }) { Text(stringResource(R.string.save)) }
+                        } else {
+                            IconButton(onClick = { isEditing = true }) {
+                                Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit_note))
+                            }
+                        }
+                    }
+                    Divider()
+                    if (isEditing) {
+                        OutlinedTextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                                .verticalScroll(rememberScrollState()),
+                            textStyle = TextStyle(textDirection = TextDirection.Content)
+                        )
+                    } else {
+                        Text(
+                            text,
+                            style = TextStyle(textDirection = TextDirection.Content),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                                .verticalScroll(rememberScrollState())
+                        )
+                    }
                 }
             }
-        },
-        confirmButton = {
-            if (isEditing) {
-                TextButton(onClick = {
-                    onSave(text)
-                    isEditing = false
-                    onDismiss()
-                }) { Text(stringResource(R.string.save)) }
-            } else {
-                TextButton(onClick = { isEditing = true }) {
-                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text(stringResource(R.string.edit_note))
-                }
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = {
-                if (isEditing) {
-                    // Discard in-progress edits and go back to the read-only view instead of
-                    // closing outright — Cancel should undo the edit, not exit the note.
-                    text = entry.content
-                    isEditing = false
-                } else {
-                    onDismiss()
-                }
-            }) { Text(stringResource(if (isEditing) R.string.cancel else R.string.back)) }
         }
-    )
+    }
 }
