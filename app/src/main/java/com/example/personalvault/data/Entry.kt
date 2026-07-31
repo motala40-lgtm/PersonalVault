@@ -3,7 +3,7 @@ package com.example.personalvault.data
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-enum class EntryType { TEXT, IMAGE, FILE, PDF_SCAN }
+enum class EntryType { TEXT, IMAGE, VIDEO, FILE, PDF_SCAN }
 
 @Entity(tableName = "entries")
 data class Entry(

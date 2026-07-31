@@ -113,11 +113,12 @@
     <string name="open_help_button">How to use the app</string>
 
     <!-- Folder screen (composer) -->
-    <string name="attach_image">Attach image</string>
+    <string name="attach_image">Attach photo or video</string>
     <string name="attach_file">Attach file</string>
     <string name="scan_document">Scan document</string>
     <string name="note_placeholder">Write a note...</string>
     <string name="note_label">Note</string>
+    <string name="edit_note">Edit note</string>
     <string name="send">Send</string>
     <string name="add_content">Add</string>
     <string name="change_grid_size">Change display size</string>

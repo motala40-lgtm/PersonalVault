@@ -7,7 +7,11 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -65,8 +69,12 @@ fun FolderScreen(
 
     var selectionMode by remember { mutableStateOf(false) }
     var selectedIds by remember { mutableStateOf(setOf<Long>()) }
-    var viewingImageEntry by remember { mutableStateOf<Entry?>(null) }
+    var viewingImageIndex by remember { mutableStateOf<Int?>(null) }
+    var viewingVideoEntry by remember { mutableStateOf<Entry?>(null) }
     var viewingTextEntry by remember { mutableStateOf<Entry?>(null) }
+    // Only the images, in the same order they appear in the grid — this is what lets the
+    // full-screen viewer swipe through "the folder's photos" rather than every entry type.
+    val imageEntries = remember(entries) { entries.filter { it.type == EntryType.IMAGE } }
 
     fun exitSelectionMode() {
         selectionMode = false
@@ -78,11 +86,15 @@ fun FolderScreen(
         return "${context.getString(R.string.generic_file)} - $stamp"
     }
 
-    val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri> ->
+    val mediaPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia()
+    ) { uris: List<Uri> ->
         uris.forEach { uri ->
             val displayName = FileUtils.getDisplayName(context, uri) ?: autoName()
+            val mimeType = context.contentResolver.getType(uri) ?: ""
             val saved = FileUtils.copyUriToInternalStorage(context, uri, displayName)
-            viewModel.addFileEntry(folder.id, EntryType.IMAGE, saved.absolutePath, displayName)
+            val type = if (mimeType.startsWith("video/")) EntryType.VIDEO else EntryType.IMAGE
+            viewModel.addFileEntry(folder.id, type, saved.absolutePath, displayName)
         }
     }
 
@@ -168,7 +180,10 @@ fun FolderScreen(
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.attach_image)) },
                             leadingIcon = { Icon(Icons.Default.Image, contentDescription = null) },
-                            onClick = { showAddMenu = false; imagePicker.launch("image/*") }
+                            onClick = {
+                                showAddMenu = false
+                                mediaPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                            }
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.attach_file)) },
@@ -234,7 +249,11 @@ fun FolderScreen(
                             } else {
                                 when (entry.type) {
                                     EntryType.TEXT -> viewingTextEntry = entry
-                                    EntryType.IMAGE -> viewingImageEntry = entry
+                                    EntryType.IMAGE -> {
+                                        val idx = imageEntries.indexOfFirst { it.id == entry.id }
+                                        if (idx >= 0) viewingImageIndex = idx
+                                    }
+                                    EntryType.VIDEO -> viewingVideoEntry = entry
                                     EntryType.FILE, EntryType.PDF_SCAN -> openEntryExternally(context, entry)
                                 }
                             }
@@ -280,8 +299,16 @@ fun FolderScreen(
         )
     }
 
-    viewingImageEntry?.let { entry ->
-        ImageViewerDialog(entry = entry, onDismiss = { viewingImageEntry = null })
+    viewingImageIndex?.let { idx ->
+        ImageViewerDialog(
+            images = imageEntries,
+            initialIndex = idx,
+            onDismiss = { viewingImageIndex = null }
+        )
+    }
+
+    viewingVideoEntry?.let { entry ->
+        VideoViewerDialog(entry = entry, onDismiss = { viewingVideoEntry = null })
     }
 
     viewingTextEntry?.let { entry ->
@@ -310,12 +337,13 @@ private fun openEntryExternally(context: android.content.Context, entry: Entry) 
         }
 }
 
-/** Full-screen image viewer with pinch-to-zoom/pan — this is what makes tapping a photo "enlarge" it. */
+/** Full-screen gallery viewer for a folder's photos — swipe left/right between them, pinch to
+ *  zoom/pan the current one. Only ever shown the IMAGE entries, so swiping skips over notes,
+ *  files, and videos in between. */
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
-private fun ImageViewerDialog(entry: Entry, onDismiss: () -> Unit) {
-    var scale by remember { mutableStateOf(1f) }
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
+private fun ImageViewerDialog(images: List<Entry>, initialIndex: Int, onDismiss: () -> Unit) {
+    val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(
@@ -323,25 +351,73 @@ private fun ImageViewerDialog(entry: Entry, onDismiss: () -> Unit) {
                 .fillMaxSize()
                 .background(Color.Black)
         ) {
-            AsyncImage(
-                model = File(entry.content),
-                contentDescription = entry.fileName,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(Unit) {
-                        detectTransformGestures { _, pan, zoom, _ ->
-                            scale = (scale * zoom).coerceIn(1f, 6f)
-                            offsetX += pan.x
-                            offsetY += pan.y
+            HorizontalPager(state = pagerState, modifier = Modifier.fillMaxSize()) { page ->
+                var scale by remember { mutableStateOf(1f) }
+                var offsetX by remember { mutableStateOf(0f) }
+                var offsetY by remember { mutableStateOf(0f) }
+                val entry = images[page]
+
+                AsyncImage(
+                    model = File(entry.content),
+                    contentDescription = entry.fileName,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+                            detectTransformGestures { _, pan, zoom, _ ->
+                                scale = (scale * zoom).coerceIn(1f, 6f)
+                                offsetX += pan.x
+                                offsetY += pan.y
+                            }
                         }
+                        .graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale,
+                            translationX = offsetX,
+                            translationY = offsetY
+                        )
+                )
+            }
+            IconButton(
+                onClick = onDismiss,
+                modifier = Modifier.align(Alignment.TopStart).padding(8.dp)
+            ) {
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel), tint = Color.White)
+            }
+            if (images.size > 1) {
+                Text(
+                    "${pagerState.currentPage + 1} / ${images.size}",
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
+                )
+            }
+        }
+    }
+}
+
+/** Full-screen in-app video player — uses the platform's VideoView/MediaController rather
+ *  than a new player dependency, since it needs no extra setup to just play a local file. */
+@Composable
+private fun VideoViewerDialog(entry: Entry, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            AndroidView(
+                factory = { ctx ->
+                    android.widget.VideoView(ctx).apply {
+                        setVideoPath(entry.content)
+                        val controller = android.widget.MediaController(ctx)
+                        controller.setAnchorView(this)
+                        setMediaController(controller)
+                        setOnPreparedListener { start() }
                     }
-                    .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offsetX,
-                        translationY = offsetY
-                    )
+                },
+                modifier = Modifier.fillMaxSize()
             )
             IconButton(
                 onClick = onDismiss,
@@ -353,34 +429,63 @@ private fun ImageViewerDialog(entry: Entry, onDismiss: () -> Unit) {
     }
 }
 
-/** Full-text editor for TEXT entries — the grid card only shows a truncated 6-line preview.
- *  Doubles as the viewer: opening it always shows the editable field, and Save persists
- *  whatever the person added or removed. */
+/** Opens read-only by default (a clean, keyboard-free view for actually reading the note) —
+ *  tapping the edit icon switches to an editable field. Save/Cancel return to read mode. */
 @Composable
 private fun TextViewerDialog(entry: Entry, onSave: (String) -> Unit, onDismiss: () -> Unit) {
+    var isEditing by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf(entry.content) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         text = {
-            OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 160.dp, max = 420.dp)
-                    .verticalScroll(rememberScrollState()),
-                textStyle = TextStyle(textDirection = TextDirection.Content)
-            )
+            if (isEditing) {
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 160.dp, max = 420.dp)
+                        .verticalScroll(rememberScrollState()),
+                    textStyle = TextStyle(textDirection = TextDirection.Content)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 420.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(text, style = TextStyle(textDirection = TextDirection.Content))
+                }
+            }
         },
         confirmButton = {
-            TextButton(onClick = {
-                onSave(text)
-                onDismiss()
-            }) { Text(stringResource(R.string.save)) }
+            if (isEditing) {
+                TextButton(onClick = {
+                    onSave(text)
+                    isEditing = false
+                    onDismiss()
+                }) { Text(stringResource(R.string.save)) }
+            } else {
+                TextButton(onClick = { isEditing = true }) {
+                    Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.edit_note))
+                }
+            }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+            TextButton(onClick = {
+                if (isEditing) {
+                    // Discard in-progress edits and go back to the read-only view instead of
+                    // closing outright — Cancel should undo the edit, not exit the note.
+                    text = entry.content
+                    isEditing = false
+                } else {
+                    onDismiss()
+                }
+            }) { Text(stringResource(if (isEditing) R.string.cancel else R.string.back)) }
         }
     )
 }
