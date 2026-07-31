@@ -3,19 +3,27 @@ package com.example.personalvault.ui.screens
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.personalvault.R
+import com.example.personalvault.ui.theme.accentScreenBackground
 import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
+import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.util.ThemeMode
 
@@ -23,7 +31,7 @@ private const val SUPPORT_EMAIL = "newlifetech25@hotmail.com"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
+fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
     val context = LocalContext.current
     var themeMode by remember { mutableStateOf(AppPreferences.getThemeMode(context)) }
     var language by remember { mutableStateOf(AppPreferences.getLanguage(context)) }
@@ -31,14 +39,23 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
     var biometricEnabled by remember { mutableStateOf(SecurityManager.isBiometricEnabled(context)) }
     var screenshotBlocked by remember { mutableStateOf(SecurityManager.isScreenshotBlockEnabled(context)) }
     var showPinDialog by remember { mutableStateOf(false) }
+    var accentHex by remember { mutableStateOf(AppPreferences.getAccentColorHex(context)) }
+    var showFolderRecoveryDialog by remember { mutableStateOf(false) }
 
+    // Same colored background as the folder list, so Settings doesn't feel like a
+    // different, plainer app once the person has picked an accent color.
+    val screenBackground = accentScreenBackground(accentHex, isDarkTheme)
+
+    Box(Modifier.fillMaxSize().then(screenBackground)) {
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.nav_settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back)) }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
         }
     ) { padding ->
@@ -61,6 +78,36 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
                             ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
                             ThemeMode.LIGHT -> stringResource(R.string.theme_light)
                             ThemeMode.DARK -> stringResource(R.string.theme_dark)
+                        }
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Divider()
+            Spacer(Modifier.height(16.dp))
+
+            Text(stringResource(R.string.accent_color), style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(8.dp))
+            Row {
+                // "White" — the plain/no-gradient option — always comes first.
+                AccentSwatch(
+                    hex = null,
+                    selected = accentHex == null,
+                    onClick = {
+                        accentHex = null
+                        AppPreferences.setAccentColorHex(context, null)
+                        onThemeOrLanguageChanged()
+                    }
+                )
+                PastelPalette.forEach { hex ->
+                    AccentSwatch(
+                        hex = hex,
+                        selected = accentHex == hex,
+                        onClick = {
+                            accentHex = hex
+                            AppPreferences.setAccentColorHex(context, hex)
+                            onThemeOrLanguageChanged()
                         }
                     )
                 }
@@ -155,6 +202,21 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
             Divider()
             Spacer(Modifier.height(16.dp))
 
+            Text(stringResource(R.string.folder_recovery_section_title), style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(4.dp))
+            Text(
+                stringResource(R.string.folder_recovery_section_hint),
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = { showFolderRecoveryDialog = true }) {
+                Text(stringResource(R.string.set_folder_recovery_button))
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Divider()
+            Spacer(Modifier.height(16.dp))
+
             Text(stringResource(R.string.support), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = {
@@ -168,6 +230,17 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
                 Text(stringResource(R.string.contact_support))
             }
         }
+    }
+    } // close Box(screenBackground)
+
+    if (showFolderRecoveryDialog) {
+        SetFolderRecoveryDialog(
+            onDismiss = { showFolderRecoveryDialog = false },
+            onConfirm = { pet, city ->
+                SecurityManager.setFolderRecoveryAnswers(context, pet, city)
+                showFolderRecoveryDialog = false
+            }
+        )
     }
 
     if (showPinDialog) {
@@ -184,6 +257,74 @@ fun SettingsScreen(onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
             }
         )
     }
+}
+
+@Composable
+private fun SetFolderRecoveryDialog(onDismiss: () -> Unit, onConfirm: (pet: String, city: String) -> Unit) {
+    var petAnswer by remember { mutableStateOf("") }
+    var cityAnswer by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+    val bothRequiredError = stringResource(R.string.folder_recovery_answers_required_error)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.set_folder_recovery_button)) },
+        text = {
+            Column {
+                Text(stringResource(R.string.folder_recovery_question_pet))
+                Spacer(Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = petAnswer,
+                    onValueChange = { petAnswer = it },
+                    singleLine = true
+                )
+                Spacer(Modifier.height(12.dp))
+                Text(stringResource(R.string.folder_recovery_question_city))
+                Spacer(Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = cityAnswer,
+                    onValueChange = { cityAnswer = it },
+                    singleLine = true
+                )
+                error?.let {
+                    Spacer(Modifier.height(4.dp))
+                    Text(it, color = MaterialTheme.colorScheme.error)
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (petAnswer.isBlank() || cityAnswer.isBlank()) {
+                    error = bothRequiredError
+                } else {
+                    onConfirm(petAnswer, cityAnswer)
+                }
+            }) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+        }
+    )
+}
+
+@Composable
+private fun AccentSwatch(hex: String?, selected: Boolean, onClick: () -> Unit) {
+    val swatchColor = hex?.let { Color(android.graphics.Color.parseColor(it)) } ?: Color.White
+    Box(
+        modifier = Modifier
+            .padding(4.dp)
+            .size(32.dp)
+            .clip(CircleShape)
+            .background(swatchColor)
+            // White needs a visible border on its own; every swatch gets a stronger one when
+            // selected so it's clear which color is currently active.
+            .border(
+                width = if (selected) 2.dp else 1.dp,
+                color = if (selected) MaterialTheme.colorScheme.onSurface else Color.LightGray,
+                shape = CircleShape
+            )
+            .clickable(onClick = onClick)
+    )
 }
 
 @Composable

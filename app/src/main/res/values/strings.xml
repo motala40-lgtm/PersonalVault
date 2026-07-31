@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ایزی آرشیو TEST‌v3</string>
+    <string name="app_name">ایزی آرشیو</string>
 
     <!-- Common -->
     <string name="back">بازگشت</string>
@@ -18,7 +18,7 @@
     <string name="search_placeholder">جستجو در عنوان، متن، نام فایل...</string>
     <string name="search_results">نتایج جستجو</string>
     <string name="no_folders_yet">هنوز پوشه‌ای نساختی؛ با دکمه‌ی + یکی بساز</string>
-    <string name="app_title">ایزی آرشیو TEST‌v3</string>
+    <string name="app_title">ایزی آرشیو</string>
     <string name="support">پشتیبانی</string>
     <string name="contact_support">تماس با پشتیبانی</string>
 
@@ -46,8 +46,14 @@
     <string name="change_folder_password">تغییر رمز پوشه</string>
     <string name="set_folder_password_title">تنظیم رمز پوشه</string>
     <string name="forgot_folder_password">رمز پوشه رو فراموش کردم</string>
-    <string name="unlock_with_app_password_hint">رمز کلی اپ رو وارد کن</string>
-    <string name="no_app_password_set_notice">برای بازیابی، اول باید از تنظیمات یه رمز کلی برای اپ تنظیم کنی. اگه رمز کلی هم یادت رفته، از «رمز رو فراموش کردم» توی صفحه‌ی قفل استفاده کن.</string>
+    <string name="wrong_folder_recovery_answer">پاسخ‌ها درست نیستن</string>
+    <string name="no_folder_recovery_set_notice">برای بازیابی، اول باید از تنظیمات، پاسخ‌های بازیابی پوشه رو تنظیم کنی.</string>
+    <string name="folder_recovery_question_pet">نام اولین حیوان خانگی‌تان چیست؟</string>
+    <string name="folder_recovery_question_city">نام شهری که دوست دارید چیست؟</string>
+    <string name="folder_recovery_section_title">بازیابی قفل پوشه‌ها</string>
+    <string name="folder_recovery_section_hint">این پاسخ‌ها برای همه‌ی پوشه‌های قفل‌شده مشترکه و اگه رمز یه پوشه رو فراموش کنی، ازت پرسیده می‌شه.</string>
+    <string name="set_folder_recovery_button">تنظیم پاسخ‌های بازیابی</string>
+    <string name="folder_recovery_answers_required_error">پر کردن هر دو پاسخ لازمه</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">پیوست عکس</string>
@@ -100,6 +106,7 @@
 
     <!-- Settings -->
     <string name="appearance">ظاهر</string>
+    <string name="accent_color">رنگ زمینه</string>
     <string name="theme_system">پیش‌فرض سیستم</string>
     <string name="theme_light">روشن</string>
     <string name="theme_dark">تیره</string>

@@ -11,8 +11,19 @@ object AppPreferences {
     private const val KEY_THEME = "theme_mode"
     private const val KEY_LANGUAGE = "app_language"
     private const val KEY_GRID_COLUMNS = "grid_columns"
+    private const val KEY_ACCENT_COLOR = "accent_color_hex"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    // Null/blank means "White" — no colored background gradient, just the plain theme background.
+    fun getAccentColorHex(context: Context): String? {
+        val value = prefs(context).getString(KEY_ACCENT_COLOR, null)
+        return if (value.isNullOrBlank()) null else value
+    }
+
+    fun setAccentColorHex(context: Context, hex: String?) {
+        prefs(context).edit().putString(KEY_ACCENT_COLOR, hex).apply()
+    }
 
     fun getThemeMode(context: Context): ThemeMode =
         ThemeMode.valueOf(prefs(context).getString(KEY_THEME, ThemeMode.SYSTEM.name) ?: ThemeMode.SYSTEM.name)

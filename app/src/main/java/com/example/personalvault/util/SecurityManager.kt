@@ -13,6 +13,8 @@ object SecurityManager {
     private const val KEY_SCREENSHOT_BLOCK = "screenshot_block"
     private const val KEY_SECURITY_QUESTION = "security_question"
     private const val KEY_SECURITY_ANSWER_HASH = "security_answer_hash"
+    private const val KEY_FOLDER_RECOVERY_ANSWER_PET = "folder_recovery_answer_pet_hash"
+    private const val KEY_FOLDER_RECOVERY_ANSWER_CITY = "folder_recovery_answer_city_hash"
 
     private fun prefs(context: Context) = EncryptedSharedPreferences.create(
         context,
@@ -76,5 +78,26 @@ object SecurityManager {
     fun verifySecurityAnswer(context: Context, answer: String): Boolean {
         val stored = prefs(context).getString(KEY_SECURITY_ANSWER_HASH, null) ?: return false
         return stored == hash(answer.trim().lowercase())
+    }
+
+    // --- Folder-lock recovery: two fixed questions (same pair for every folder), set up
+    // once in Settings, used to reset a forgotten *folder* PIN — separate from the app-wide
+    // security question above, and separate from the app-wide PIN itself. ---
+
+    fun setFolderRecoveryAnswers(context: Context, petAnswer: String, cityAnswer: String) {
+        prefs(context).edit()
+            .putString(KEY_FOLDER_RECOVERY_ANSWER_PET, hash(petAnswer.trim().lowercase()))
+            .putString(KEY_FOLDER_RECOVERY_ANSWER_CITY, hash(cityAnswer.trim().lowercase()))
+            .apply()
+    }
+
+    fun hasFolderRecoverySetup(context: Context): Boolean =
+        prefs(context).getString(KEY_FOLDER_RECOVERY_ANSWER_PET, null) != null
+
+    fun verifyFolderRecoveryAnswers(context: Context, petAnswer: String, cityAnswer: String): Boolean {
+        val storedPet = prefs(context).getString(KEY_FOLDER_RECOVERY_ANSWER_PET, null) ?: return false
+        val storedCity = prefs(context).getString(KEY_FOLDER_RECOVERY_ANSWER_CITY, null) ?: return false
+        return storedPet == hash(petAnswer.trim().lowercase()) &&
+            storedCity == hash(cityAnswer.trim().lowercase())
     }
 }

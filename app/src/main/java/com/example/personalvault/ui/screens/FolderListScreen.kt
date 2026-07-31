@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,14 +35,14 @@ import androidx.compose.ui.unit.dp
 import com.example.personalvault.R
 import com.example.personalvault.data.Folder
 import com.example.personalvault.ui.components.EntryItem
+import com.example.personalvault.ui.theme.accentScreenBackground
+import com.example.personalvault.util.AppPreferences
+import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.viewmodel.VaultViewModel
 
-// Cheerful pastel palette — replaces the previous darker/muted set.
-private val FolderColors = listOf(
-    "#FFADAD", "#FFD6A5", "#FDFFB6", "#CAFFBF",
-    "#9BF6FF", "#A0C4FF", "#BDB2FF", "#FFC6FF"
-)
+// Cheerful pastel palette — shared with the theme accent-color picker in Settings.
+private val FolderColors = PastelPalette
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,16 +69,13 @@ fun FolderListScreen(
     var removingLockFor by remember { mutableStateOf<Folder?>(null) }
     var changingPasswordFor by remember { mutableStateOf<Folder?>(null) }
 
-    // On the light theme, the first screen gets a cheerful sky-blue gradient (lighter near
-    // the top, deeper blue near the bottom) instead of the flat theme background. Dark theme
-    // keeps the normal background so contrast/readability aren't compromised.
-    val screenBackground = if (isDarkTheme) {
-        Modifier.background(MaterialTheme.colorScheme.background)
-    } else {
-        Modifier.background(
-            Brush.verticalGradient(listOf(Color(0xFFEFFBFF), Color(0xFF64C4F2)))
-        )
-    }
+    val context = LocalContext.current
+
+    // The background gradient now follows whatever accent color the user picked in Settings
+    // (one of the pastel folder colors, or "White" for a plain background) instead of being
+    // a fixed sky blue. Dark theme always keeps the flat theme background regardless.
+    val accentHex = AppPreferences.getAccentColorHex(context)
+    val screenBackground = accentScreenBackground(accentHex, isDarkTheme)
 
     Box(
         modifier = Modifier
@@ -89,37 +88,49 @@ fun FolderListScreen(
                 TopAppBar(
                     title = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.app_title))
+                            Spacer(Modifier.width(8.dp))
                             Image(
                                 painter = painterResource(R.drawable.logo_easy_archive),
                                 contentDescription = null,
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier.size(64.dp)
                             )
-                            Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.app_title))
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             },
             bottomBar = {
+                // A cheerful, fixed modern blue for the bottom bar — independent of the
+                // user's accent-color choice above, since this is a design accent rather
+                // than the theme background. Dark theme keeps the default bar color.
+                val bottomBarColor = if (isDarkTheme) BottomAppBarDefaults.containerColor else Color(0xFF1E88E5)
+                val bottomBarContentColor = if (isDarkTheme) contentColorFor(bottomBarColor) else Color.White
+
                 BottomAppBar(
+                    containerColor = bottomBarColor,
+                    contentColor = bottomBarContentColor,
                     actions = {
                         IconButton(onClick = onOpenFavorites) {
-                            Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.nav_favorites))
+                            Icon(Icons.Rounded.Favorite, contentDescription = stringResource(R.string.nav_favorites))
                         }
                         IconButton(onClick = onOpenReminders) {
-                            Icon(Icons.Default.Alarm, contentDescription = stringResource(R.string.nav_reminders))
+                            Icon(Icons.Rounded.NotificationsActive, contentDescription = stringResource(R.string.nav_reminders))
                         }
                         IconButton(onClick = onOpenTrash) {
-                            Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.nav_trash))
+                            Icon(Icons.Rounded.DeleteOutline, contentDescription = stringResource(R.string.nav_trash))
                         }
                         IconButton(onClick = onOpenSettings) {
-                            Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.nav_settings))
+                            Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.nav_settings))
                         }
                     },
                     floatingActionButton = {
-                        FloatingActionButton(onClick = { showAddDialog = true }) {
-                            Icon(Icons.Default.Add, contentDescription = stringResource(R.string.new_folder))
+                        FloatingActionButton(
+                            onClick = { showAddDialog = true },
+                            containerColor = if (isDarkTheme) FloatingActionButtonDefaults.containerColor else Color.White,
+                            contentColor = if (isDarkTheme) contentColorFor(FloatingActionButtonDefaults.containerColor) else bottomBarColor
+                        ) {
+                            Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.new_folder))
                         }
                     }
                 )
@@ -355,46 +366,62 @@ private fun VerifyFolderPinDialog(
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var pin by remember { mutableStateOf("") }
+    var petAnswer by remember { mutableStateOf("") }
+    var cityAnswer by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
-    // Fallback path for a forgotten folder PIN: the app's own master password (set in
-    // Settings) can override any folder lock, the same way an OS admin password can reset
-    // a user's own lock. If no app-wide password is set, there's no recovery route.
-    var useAppPassword by remember { mutableStateOf(false) }
-    val hasAppPassword = remember { SecurityManager.hasPinSet(context) }
+    // Fallback path for a forgotten folder PIN: two fixed recovery questions (set up once
+    // in Settings) rather than the folder's own PIN.
+    var useRecoveryQuestions by remember { mutableStateOf(false) }
+    val hasRecoverySetup = remember { SecurityManager.hasFolderRecoverySetup(context) }
     val wrongPasswordText = stringResource(R.string.wrong_password)
-    val noAppPasswordNotice = stringResource(R.string.no_app_password_set_notice)
+    val wrongRecoveryAnswerText = stringResource(R.string.wrong_folder_recovery_answer)
+    val noRecoverySetupNotice = stringResource(R.string.no_folder_recovery_set_notice)
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(folder.name) },
         text = {
             Column {
-                Text(
-                    if (useAppPassword) stringResource(R.string.unlock_with_app_password_hint)
-                    else stringResource(R.string.enter_folder_password)
-                )
-                Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = pin,
-                    onValueChange = { pin = it; error = null },
-                    label = { Text(stringResource(R.string.password_label)) },
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                    singleLine = true
-                )
+                if (useRecoveryQuestions) {
+                    Text(stringResource(R.string.folder_recovery_question_pet))
+                    Spacer(Modifier.height(4.dp))
+                    OutlinedTextField(
+                        value = petAnswer,
+                        onValueChange = { petAnswer = it; error = null },
+                        singleLine = true
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Text(stringResource(R.string.folder_recovery_question_city))
+                    Spacer(Modifier.height(4.dp))
+                    OutlinedTextField(
+                        value = cityAnswer,
+                        onValueChange = { cityAnswer = it; error = null },
+                        singleLine = true
+                    )
+                } else {
+                    Text(stringResource(R.string.enter_folder_password))
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = pin,
+                        onValueChange = { pin = it; error = null },
+                        label = { Text(stringResource(R.string.password_label)) },
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                        singleLine = true
+                    )
+                }
                 error?.let {
                     Spacer(Modifier.height(4.dp))
                     Text(it, color = MaterialTheme.colorScheme.error)
                 }
-                if (!useAppPassword) {
+                if (!useRecoveryQuestions) {
                     Spacer(Modifier.height(8.dp))
                     TextButton(onClick = {
-                        if (hasAppPassword) {
-                            useAppPassword = true
-                            pin = ""
+                        if (hasRecoverySetup) {
+                            useRecoveryQuestions = true
                             error = null
                         } else {
-                            error = noAppPasswordNotice
+                            error = noRecoverySetupNotice
                         }
                     }) {
                         Text(stringResource(R.string.forgot_folder_password))
@@ -404,12 +431,16 @@ private fun VerifyFolderPinDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                val success = if (useAppPassword) {
-                    SecurityManager.verifyPin(context, pin)
+                val success = if (useRecoveryQuestions) {
+                    SecurityManager.verifyFolderRecoveryAnswers(context, petAnswer, cityAnswer)
                 } else {
                     folder.pinHash != null && folder.pinHash == SecurityManager.hashValue(pin)
                 }
-                if (success) onVerified() else error = wrongPasswordText
+                if (success) {
+                    onVerified()
+                } else {
+                    error = if (useRecoveryQuestions) wrongRecoveryAnswerText else wrongPasswordText
+                }
             }) { Text(stringResource(R.string.login)) }
         },
         dismissButton = {

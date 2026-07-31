@@ -122,6 +122,7 @@ class MainActivity : FragmentActivity() {
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Settings -> SettingsScreen(
+                            isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList },
                             onThemeOrLanguageChanged = {
                                 recomposeTrigger++
