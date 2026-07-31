@@ -24,8 +24,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -121,43 +123,49 @@ fun FolderListScreen(
                     containerColor = bottomBarColor,
                     contentColor = bottomBarContentColor,
                     actions = {
-                        // Each icon sits on its own small raised chip (bigger + a translucent
-                        // circle behind it) so they stand out more than a flat icon would —
-                        // and each keeps its own fixed color in light theme, as requested.
-                        // In dark theme, Settings falls back to a light neutral instead of pure
-                        // black, since black-on-dark would repeat the exact "text disappears"
-                        // problem this whole round of fixes is trying to solve.
-                        BottomBarChip(onClick = onOpenFavorites, contentDescriptionText = stringResource(R.string.nav_favorites)) {
-                            Icon(Icons.Rounded.Favorite, contentDescription = null, tint = Color(0xFFE53935), modifier = Modifier.size(26.dp))
-                        }
-                        BottomBarChip(onClick = onOpenReminders, contentDescriptionText = stringResource(R.string.nav_reminders)) {
-                            Icon(Icons.Rounded.NotificationsActive, contentDescription = null, tint = Color(0xFFFFC107), modifier = Modifier.size(26.dp))
-                        }
-                        BottomBarChip(onClick = onOpenContacts, contentDescriptionText = stringResource(R.string.nav_contacts)) {
-                            Icon(Icons.Rounded.Phone, contentDescription = null, tint = Color(0xFF2E7D32), modifier = Modifier.size(26.dp))
-                        }
-                        BottomBarChip(onClick = onOpenTrash, contentDescriptionText = stringResource(R.string.nav_trash)) {
-                            Icon(Icons.Rounded.DeleteOutline, contentDescription = null, tint = Color(0xFFEC407A), modifier = Modifier.size(26.dp))
-                        }
-                        BottomBarChip(onClick = onOpenSettings, contentDescriptionText = stringResource(R.string.nav_settings)) {
-                            Icon(
-                                Icons.Rounded.Settings,
-                                contentDescription = null,
-                                tint = if (isDarkTheme) bottomBarContentColor else Color.Black,
-                                modifier = Modifier.size(26.dp)
-                            )
-                        }
-                        BottomBarChip(onClick = { showLanguageDialog = true }, contentDescriptionText = stringResource(R.string.app_language)) {
-                            // A flat monochrome icon can't look "colorful" — a real emoji glyph
-                            // renders in full color on Android regardless of icon tint.
-                            Text("\uD83C\uDF0D", fontSize = 24.sp)
-                        }
+                        AppIconChip(
+                            icon = Icons.Rounded.Favorite,
+                            baseColor = Color(0xFFE53935),
+                            contentDescriptionText = stringResource(R.string.nav_favorites),
+                            onClick = onOpenFavorites
+                        )
+                        AppIconChip(
+                            icon = Icons.Rounded.NotificationsActive,
+                            baseColor = Color(0xFFFFA726),
+                            contentDescriptionText = stringResource(R.string.nav_reminders),
+                            onClick = onOpenReminders
+                        )
+                        AppIconChip(
+                            icon = Icons.Rounded.Phone,
+                            baseColor = Color(0xFF43A047),
+                            contentDescriptionText = stringResource(R.string.nav_contacts),
+                            onClick = onOpenContacts
+                        )
+                        AppIconChip(
+                            icon = Icons.Rounded.DeleteOutline,
+                            baseColor = Color(0xFFD6336C),
+                            contentDescriptionText = stringResource(R.string.nav_trash),
+                            onClick = onOpenTrash
+                        )
+                        AppIconChip(
+                            icon = Icons.Rounded.Settings,
+                            baseColor = Color(0xFF37474F),
+                            contentDescriptionText = stringResource(R.string.nav_settings),
+                            onClick = onOpenSettings
+                        )
+                        EmojiIconChip(
+                            emoji = "\uD83C\uDF0D",
+                            baseColor = Color(0xFF1E88E5),
+                            contentDescriptionText = stringResource(R.string.app_language),
+                            onClick = { showLanguageDialog = true }
+                        )
                     },
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = { showAddDialog = true },
-                            containerColor = if (isDarkTheme) FloatingActionButtonDefaults.containerColor else Color.White,
-                            contentColor = if (isDarkTheme) contentColorFor(FloatingActionButtonDefaults.containerColor) else bottomBarColor
+                            shape = RoundedCornerShape(16.dp),
+                            containerColor = Color(0xFF7C4DFF),
+                            contentColor = Color.White
                         ) {
                             Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.new_folder))
                         }
@@ -322,15 +330,18 @@ fun FolderListScreen(
 }
 
 /**
- * Wraps a bottom-bar icon in a small raised circular chip — bigger and more visually prominent
- * than a bare IconButton, which is what makes these icons read as "embossed" rather than flat.
+ * A colorful, rounded-square "chip" icon with a subtle gradient + drop shadow to approximate
+ * a glossy 3D look — a simple vector icon can't fully match custom 3D artwork, but the
+ * gradient/shadow combination gets meaningfully closer than a flat tinted icon.
  */
 @Composable
-private fun BottomBarChip(
-    onClick: () -> Unit,
+private fun AppIconChip(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    baseColor: Color,
     contentDescriptionText: String,
-    content: @Composable () -> Unit
+    onClick: () -> Unit
 ) {
+    val gradientTop = lerp(baseColor, Color.White, 0.35f)
     IconButton(
         onClick = onClick,
         modifier = Modifier.semantics { contentDescription = contentDescriptionText }
@@ -338,11 +349,38 @@ private fun BottomBarChip(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .clip(CircleShape)
-                .background(Color.White.copy(alpha = 0.18f)),
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = false)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Brush.verticalGradient(listOf(gradientTop, baseColor))),
             contentAlignment = Alignment.Center
         ) {
-            content()
+            Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(22.dp))
+        }
+    }
+}
+
+/** Same chip shell as [AppIconChip], but for the language button's emoji glyph (not a tintable icon). */
+@Composable
+private fun EmojiIconChip(
+    emoji: String,
+    baseColor: Color,
+    contentDescriptionText: String,
+    onClick: () -> Unit
+) {
+    val gradientTop = lerp(baseColor, Color.White, 0.35f)
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.semantics { contentDescription = contentDescriptionText }
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = false)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Brush.verticalGradient(listOf(gradientTop, baseColor))),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(emoji, fontSize = 20.sp)
         }
     }
 }
