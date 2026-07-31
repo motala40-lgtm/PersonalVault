@@ -114,7 +114,7 @@ fun FolderListScreen(
                 // A cheerful, fixed modern blue for the bottom bar — independent of the
                 // user's accent-color choice above, since this is a design accent rather
                 // than the theme background. Dark theme keeps the default bar color.
-                val bottomBarColor = if (isDarkTheme) BottomAppBarDefaults.containerColor else Color(0xFF1E88E5)
+                val bottomBarColor = if (isDarkTheme) BottomAppBarDefaults.containerColor else Color(0xFF4FC3F7)
                 val bottomBarContentColor = if (isDarkTheme) contentColorFor(bottomBarColor) else Color.White
 
                 BottomAppBar(

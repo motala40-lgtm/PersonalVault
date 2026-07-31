@@ -91,7 +91,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(8.dp))
             ThemeMode.values().forEach { mode ->
                 Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
@@ -117,7 +117,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             Divider()
             Spacer(Modifier.height(16.dp))
 
-            Text(stringResource(R.string.accent_color), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.accent_color), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(8.dp))
             Row {
                 // "White" — the plain/no-gradient option — always comes first.
@@ -147,7 +147,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             Divider()
             Spacer(Modifier.height(16.dp))
 
-            Text(stringResource(R.string.security), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.security), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(8.dp))
 
             Row(
@@ -210,11 +210,12 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             Divider()
             Spacer(Modifier.height(16.dp))
 
-            Text(stringResource(R.string.folder_recovery_section_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.folder_recovery_section_title), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.folder_recovery_section_hint),
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = { showFolderRecoveryDialog = true }) {
@@ -225,9 +226,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             Divider()
             Spacer(Modifier.height(16.dp))
 
-            Text(stringResource(R.string.backup_section_title), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.backup_section_title), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(4.dp))
-            Text(stringResource(R.string.backup_section_hint), style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.backup_section_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = { showExportPasswordDialog = true },
@@ -253,7 +254,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             Divider()
             Spacer(Modifier.height(16.dp))
 
-            Text(stringResource(R.string.support), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.support), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = {
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -519,7 +520,7 @@ private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (pin: String, questio
                 Spacer(Modifier.height(16.dp))
                 Divider()
                 Spacer(Modifier.height(8.dp))
-                Text(stringResource(R.string.security_question_hint), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.security_question_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = question,
