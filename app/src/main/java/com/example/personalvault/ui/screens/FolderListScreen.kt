@@ -1,7 +1,9 @@
 package com.example.personalvault.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -20,7 +22,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -32,14 +36,17 @@ import com.example.personalvault.ui.components.EntryItem
 import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.viewmodel.VaultViewModel
 
+// Cheerful pastel palette — replaces the previous darker/muted set.
 private val FolderColors = listOf(
-    "#6750A4", "#386641", "#BC4749", "#1D4E89", "#C08552", "#457B9D"
+    "#FFADAD", "#FFD6A5", "#FDFFB6", "#CAFFBF",
+    "#9BF6FF", "#A0C4FF", "#BDB2FF", "#FFC6FF"
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FolderListScreen(
     viewModel: VaultViewModel,
+    isDarkTheme: Boolean,
     onOpenFolder: (Folder) -> Unit,
     onOpenFavorites: () -> Unit,
     onOpenTrash: () -> Unit,
@@ -60,17 +67,38 @@ fun FolderListScreen(
     var removingLockFor by remember { mutableStateOf<Folder?>(null) }
     var changingPasswordFor by remember { mutableStateOf<Folder?>(null) }
 
-    // Surface (rather than a bare Column) is what makes this screen react to theme/color
-    // changes — without it the background stayed whatever the static window background was.
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+    // On the light theme, the first screen gets a cheerful sky-blue gradient (lighter near
+    // the top, deeper blue near the bottom) instead of the flat theme background. Dark theme
+    // keeps the normal background so contrast/readability aren't compromised.
+    val screenBackground = if (isDarkTheme) {
+        Modifier.background(MaterialTheme.colorScheme.background)
+    } else {
+        Modifier.background(
+            Brush.verticalGradient(listOf(Color(0xFFEFFBFF), Color(0xFF64C4F2)))
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .then(screenBackground)
     ) {
         Scaffold(
-            containerColor = androidx.compose.ui.graphics.Color.Transparent,
+            containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.app_title)) }
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(R.drawable.logo_easy_archive),
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.app_title))
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             },
             bottomBar = {
@@ -264,14 +292,14 @@ private fun FolderCard(
                     Icon(
                         Icons.Default.Folder,
                         contentDescription = null,
-                        tint = Color.White,
+                        tint = Color(0xFF5A5A5A),
                         modifier = Modifier.size(32.dp)
                     )
                     if (folder.isLocked) {
                         Icon(
                             Icons.Default.Lock,
                             contentDescription = null,
-                            tint = Color.White,
+                            tint = Color(0xFF5A5A5A),
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
                                 .padding(6.dp)
@@ -325,16 +353,26 @@ private fun VerifyFolderPinDialog(
     onDismiss: () -> Unit,
     onVerified: () -> Unit
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     var pin by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
+    // Fallback path for a forgotten folder PIN: the app's own master password (set in
+    // Settings) can override any folder lock, the same way an OS admin password can reset
+    // a user's own lock. If no app-wide password is set, there's no recovery route.
+    var useAppPassword by remember { mutableStateOf(false) }
+    val hasAppPassword = remember { SecurityManager.hasPinSet(context) }
     val wrongPasswordText = stringResource(R.string.wrong_password)
+    val noAppPasswordNotice = stringResource(R.string.no_app_password_set_notice)
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(folder.name) },
         text = {
             Column {
-                Text(stringResource(R.string.enter_folder_password))
+                Text(
+                    if (useAppPassword) stringResource(R.string.unlock_with_app_password_hint)
+                    else stringResource(R.string.enter_folder_password)
+                )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = pin,
@@ -348,15 +386,30 @@ private fun VerifyFolderPinDialog(
                     Spacer(Modifier.height(4.dp))
                     Text(it, color = MaterialTheme.colorScheme.error)
                 }
+                if (!useAppPassword) {
+                    Spacer(Modifier.height(8.dp))
+                    TextButton(onClick = {
+                        if (hasAppPassword) {
+                            useAppPassword = true
+                            pin = ""
+                            error = null
+                        } else {
+                            error = noAppPasswordNotice
+                        }
+                    }) {
+                        Text(stringResource(R.string.forgot_folder_password))
+                    }
+                }
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                if (folder.pinHash != null && folder.pinHash == SecurityManager.hashValue(pin)) {
-                    onVerified()
+                val success = if (useAppPassword) {
+                    SecurityManager.verifyPin(context, pin)
                 } else {
-                    error = wrongPasswordText
+                    folder.pinHash != null && folder.pinHash == SecurityManager.hashValue(pin)
                 }
+                if (success) onVerified() else error = wrongPasswordText
             }) { Text(stringResource(R.string.login)) }
         },
         dismissButton = {
@@ -436,16 +489,23 @@ private fun AddFolderDialog(onDismiss: () -> Unit, onCreate: (String, String) ->
                     singleLine = true
                 )
                 Spacer(Modifier.height(12.dp))
-                Row {
-                    FolderColors.forEach { colorHex ->
-                        Box(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(Color(android.graphics.Color.parseColor(colorHex)))
-                                .clickable { selectedColor = colorHex }
-                        )
+                FolderColors.chunked(4).forEach { rowColors ->
+                    Row {
+                        rowColors.forEach { colorHex ->
+                            Box(
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(android.graphics.Color.parseColor(colorHex)))
+                                    .then(
+                                        if (selectedColor == colorHex)
+                                            Modifier.border(2.dp, MaterialTheme.colorScheme.onSurface, CircleShape)
+                                        else Modifier
+                                    )
+                                    .clickable { selectedColor = colorHex }
+                            )
+                        }
                     }
                 }
             }

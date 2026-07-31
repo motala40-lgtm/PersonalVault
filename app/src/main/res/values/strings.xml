@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ایزی آرشیو</string>
+    <string name="app_name">ایزی آرشیو TEST‌v3</string>
 
     <!-- Common -->
     <string name="back">بازگشت</string>
@@ -18,7 +18,7 @@
     <string name="search_placeholder">جستجو در عنوان، متن، نام فایل...</string>
     <string name="search_results">نتایج جستجو</string>
     <string name="no_folders_yet">هنوز پوشه‌ای نساختی؛ با دکمه‌ی + یکی بساز</string>
-    <string name="app_title">ایزی آرشیو</string>
+    <string name="app_title">ایزی آرشیو TEST‌v3</string>
     <string name="support">پشتیبانی</string>
     <string name="contact_support">تماس با پشتیبانی</string>
 
@@ -45,6 +45,9 @@
     <string name="remove_folder_lock">حذف قفل پوشه</string>
     <string name="change_folder_password">تغییر رمز پوشه</string>
     <string name="set_folder_password_title">تنظیم رمز پوشه</string>
+    <string name="forgot_folder_password">رمز پوشه رو فراموش کردم</string>
+    <string name="unlock_with_app_password_hint">رمز کلی اپ رو وارد کن</string>
+    <string name="no_app_password_set_notice">برای بازیابی، اول باید از تنظیمات یه رمز کلی برای اپ تنظیم کنی. اگه رمز کلی هم یادت رفته، از «رمز رو فراموش کردم» توی صفحه‌ی قفل استفاده کن.</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">پیوست عکس</string>

@@ -96,6 +96,7 @@ class MainActivity : FragmentActivity() {
                     when (val current = screen) {
                         is Screen.FolderList -> FolderListScreen(
                             viewModel = viewModel,
+                            isDarkTheme = darkTheme,
                             onOpenFolder = { screen = Screen.FolderDetail(it) },
                             onOpenFavorites = { screen = Screen.Favorites },
                             onOpenTrash = { screen = Screen.Trash },

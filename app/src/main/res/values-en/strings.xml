@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Easy Archive</string>
+    <string name="app_name">Easy Archive TEST v3</string>
 
     <!-- Common -->
     <string name="back">Back</string>
@@ -18,7 +18,7 @@
     <string name="search_placeholder">Search title, text, file name...</string>
     <string name="search_results">Search results</string>
     <string name="no_folders_yet">No folders yet — tap + to create one</string>
-    <string name="app_title">Easy Archive</string>
+    <string name="app_title">Easy Archive TEST v3</string>
     <string name="support">Support</string>
     <string name="contact_support">Contact support</string>
 
@@ -45,6 +45,9 @@
     <string name="remove_folder_lock">Remove folder lock</string>
     <string name="change_folder_password">Change folder password</string>
     <string name="set_folder_password_title">Set folder password</string>
+    <string name="forgot_folder_password">Forgot folder password</string>
+    <string name="unlock_with_app_password_hint">Enter the app\'s main password</string>
+    <string name="no_app_password_set_notice">To recover this, first set a main app password in Settings. If you\'ve forgotten that too, use \"Forgot password?\" on the lock screen.</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">Attach image</string>
