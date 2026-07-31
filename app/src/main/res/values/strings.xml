@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">ایزی آرشیو</string>
+    <!-- Always English regardless of app/device language — this is the label shown under
+         the icon on the phone's home screen and app drawer. -->
+    <string name="app_launcher_label" translatable="false">Easy Archive</string>
 
     <!-- Common -->
     <string name="back">بازگشت</string>

@@ -1,13 +1,14 @@
 package com.example.personalvault.ui.screens
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
@@ -21,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.personalvault.R
 import com.example.personalvault.ui.theme.accentScreenBackground
-import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.SecurityManager
@@ -34,7 +34,6 @@ private const val SUPPORT_EMAIL = "newlifetech25@hotmail.com"
 fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
     val context = LocalContext.current
     var themeMode by remember { mutableStateOf(AppPreferences.getThemeMode(context)) }
-    var language by remember { mutableStateOf(AppPreferences.getLanguage(context)) }
     var lockEnabled by remember { mutableStateOf(SecurityManager.isLockEnabled(context)) }
     var biometricEnabled by remember { mutableStateOf(SecurityManager.isBiometricEnabled(context)) }
     var screenshotBlocked by remember { mutableStateOf(SecurityManager.isScreenshotBlockEnabled(context)) }
@@ -59,7 +58,15 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             )
         }
     ) { padding ->
-        Column(Modifier.padding(padding).padding(16.dp)) {
+        // Scrollable: with the accent-color row and folder-recovery section added, this no
+        // longer reliably fits one screen — without scroll, the lower sections (including the
+        // "set recovery answers" button) could end up unreachable on smaller screens.
+        Column(
+            Modifier
+                .padding(padding)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
 
             Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
@@ -110,28 +117,6 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
                             onThemeOrLanguageChanged()
                         }
                     )
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
-
-            Text(stringResource(R.string.app_language), style = MaterialTheme.typography.titleMedium)
-            Spacer(Modifier.height(8.dp))
-            AppLanguage.values().forEach { lang ->
-                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = language == lang,
-                        onClick = {
-                            if (language != lang) {
-                                language = lang
-                                AppPreferences.setLanguage(context, lang)
-                                (context as? Activity)?.recreate()
-                            }
-                        }
-                    )
-                    Text(if (lang == AppLanguage.FA) stringResource(R.string.language_fa) else stringResource(R.string.language_en))
                 }
             }
 

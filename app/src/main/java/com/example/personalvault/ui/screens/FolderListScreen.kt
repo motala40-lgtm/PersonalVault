@@ -1,5 +1,6 @@
 package com.example.personalvault.ui.screens
 
+import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,6 +37,7 @@ import com.example.personalvault.R
 import com.example.personalvault.data.Folder
 import com.example.personalvault.ui.components.EntryItem
 import com.example.personalvault.ui.theme.accentScreenBackground
+import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.SecurityManager
@@ -68,6 +70,7 @@ fun FolderListScreen(
     var settingLockFor by remember { mutableStateOf<Folder?>(null) }
     var removingLockFor by remember { mutableStateOf<Folder?>(null) }
     var changingPasswordFor by remember { mutableStateOf<Folder?>(null) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -86,16 +89,15 @@ fun FolderListScreen(
             containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
-                    title = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(stringResource(R.string.app_title))
-                            Spacer(Modifier.width(8.dp))
-                            Image(
-                                painter = painterResource(R.drawable.logo_easy_archive),
-                                contentDescription = null,
-                                modifier = Modifier.size(64.dp)
-                            )
-                        }
+                    title = { Text(stringResource(R.string.app_title)) },
+                    actions = {
+                        Image(
+                            painter = painterResource(R.drawable.logo_easy_archive),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(64.dp)
+                                .padding(end = 8.dp)
+                        )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
@@ -122,6 +124,9 @@ fun FolderListScreen(
                         }
                         IconButton(onClick = onOpenSettings) {
                             Icon(Icons.Rounded.Settings, contentDescription = stringResource(R.string.nav_settings))
+                        }
+                        IconButton(onClick = { showLanguageDialog = true }) {
+                            Icon(Icons.Rounded.Language, contentDescription = stringResource(R.string.app_language))
                         }
                     },
                     floatingActionButton = {
@@ -271,6 +276,10 @@ fun FolderListScreen(
             }
         )
     }
+
+    if (showLanguageDialog) {
+        LanguageDialog(onDismiss = { showLanguageDialog = false })
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -356,6 +365,39 @@ private fun FolderCard(
             }
         }
     }
+}
+
+@Composable
+private fun LanguageDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    var language by remember { mutableStateOf(AppPreferences.getLanguage(context)) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.app_language)) },
+        text = {
+            Column {
+                AppLanguage.values().forEach { lang ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = language == lang,
+                            onClick = {
+                                if (language != lang) {
+                                    language = lang
+                                    AppPreferences.setLanguage(context, lang)
+                                    (context as? Activity)?.recreate()
+                                }
+                            }
+                        )
+                        Text(if (lang == AppLanguage.FA) stringResource(R.string.language_fa) else stringResource(R.string.language_en))
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.back)) }
+        }
+    )
 }
 
 @Composable
