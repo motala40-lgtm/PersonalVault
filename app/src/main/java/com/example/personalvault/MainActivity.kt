@@ -38,6 +38,7 @@ sealed class Screen {
     object Trash : Screen()
     object Reminders : Screen()
     object Contacts : Screen()
+    object Help : Screen()
     object Settings : Screen()
 }
 
@@ -130,10 +131,14 @@ class MainActivity : FragmentActivity() {
                         is Screen.Settings -> SettingsScreen(
                             isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList },
+                            onOpenHelp = { screen = Screen.Help },
                             onThemeOrLanguageChanged = {
                                 recomposeTrigger++
                                 applyScreenshotProtection()
                             }
+                        )
+                        is Screen.Help -> HelpScreen(
+                            onBack = { screen = Screen.Settings }
                         )
                     }
                 }

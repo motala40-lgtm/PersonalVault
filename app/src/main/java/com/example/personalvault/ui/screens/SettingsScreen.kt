@@ -40,7 +40,7 @@ private const val SUPPORT_EMAIL = "newlifetech25@hotmail.com"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
+fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
     val context = LocalContext.current
     var themeMode by remember { mutableStateOf(AppPreferences.getThemeMode(context)) }
     var lockEnabled by remember { mutableStateOf(SecurityManager.isLockEnabled(context)) }
@@ -248,6 +248,18 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onThemeOrLanguageCh
             if (backupInProgress) {
                 Spacer(Modifier.height(8.dp))
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Divider()
+            Spacer(Modifier.height(16.dp))
+
+            Text(stringResource(R.string.help_section_title), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = onOpenHelp, modifier = Modifier.fillMaxWidth()) {
+                Icon(Icons.Default.Info, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.open_help_button))
             }
 
             Spacer(Modifier.height(16.dp))

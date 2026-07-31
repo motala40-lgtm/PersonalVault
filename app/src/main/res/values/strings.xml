@@ -29,6 +29,36 @@
     <string name="delete_contact_title">این مخاطب حذف بشه؟</string>
     <string name="call">تماس</string>
     <string name="send_sms">پیامک</string>
+
+    <!-- In-app help / user manual -->
+    <string name="help_screen_title">راهنمای استفاده از اپ</string>
+
+    <string name="help_intro_title">معرفی</string>
+    <string name="help_intro_body">ایزی آرشیو یه اپ خصوصیه برای نگهداری امن عکس، فایل، اسکن سند، یادداشت و مخاطبین شما — همه‌چیز فقط روی خودِ گوشی ذخیره می‌شه، نه روی سرور یا اینترنت.</string>
+
+    <string name="help_folders_title">پوشه‌ها</string>
+    <string name="help_folders_body">از دکمه‌ی بنفش + پایین صفحه، پوشه‌ی جدید بسازید و یکی از هشت رنگ پاستیلی رو انتخاب کنید.\n\nبرای قفل کردن یه پوشه: لمس طولانی روی پوشه یا آیکون سه‌نقطه → «قفل کردن پوشه». از همون منو می‌تونید رمزش رو تغییر بدید یا قفلش رو بردارید.\n\nاگه رمز یه پوشه رو فراموش کردید: موقع باز کردن، «رمز پوشه رو فراموش کردم» رو بزنید و به دو سوال امنیتی (که باید از قبل در تنظیمات ثبت کرده باشید) پاسخ بدید — بلافاصله یه رمز جدید تنظیم می‌کنید.</string>
+
+    <string name="help_content_title">افزودن و مشاهده‌ی محتوا</string>
+    <string name="help_content_body">داخل هر پوشه، دکمه‌ی + چهار گزینه داره: افزودن عکس (چندتایی هم می‌شه)، افزودن فایل، اسکن سند با دوربین، و نوشتن یادداشت.\n\nبا ضربه روی هر آیتم: عکس تمام‌صفحه با زوم باز می‌شه، یادداشت کامل نمایش داده می‌شه، و فایل/اسکن با اپ مناسب گوشی باز می‌شه.\n\nبا لمس طولانی، حالت انتخاب چندتایی فعال می‌شه. از منوی سه‌نقطه هر آیتم: سنجاق، علاقه‌مندی، تغییر نام، اشتراک‌گذاری یا حذف.</string>
+
+    <string name="help_favtrash_title">علاقه‌مندی‌ها و سطل زباله</string>
+    <string name="help_favtrash_body">آیتم‌های علاقه‌مندی‌شده (از هر پوشه‌ای) در بخش «علاقه‌مندی‌ها» جمع می‌شن. آیتم‌های حذف‌شده اول می‌رن سطل زباله و بعد از ۳۰ روز خودکار پاک می‌شن — تا قبلش می‌تونید بازیابی‌شون کنید.</string>
+
+    <string name="help_reminders_title">یادآوری‌ها</string>
+    <string name="help_reminders_body">یادآوری زمان‌دار بسازید، در صورت نیاز به یه پوشه‌ی خاص وصلش کنید، و در صورت تمایل سالانه تکرارش کنید.</string>
+
+    <string name="help_contacts_title">دفترچه تلفن</string>
+    <string name="help_contacts_body">یه دفترچه تلفن جدا از مخاطبین گوشی، فقط داخل اپ: افزودن مخاطب با نام، شماره، ایمیل و یادداشت؛ جستجو؛ تماس یا پیامک مستقیم؛ علاقه‌مند کردن مخاطب.</string>
+
+    <string name="help_settings_title">تنظیمات</string>
+    <string name="help_settings_body">تم روشن/تیره/سیستم و رنگ زمینه (یکی از هشت رنگ پاستیلی یا سفید) از بخش «ظاهر». زبان با دکمه‌ی 🌍 پایین صفحه‌ی اول.\n\nامنیت: قفل کلی اپ با رمز + سوال امنیتی، ورود با اثر انگشت، جلوگیری از اسکرین‌شات، و ثبت دو پاسخ برای بازیابی قفل پوشه‌ها.</string>
+
+    <string name="help_backup_title">پشتیبان‌گیری کامل</string>
+    <string name="help_backup_body">«خروجی گرفتن از همه‌ی اطلاعات»: یه رمز برای همون فایل تعیین می‌کنید و یه فایل رمزگذاری‌شده می‌سازه که به هرجا (ایمیل، درایو، تلگرام) می‌تونید بفرستید.\n\n«بازیابی از فایل پشتیبان»: فایل و رمزش رو وارد می‌کنید؛ همه‌چیز جایگزین اطلاعات فعلی می‌شه. بعد از بازیابی، حتماً اپ رو کامل ببندید و دوباره باز کنید.</string>
+
+    <string name="help_support_title">پشتیبانی</string>
+    <string name="help_support_body">برای هرگونه سؤال یا مشکل، از همین صفحه «تماس با پشتیبانی» رو بزنید یا با newlifetech25@hotmail.com در ارتباط باشید.</string>
     <string name="nav_trash">سطل زباله</string>
     <string name="nav_settings">تنظیمات</string>
     <string name="folders_title">پوشه‌ها</string>
@@ -81,6 +111,8 @@
     <string name="backup_restore_success">بازیابی انجام شد. لطفاً اپ رو کامل ببند و دوباره باز کن.</string>
     <string name="backup_restore_wrong_password">رمز اشتباهه یا این فایل، فایل پشتیبان معتبری نیست</string>
     <string name="backup_restore_invalid_file">این فایل، فایل پشتیبان معتبری نیست</string>
+    <string name="help_section_title">راهنمای استفاده</string>
+    <string name="open_help_button">راهنمای استفاده از اپ</string>
 
     <!-- Folder screen (composer) -->
     <string name="attach_image">پیوست عکس</string>
