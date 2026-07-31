@@ -23,7 +23,18 @@ val Pink40 = Color(0xFF7D5260)
 private val DarkColors = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
+    // Every text/icon-on-surface role spelled out explicitly and kept near-white — this is
+    // the actual fix for "text disappears in dark mode": we no longer lean on the library's
+    // own defaults for these roles at all.
+    background = Color(0xFF121212),
+    onBackground = Color(0xFFF5F5F5),
+    surface = Color(0xFF1E1E1E),
+    onSurface = Color(0xFFF5F5F5),
+    surfaceVariant = Color(0xFF2A2A2A),
+    onSurfaceVariant = Color(0xFFE0E0E0),
+    error = Color(0xFFFF6B6B),
+    onError = Color(0xFF121212)
 )
 
 private val LightColors = lightColorScheme(

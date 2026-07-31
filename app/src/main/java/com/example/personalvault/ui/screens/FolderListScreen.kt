@@ -74,6 +74,10 @@ fun FolderListScreen(
     var settingLockFor by remember { mutableStateOf<Folder?>(null) }
     var removingLockFor by remember { mutableStateOf<Folder?>(null) }
     var changingPasswordFor by remember { mutableStateOf<Folder?>(null) }
+    // Set alongside settingLockFor only when we got there via "forgot folder password" while
+    // trying to open a folder — after the new password is saved, we still owe the person
+    // actually getting into the folder they were trying to open.
+    var openFolderAfterNewPassword by remember { mutableStateOf<Folder?>(null) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -117,54 +121,36 @@ fun FolderListScreen(
                     containerColor = bottomBarColor,
                     contentColor = bottomBarContentColor,
                     actions = {
-                        // Each icon keeps its own fixed color in light theme (as requested).
+                        // Each icon sits on its own small raised chip (bigger + a translucent
+                        // circle behind it) so they stand out more than a flat icon would —
+                        // and each keeps its own fixed color in light theme, as requested.
                         // In dark theme, Settings falls back to a light neutral instead of pure
                         // black, since black-on-dark would repeat the exact "text disappears"
                         // problem this whole round of fixes is trying to solve.
-                        IconButton(onClick = onOpenFavorites) {
-                            Icon(
-                                Icons.Rounded.Favorite,
-                                contentDescription = stringResource(R.string.nav_favorites),
-                                tint = Color(0xFFE53935)
-                            )
+                        BottomBarChip(onClick = onOpenFavorites, contentDescriptionText = stringResource(R.string.nav_favorites)) {
+                            Icon(Icons.Rounded.Favorite, contentDescription = null, tint = Color(0xFFE53935), modifier = Modifier.size(26.dp))
                         }
-                        IconButton(onClick = onOpenReminders) {
-                            Icon(
-                                Icons.Rounded.NotificationsActive,
-                                contentDescription = stringResource(R.string.nav_reminders),
-                                tint = Color(0xFFFFC107)
-                            )
+                        BottomBarChip(onClick = onOpenReminders, contentDescriptionText = stringResource(R.string.nav_reminders)) {
+                            Icon(Icons.Rounded.NotificationsActive, contentDescription = null, tint = Color(0xFFFFC107), modifier = Modifier.size(26.dp))
                         }
-                        IconButton(onClick = onOpenContacts) {
-                            Icon(
-                                Icons.Rounded.Phone,
-                                contentDescription = stringResource(R.string.nav_contacts),
-                                tint = Color(0xFF0D47A1)
-                            )
+                        BottomBarChip(onClick = onOpenContacts, contentDescriptionText = stringResource(R.string.nav_contacts)) {
+                            Icon(Icons.Rounded.Phone, contentDescription = null, tint = Color(0xFF2E7D32), modifier = Modifier.size(26.dp))
                         }
-                        IconButton(onClick = onOpenTrash) {
-                            Icon(
-                                Icons.Rounded.DeleteOutline,
-                                contentDescription = stringResource(R.string.nav_trash),
-                                tint = Color(0xFFEC407A)
-                            )
+                        BottomBarChip(onClick = onOpenTrash, contentDescriptionText = stringResource(R.string.nav_trash)) {
+                            Icon(Icons.Rounded.DeleteOutline, contentDescription = null, tint = Color(0xFFEC407A), modifier = Modifier.size(26.dp))
                         }
-                        IconButton(onClick = onOpenSettings) {
+                        BottomBarChip(onClick = onOpenSettings, contentDescriptionText = stringResource(R.string.nav_settings)) {
                             Icon(
                                 Icons.Rounded.Settings,
-                                contentDescription = stringResource(R.string.nav_settings),
-                                tint = if (isDarkTheme) bottomBarContentColor else Color.Black
+                                contentDescription = null,
+                                tint = if (isDarkTheme) bottomBarContentColor else Color.Black,
+                                modifier = Modifier.size(26.dp)
                             )
                         }
-                        IconButton(onClick = { showLanguageDialog = true }) {
+                        BottomBarChip(onClick = { showLanguageDialog = true }, contentDescriptionText = stringResource(R.string.app_language)) {
                             // A flat monochrome icon can't look "colorful" — a real emoji glyph
                             // renders in full color on Android regardless of icon tint.
-                            val languageLabel = stringResource(R.string.app_language)
-                            Text(
-                                "\uD83C\uDF0D",
-                                fontSize = 22.sp,
-                                modifier = Modifier.semantics { contentDescription = languageLabel }
-                            )
+                            Text("\uD83C\uDF0D", fontSize = 24.sp)
                         }
                     },
                     floatingActionButton = {
@@ -276,9 +262,17 @@ fun FolderListScreen(
         VerifyFolderPinDialog(
             folder = folder,
             onDismiss = { openingFolder = null },
-            onVerified = {
+            onVerified = { usedRecovery ->
                 openingFolder = null
-                onOpenFolder(folder)
+                if (usedRecovery) {
+                    // Recovering via the two questions means the old PIN is presumably lost —
+                    // walk straight into setting a new one instead of silently reopening the
+                    // folder with the same forgotten PIN still in place.
+                    settingLockFor = folder
+                    openFolderAfterNewPassword = folder
+                } else {
+                    onOpenFolder(folder)
+                }
             }
         )
     }
@@ -307,16 +301,49 @@ fun FolderListScreen(
 
     settingLockFor?.let { folder ->
         SetFolderPinDialog(
-            onDismiss = { settingLockFor = null },
+            onDismiss = {
+                settingLockFor = null
+                openFolderAfterNewPassword = null
+            },
             onConfirm = { pin ->
                 viewModel.updateFolder(folder.copy(isLocked = true, pinHash = SecurityManager.hashValue(pin)))
                 settingLockFor = null
+                if (openFolderAfterNewPassword == folder) {
+                    openFolderAfterNewPassword = null
+                    onOpenFolder(folder)
+                }
             }
         )
     }
 
     if (showLanguageDialog) {
         LanguageDialog(onDismiss = { showLanguageDialog = false })
+    }
+}
+
+/**
+ * Wraps a bottom-bar icon in a small raised circular chip — bigger and more visually prominent
+ * than a bare IconButton, which is what makes these icons read as "embossed" rather than flat.
+ */
+@Composable
+private fun BottomBarChip(
+    onClick: () -> Unit,
+    contentDescriptionText: String,
+    content: @Composable () -> Unit
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.semantics { contentDescription = contentDescriptionText }
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color.White.copy(alpha = 0.18f)),
+            contentAlignment = Alignment.Center
+        ) {
+            content()
+        }
     }
 }
 
@@ -442,7 +469,7 @@ private fun LanguageDialog(onDismiss: () -> Unit) {
 private fun VerifyFolderPinDialog(
     folder: Folder,
     onDismiss: () -> Unit,
-    onVerified: () -> Unit
+    onVerified: (usedRecovery: Boolean) -> Unit
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var pin by remember { mutableStateOf("") }
@@ -517,7 +544,7 @@ private fun VerifyFolderPinDialog(
                     folder.pinHash != null && folder.pinHash == SecurityManager.hashValue(pin)
                 }
                 if (success) {
-                    onVerified()
+                    onVerified(useRecoveryQuestions)
                 } else {
                     error = if (useRecoveryQuestions) wrongRecoveryAnswerText else wrongPasswordText
                 }
