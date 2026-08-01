@@ -684,7 +684,7 @@ private fun VerifyFolderPinDialog(
                 val success = if (useRecoveryQuestions) {
                     SecurityManager.verifyFolderRecoveryAnswers(context, petAnswer, cityAnswer)
                 } else {
-                    folder.pinHash != null && folder.pinHash == SecurityManager.hashValue(pin)
+                    folder.pinHash != null && SecurityManager.verifyFolderPin(pin, folder.pinHash)
                 }
                 if (success) {
                     onVerified(useRecoveryQuestions)
