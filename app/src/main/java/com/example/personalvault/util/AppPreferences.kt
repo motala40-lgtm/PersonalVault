@@ -3,7 +3,7 @@ package com.example.personalvault.util
 import android.content.Context
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
-enum class AppLanguage { FA, EN }
+enum class AppLanguage { FA, EN, FR, DE, ES, AR, RU, ZH, HI, TR, SV }
 enum class GridColumns(val count: Int) { ONE(1), TWO(2), THREE(3) }
 
 object AppPreferences {

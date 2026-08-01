@@ -2,4 +2,5 @@
 <paths>
     <files-path name="vault_files" path="vault_files/" />
     <cache-path name="backups" path="backups/" />
+    <cache-path name="shares" path="shares/" />
 </paths>

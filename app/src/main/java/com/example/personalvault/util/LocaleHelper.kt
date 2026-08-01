@@ -11,8 +11,19 @@ import java.util.Locale
  */
 object LocaleHelper {
 
-    private fun localeFor(language: AppLanguage): Locale =
-        if (language == AppLanguage.FA) Locale("fa") else Locale("en")
+    private fun localeFor(language: AppLanguage): Locale = when (language) {
+        AppLanguage.FA -> Locale("fa")
+        AppLanguage.EN -> Locale("en")
+        AppLanguage.FR -> Locale("fr")
+        AppLanguage.DE -> Locale("de")
+        AppLanguage.ES -> Locale("es")
+        AppLanguage.AR -> Locale("ar")
+        AppLanguage.RU -> Locale("ru")
+        AppLanguage.ZH -> Locale("zh")
+        AppLanguage.HI -> Locale("hi")
+        AppLanguage.TR -> Locale("tr")
+        AppLanguage.SV -> Locale("sv")
+    }
 
     /** Wraps [context] with a configuration locked to [language]. */
     fun wrap(context: Context, language: AppLanguage): Context {

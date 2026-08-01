@@ -1,0 +1,197 @@
+<resources>
+    <string name="app_name">Easy Archive</string>
+    <string name="app_launcher_label" translatable="false">Easy Archive</string>
+
+    <!-- Common -->
+    <string name="back">वापस</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="save">सहेजें</string>
+    <string name="delete">हटाएं</string>
+    <string name="create">बनाएं</string>
+    <string name="more_options">अधिक विकल्प</string>
+
+    <!-- Navigation / section titles -->
+    <string name="nav_favorites">पसंदीदा</string>
+    <string name="nav_reminders">रिमाइंडर</string>
+    <string name="nav_contacts">संपर्क</string>
+    <string name="add_contact">संपर्क जोड़ें</string>
+    <string name="edit_contact">संपर्क संपादित करें</string>
+    <string name="search_contacts_placeholder">नाम या नंबर खोजें…</string>
+    <string name="no_contacts_yet">अभी तक कोई संपर्क नहीं है; + बटन से एक जोड़ें</string>
+    <string name="contact_name_label">नाम</string>
+    <string name="contact_phone_label">फ़ोन नंबर</string>
+    <string name="contact_phone2_label">दूसरा नंबर (वैकल्पिक)</string>
+    <string name="contact_email_label">ईमेल (वैकल्पिक)</string>
+    <string name="contact_note_label">नोट (वैकल्पिक)</string>
+    <string name="contact_name_required_error">नाम आवश्यक है</string>
+    <string name="delete_contact_title">क्या इस संपर्क को हटाना है?</string>
+    <string name="call">कॉल करें</string>
+    <string name="send_sms">मैसेज</string>
+
+    <!-- In-app help / user manual -->
+    <string name="help_screen_title">ऐप का उपयोग कैसे करें</string>
+
+    <string name="help_intro_title">परिचय</string>
+    <string name="help_intro_body">Easy Archive आपकी फ़ोटो, फ़ाइलें, स्कैन किए गए दस्तावेज़, नोट्स और संपर्कों को सुरक्षित रूप से रखने के लिए एक निजी ऐप है — सब कुछ केवल आपके फ़ोन पर संग्रहीत होता है, कभी किसी सर्वर या इंटरनेट पर नहीं।</string>
+
+    <string name="help_folders_title">फ़ोल्डर</string>
+    <string name="help_folders_body">नीचे बैंगनी + बटन से नया फ़ोल्डर बनाएं और आठ पेस्टल रंगों में से एक चुनें।\n\nफ़ोल्डर को लॉक करने के लिए: उस पर लंबे समय तक दबाएं या तीन-डॉट मेनू पर टैप करें → «फ़ोल्डर लॉक करें»। इसी मेनू से आप उसका पासवर्ड बदल सकते हैं या लॉक हटा सकते हैं।\n\nफ़ोल्डर का पासवर्ड भूल गए? इसे खोलते समय «फ़ोल्डर का पासवर्ड भूल गए» टैप करें और दो सुरक्षा प्रश्नों के उत्तर दें (जो पहले से सेटिंग्स में सेट किए गए हों) — आप तुरंत एक नया पासवर्ड सेट कर सकेंगे।</string>
+
+    <string name="help_content_title">सामग्री जोड़ना और देखना</string>
+    <string name="help_content_body">किसी फ़ोल्डर के अंदर, + बटन चार विकल्प देता है: फ़ोटो जोड़ें (एक साथ कई भी), फ़ाइल जोड़ें, कैमरे से दस्तावेज़ स्कैन करें, या नोट लिखें।\n\nकिसी आइटम पर टैप करने पर: फ़ोटो ज़ूम के साथ पूरी स्क्रीन पर खुलती हैं, नोट्स अपना पूरा टेक्स्ट दिखाते हैं, और फ़ाइलें/स्कैन आपके फ़ोन के किसी उपयुक्त ऐप में खुलते हैं।\n\nमल्टी-सिलेक्ट मोड चालू करने के लिए लंबे समय तक दबाएं। हर आइटम के तीन-डॉट मेनू में पिन करें, पसंदीदा, नाम बदलें, शेयर करें या हटाएं के विकल्प होते हैं।</string>
+
+    <string name="help_favtrash_title">पसंदीदा और ट्रैश</string>
+    <string name="help_favtrash_body">पसंदीदा बनाई गई आइटम (किसी भी फ़ोल्डर से) «पसंदीदा» में इकट्ठी हो जाती हैं। हटाई गई आइटम पहले ट्रैश में जाती हैं और 30 दिनों के बाद अपने आप हमेशा के लिए हट जाती हैं — इससे पहले आप उन्हें वापस ला सकते हैं।</string>
+
+    <string name="help_reminders_title">रिमाइंडर</string>
+    <string name="help_reminders_body">समय-आधारित रिमाइंडर बनाएं, चाहें तो उन्हें किसी विशेष फ़ोल्डर से जोड़ें, और चाहें तो उन्हें हर साल दोहराएं।</string>
+
+    <string name="help_contacts_title">संपर्क</string>
+    <string name="help_contacts_body">आपके फ़ोन के संपर्कों से अलग, केवल ऐप के अंदर रखी गई एक फ़ोन बुक: नाम, नंबर, ईमेल और नोट के साथ संपर्क जोड़ें; खोजें; सीधे कॉल या मैसेज करें; पसंदीदा चिह्नित करें।</string>
+
+    <string name="help_settings_title">सेटिंग्स</string>
+    <string name="help_settings_body">लाइट/डार्क/सिस्टम थीम और बैकग्राउंड रंग (आठ पेस्टल रंगों में से एक, या सफ़ेद) «दिखावट» में मिलेंगे। होम स्क्रीन के 🌍 बटन से भाषा बदलें।\n\nसुरक्षा: सुरक्षा प्रश्न के साथ ऐप-व्यापी पासवर्ड लॉक, फिंगरप्रिंट अनलॉक, स्क्रीनशॉट रोकना, और फ़ोल्डर रिकवरी के दो उत्तर सेट करना।</string>
+
+    <string name="help_backup_title">पूरा बैकअप</string>
+    <string name="help_backup_body">«सभी डेटा एक्सपोर्ट करें»: फ़ाइल के लिए एक पासवर्ड चुनें और यह एक एन्क्रिप्टेड फ़ाइल बनाता है जिसे आप कहीं भी (ईमेल, ड्राइव, टेलीग्राम) भेज सकते हैं।\n\n«बैकअप फ़ाइल से रीस्टोर करें»: फ़ाइल चुनें और उसका पासवर्ड डालें; सब कुछ आपके मौजूदा डेटा की जगह ले लेगा। रीस्टोर के बाद, ऐप को पूरी तरह बंद करके दोबारा खोलना न भूलें।</string>
+
+    <string name="help_support_title">सहायता</string>
+    <string name="help_support_body">किसी भी सवाल या समस्या के लिए, इस स्क्रीन पर «सहायता से संपर्क करें» टैप करें या newlifetech25@hotmail.com पर संपर्क करें।</string>
+    <string name="nav_trash">ट्रैश</string>
+    <string name="nav_settings">सेटिंग्स</string>
+    <string name="folders_title">फ़ोल्डर</string>
+    <string name="search_placeholder">शीर्षक, टेक्स्ट, फ़ाइल नाम खोजें...</string>
+    <string name="search_results">खोज परिणाम</string>
+    <string name="no_folders_yet">अभी तक कोई फ़ोल्डर नहीं बना; बनाने के लिए + पर टैप करें</string>
+    <string name="app_title">Easy Archive</string>
+    <string name="support">सहायता</string>
+    <string name="contact_support">सहायता से संपर्क करें</string>
+
+    <!-- Folder -->
+    <string name="new_folder">नया फ़ोल्डर</string>
+    <string name="folder_name_label">फ़ोल्डर का नाम</string>
+
+    <!-- Lock screen -->
+    <string name="vault_locked">आर्काइव लॉक है</string>
+    <string name="password_label">पासवर्ड</string>
+    <string name="wrong_password">पासवर्ड गलत है</string>
+    <string name="login">अनलॉक करें</string>
+    <string name="biometric_login">फिंगरप्रिंट से लॉगिन करें</string>
+    <string name="forgot_password">पासवर्ड भूल गए?</string>
+    <string name="reset_password_title">पासवर्ड रीसेट करें</string>
+    <string name="no_security_question_set">अभी तक कोई सुरक्षा प्रश्न सेट नहीं है। मदद के लिए newlifetech25@hotmail.com पर ईमेल करें।</string>
+    <string name="security_answer_label">उत्तर</string>
+    <string name="wrong_security_answer">उत्तर गलत है</string>
+    <string name="confirm_action">पुष्टि करें</string>
+
+    <!-- Folder actions -->
+    <string name="copy_folder">फ़ोल्डर कॉपी करें</string>
+    <string name="delete_folder">फ़ोल्डर हटाएं</string>
+    <string name="share_folder">फ़ोल्डर शेयर करें</string>
+    <string name="delete_folder_title">क्या इस फ़ोल्डर और इसकी सारी सामग्री को हटाना है?</string>
+    <string name="folder_copy_suffix"> (कॉपी)</string>
+    <string name="folder_share_empty_notice">इस फ़ोल्डर में शेयर करने के लिए कुछ नहीं है</string>
+
+    <!-- Folder lock -->
+    <string name="enter_folder_password">इस फ़ोल्डर का पासवर्ड डालें</string>
+    <string name="lock_folder">फ़ोल्डर लॉक करें</string>
+    <string name="remove_folder_lock">फ़ोल्डर लॉक हटाएं</string>
+    <string name="change_folder_password">फ़ोल्डर पासवर्ड बदलें</string>
+    <string name="set_folder_password_title">फ़ोल्डर पासवर्ड सेट करें</string>
+    <string name="forgot_folder_password">फ़ोल्डर का पासवर्ड भूल गए</string>
+    <string name="wrong_folder_recovery_answer">ये उत्तर मेल नहीं खाते</string>
+    <string name="no_folder_recovery_set_notice">रिकवर करने के लिए, पहले सेटिंग्स में फ़ोल्डर रिकवरी उत्तर सेट करें।</string>
+    <string name="folder_recovery_question_pet">आपके पहले पालतू जानवर का नाम क्या था?</string>
+    <string name="folder_recovery_question_city">एक ऐसे शहर का नाम बताएं जो आपको पसंद है</string>
+    <string name="folder_recovery_section_title">फ़ोल्डर लॉक रिकवरी</string>
+    <string name="folder_recovery_section_hint">ये उत्तर सभी लॉक किए गए फ़ोल्डर के लिए साझा होते हैं — अगर आप किसी फ़ोल्डर का पासवर्ड भूल जाते हैं तो ये आपसे पूछे जाएंगे।</string>
+    <string name="set_folder_recovery_button">रिकवरी उत्तर सेट करें</string>
+    <string name="folder_recovery_answers_required_error">दोनों उत्तर आवश्यक हैं</string>
+    <string name="backup_section_title">पूरा बैकअप</string>
+    <string name="backup_section_hint">आपके सभी फ़ोल्डर, नोट्स और फ़ाइलों के साथ एक एन्क्रिप्टेड फ़ाइल बनाता है, जिसे आप कहीं भी (ईमेल, ड्राइव, टेलीग्राम) भेज सकते हैं और बाद में किसी भी फ़ोन पर रीस्टोर कर सकते हैं।</string>
+    <string name="export_backup_button">सभी डेटा एक्सपोर्ट करें</string>
+    <string name="restore_backup_button">बैकअप फ़ाइल से रीस्टोर करें</string>
+    <string name="set_backup_password_title">इस बैकअप फ़ाइल के लिए एक पासवर्ड सेट करें</string>
+    <string name="enter_backup_password_title">इस बैकअप फ़ाइल का पासवर्ड डालें</string>
+    <string name="backup_export_failed">एक्सपोर्ट विफल रहा</string>
+    <string name="backup_restore_success">रीस्टोर पूरा हुआ। कृपया ऐप को पूरी तरह बंद करके दोबारा खोलें।</string>
+    <string name="backup_restore_wrong_password">पासवर्ड गलत है, या यह एक मान्य बैकअप फ़ाइल नहीं है</string>
+    <string name="backup_restore_invalid_file">यह एक मान्य बैकअप फ़ाइल नहीं है</string>
+    <string name="help_section_title">मदद</string>
+    <string name="open_help_button">ऐप का उपयोग कैसे करें</string>
+
+    <!-- Folder screen (composer) -->
+    <string name="attach_image">फ़ोटो या वीडियो अटैच करें</string>
+    <string name="attach_file">फ़ाइल अटैच करें</string>
+    <string name="scan_document">दस्तावेज़ स्कैन करें</string>
+    <string name="note_placeholder">नोट लिखें...</string>
+    <string name="note_label">नोट</string>
+    <string name="edit_note">नोट संपादित करें</string>
+    <string name="send">भेजें</string>
+    <string name="add_content">जोड़ें</string>
+    <string name="change_grid_size">डिस्प्ले साइज़ बदलें</string>
+    <string name="no_entries_yet">यह फ़ोल्डर अभी खाली है; शुरू करने के लिए + पर टैप करें</string>
+
+    <!-- Multi-selection -->
+    <string name="selected_count_format">%1$d चुनी गईं</string>
+    <string name="cancel_selection">चयन रद्द करें</string>
+    <string name="delete_selected">चुनी हुई हटाएं</string>
+
+    <!-- Rename -->
+    <string name="rename">नाम बदलें</string>
+    <string name="rename_title">फ़ाइल का नाम बदलें</string>
+    <string name="rename_label">नया नाम</string>
+
+    <!-- Reminders -->
+    <string name="new_reminder">नया रिमाइंडर</string>
+    <string name="yearly_suffix"> (सालाना)</string>
+    <string name="event_title_label">इवेंट का शीर्षक</string>
+    <string name="pick_date_time">तारीख और समय चुनें</string>
+    <string name="pick_date">तारीख चुनें (दिन/महीना/साल)</string>
+    <string name="pick_time">समय चुनें (घंटा/मिनट)</string>
+    <string name="date_not_selected">कोई तारीख नहीं चुनी गई</string>
+    <string name="time_not_selected">कोई समय नहीं चुना गया</string>
+    <string name="reminder_past_error">यह समय बीत चुका है; भविष्य की तारीख और समय चुनें</string>
+    <string name="reminder_missing_fields_error">पहले तारीख और समय चुनें</string>
+    <string name="exact_alarm_permission_notice">रिमाइंडर को बिल्कुल सही समय पर बजाने के लिए, सिस्टम सेटिंग्स में इस ऐप के लिए «अलार्म और रिमाइंडर» अनुमति चालू करें।</string>
+    <string name="open_settings">सेटिंग्स खोलें</string>
+    <string name="repeat_yearly">हर साल दोहराएं</string>
+    <string name="sound_label">आवाज़</string>
+    <string name="vibrate_label">वाइब्रेट</string>
+
+    <!-- Trash -->
+    <string name="trash_auto_delete_notice">30 दिनों के बाद आइटम अपने आप हमेशा के लिए हट जाते हैं।</string>
+    <string name="restore">रीस्टोर करें</string>
+    <string name="delete_permanently">हमेशा के लिए हटाएं</string>
+
+    <!-- Entry item -->
+    <string name="generic_file">फ़ाइल</string>
+    <string name="no_app_to_open_file">इस फ़ाइल को खोलने के लिए आपके फ़ोन पर कोई ऐप नहीं मिला</string>
+    <string name="pin_label">पिन करें</string>
+    <string name="favorite_label">पसंदीदा</string>
+    <string name="share">शेयर करें</string>
+
+    <!-- Settings -->
+    <string name="appearance">दिखावट</string>
+    <string name="accent_color">बैकग्राउंड रंग</string>
+    <string name="theme_system">सिस्टम डिफ़ॉल्ट</string>
+    <string name="theme_light">लाइट</string>
+    <string name="theme_dark">डार्क</string>
+    <string name="app_language">ऐप की भाषा</string>
+    <string name="security">सुरक्षा</string>
+    <string name="lock_with_password">पासवर्ड से लॉक करें</string>
+    <string name="change_password">पासवर्ड बदलें</string>
+    <string name="block_screenshot">स्क्रीनशॉट रोकें</string>
+    <string name="set_password_title">पासवर्ड सेट करें</string>
+    <string name="password_min_digits_label">पासवर्ड (कम से कम 4 अंक)</string>
+    <string name="confirm_password_label">पासवर्ड की पुष्टि करें</string>
+    <string name="password_min_error">पासवर्ड कम से कम 4 अंकों का होना चाहिए</string>
+    <string name="passwords_mismatch_error">पासवर्ड मेल नहीं खाते</string>
+    <string name="security_question_hint">यह बाद में «पासवर्ड भूल गए?» के लिए इस्तेमाल होगा</string>
+    <string name="security_question_label">सुरक्षा प्रश्न</string>
+    <string name="security_question_required_error">पहली बार सुरक्षा प्रश्न और उत्तर आवश्यक हैं</string>
+
+    <!-- Notifications -->
+    <string name="reminder_channel_description">इवेंट और अपॉइंटमेंट के रिमाइंडर</string>
+    <string name="reminder_notification_title">रिमाइंडर</string>
+</resources>

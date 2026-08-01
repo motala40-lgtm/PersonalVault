@@ -35,8 +35,39 @@ class VaultRepository(private val appContext: Context) {
         folderDao.deleteFolder(folder)
     }
 
+    // Duplicates a folder: a new folder ("<name> (Copy)") plus a physical copy of every
+    // non-trashed entry it contains (and, for files/images/scans, a copy of the file on disk
+    // too, so the two folders don't end up secretly sharing the same underlying file).
+    suspend fun copyFolder(folder: Folder, copyNameSuffix: String): Folder {
+        val newFolderId = folderDao.insertFolder(
+            folder.copy(id = 0, name = folder.name + copyNameSuffix, isLocked = false, pinHash = null)
+        )
+        val entries = entryDao.getEntriesForFolderSnapshot(folder.id)
+        entries.forEach { entry ->
+            val newContent = if (entry.type == EntryType.TEXT) {
+                entry.content
+            } else {
+                val original = File(entry.content)
+                val copy = File(original.parentFile, "${java.util.UUID.randomUUID()}_${original.name}")
+                runCatching { original.copyTo(copy, overwrite = true) }
+                copy.path
+            }
+            entryDao.insertEntry(
+                entry.copy(
+                    id = 0,
+                    folderId = newFolderId,
+                    content = newContent,
+                    isDeleted = false,
+                    deletedAt = null
+                )
+            )
+        }
+        return folderDao.getFolderById(newFolderId) ?: folder.copy(id = newFolderId)
+    }
+
     // Entries
     fun getEntriesForFolder(folderId: Long): Flow<List<Entry>> = entryDao.getEntriesForFolder(folderId)
+    suspend fun getEntriesSnapshotForFolder(folderId: Long): List<Entry> = entryDao.getEntriesForFolderSnapshot(folderId)
     fun getFavorites(): Flow<List<Entry>> = entryDao.getFavorites()
     fun getTrash(): Flow<List<Entry>> = entryDao.getTrash()
     fun search(query: String): Flow<List<Entry>> = entryDao.search(query)

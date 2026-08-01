@@ -8,6 +8,9 @@ interface FolderDao {
     @Query("SELECT * FROM folders ORDER BY createdAt DESC")
     fun getAllFolders(): Flow<List<Folder>>
 
+    @Query("SELECT * FROM folders WHERE id = :id")
+    suspend fun getFolderById(id: Long): Folder?
+
     @Insert
     suspend fun insertFolder(folder: Folder): Long
 

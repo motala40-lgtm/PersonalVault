@@ -8,6 +8,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -51,6 +53,9 @@ import com.example.personalvault.viewmodel.VaultViewModel
 // Cheerful pastel palette — shared with the theme accent-color picker in Settings.
 private val FolderColors = PastelPalette
 
+/** The three non-lock actions available from a folder's three-dot menu. */
+private enum class FolderMenuAction { COPY, DELETE, SHARE }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FolderListScreen(
@@ -82,7 +87,45 @@ fun FolderListScreen(
     var openFolderAfterNewPassword by remember { mutableStateOf<Folder?>(null) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
+    // Copy / delete / share for a folder that's locked must first verify its PIN — otherwise
+    // the copy action alone would let someone bypass a folder lock by simply duplicating it
+    // into an unlocked copy.
+    var pendingLockedAction by remember { mutableStateOf<Pair<Folder, FolderMenuAction>?>(null) }
+    var confirmingDeleteFor by remember { mutableStateOf<Folder?>(null) }
+    val copyNameSuffix = stringResource(R.string.folder_copy_suffix)
+    val shareChooserTitle = stringResource(R.string.share_folder)
+    val shareEmptyNotice = stringResource(R.string.folder_share_empty_notice)
     val context = LocalContext.current
+
+    fun runFolderAction(folder: Folder, action: FolderMenuAction) {
+        when (action) {
+            FolderMenuAction.COPY -> viewModel.copyFolder(folder, copyNameSuffix)
+            FolderMenuAction.DELETE -> confirmingDeleteFor = folder
+            FolderMenuAction.SHARE -> viewModel.shareFolder(context, folder) { zip ->
+                if (zip == null) {
+                    android.widget.Toast.makeText(context, shareEmptyNotice, android.widget.Toast.LENGTH_SHORT).show()
+                } else {
+                    val uri = androidx.core.content.FileProvider.getUriForFile(
+                        context, "${context.packageName}.fileprovider", zip
+                    )
+                    val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                        type = "application/zip"
+                        putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(android.content.Intent.createChooser(intent, shareChooserTitle))
+                }
+            }
+        }
+    }
+
+    fun requestFolderAction(folder: Folder, action: FolderMenuAction) {
+        if (folder.isLocked) {
+            pendingLockedAction = folder to action
+        } else {
+            runFolderAction(folder, action)
+        }
+    }
 
     // The background gradient now follows whatever accent color the user picked in Settings
     // (one of the pastel folder colors, or "White" for a plain background) instead of being
@@ -246,7 +289,10 @@ fun FolderListScreen(
                                     },
                                     onLockFolder = { settingLockFor = folder },
                                     onRemoveLock = { removingLockFor = folder },
-                                    onChangePassword = { changingPasswordFor = folder }
+                                    onChangePassword = { changingPasswordFor = folder },
+                                    onCopyFolder = { requestFolderAction(folder, FolderMenuAction.COPY) },
+                                    onDeleteFolder = { requestFolderAction(folder, FolderMenuAction.DELETE) },
+                                    onShareFolder = { requestFolderAction(folder, FolderMenuAction.SHARE) }
                                 )
                             }
                         }
@@ -324,6 +370,34 @@ fun FolderListScreen(
         )
     }
 
+    pendingLockedAction?.let { (folder, action) ->
+        VerifyFolderPinDialog(
+            folder = folder,
+            onDismiss = { pendingLockedAction = null },
+            onVerified = {
+                pendingLockedAction = null
+                runFolderAction(folder, action)
+            }
+        )
+    }
+
+    confirmingDeleteFor?.let { folder ->
+        AlertDialog(
+            onDismissRequest = { confirmingDeleteFor = null },
+            title = { Text(stringResource(R.string.delete_folder_title)) },
+            text = { Text(folder.name) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.deleteFolder(folder)
+                    confirmingDeleteFor = null
+                }) { Text(stringResource(R.string.delete)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmingDeleteFor = null }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
+    }
+
     if (showLanguageDialog) {
         LanguageDialog(onDismiss = { showLanguageDialog = false })
     }
@@ -392,7 +466,10 @@ private fun FolderCard(
     onClick: () -> Unit,
     onLockFolder: () -> Unit,
     onRemoveLock: () -> Unit,
-    onChangePassword: () -> Unit
+    onChangePassword: () -> Unit,
+    onCopyFolder: () -> Unit,
+    onDeleteFolder: () -> Unit,
+    onShareFolder: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -466,8 +543,38 @@ private fun FolderCard(
                     onClick = { showMenu = false; onLockFolder() }
                 )
             }
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.copy_folder)) },
+                leadingIcon = { Icon(Icons.Default.ContentCopy, contentDescription = null) },
+                onClick = { showMenu = false; onCopyFolder() }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.share_folder)) },
+                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                onClick = { showMenu = false; onShareFolder() }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.delete_folder)) },
+                leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
+                onClick = { showMenu = false; onDeleteFolder() }
+            )
         }
     }
+}
+
+/** Maps each [AppLanguage] to the string resource holding its name, in its own native script. */
+private fun languageNameRes(lang: AppLanguage): Int = when (lang) {
+    AppLanguage.FA -> R.string.language_fa
+    AppLanguage.EN -> R.string.language_en
+    AppLanguage.FR -> R.string.language_fr
+    AppLanguage.DE -> R.string.language_de
+    AppLanguage.ES -> R.string.language_es
+    AppLanguage.AR -> R.string.language_ar
+    AppLanguage.RU -> R.string.language_ru
+    AppLanguage.ZH -> R.string.language_zh
+    AppLanguage.HI -> R.string.language_hi
+    AppLanguage.TR -> R.string.language_tr
+    AppLanguage.SV -> R.string.language_sv
 }
 
 @Composable
@@ -479,7 +586,7 @@ private fun LanguageDialog(onDismiss: () -> Unit) {
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.app_language)) },
         text = {
-            Column {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
                 AppLanguage.values().forEach { lang ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(
@@ -492,7 +599,7 @@ private fun LanguageDialog(onDismiss: () -> Unit) {
                                 }
                             }
                         )
-                        Text(if (lang == AppLanguage.FA) stringResource(R.string.language_fa) else stringResource(R.string.language_en))
+                        Text(stringResource(languageNameRes(lang)))
                     }
                 }
             }

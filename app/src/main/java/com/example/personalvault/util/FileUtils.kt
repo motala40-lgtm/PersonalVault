@@ -6,9 +6,14 @@ import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.provider.OpenableColumns
+import com.example.personalvault.data.Entry
+import com.example.personalvault.data.EntryType
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.UUID
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 object FileUtils {
 
@@ -16,6 +21,66 @@ object FileUtils {
         val dir = File(context.filesDir, "vault_files")
         if (!dir.exists()) dir.mkdirs()
         return dir
+    }
+
+    private fun sharesDir(context: Context): File {
+        val dir = File(context.cacheDir, "shares")
+        if (!dir.exists()) dir.mkdirs()
+        return dir
+    }
+
+    /**
+     * Bundles every non-text entry's file into a single zip in the cache dir, ready to be
+     * shared via [android.content.Intent.ACTION_SEND] + FileProvider. Text notes are included
+     * too, each written out as its own .txt file, so a folder full of only notes still has
+     * something to share. Returns null if the folder has no entries at all.
+     *
+     * Blocking/IO-heavy — call from a background thread or coroutine, never the main thread.
+     */
+    fun zipFolderForShare(context: Context, folderName: String, entries: List<Entry>): File? {
+        if (entries.isEmpty()) return null
+
+        // Clear out any stale share zips from previous shares before writing a new one.
+        sharesDir(context).listFiles()?.forEach { it.delete() }
+
+        val safeName = folderName.ifBlank { "folder" }.replace(Regex("[\\\\/:*?\"<>|]"), "_")
+        val zipFile = File(sharesDir(context), "$safeName.zip")
+        val usedNames = mutableSetOf<String>()
+
+        fun uniqueName(preferred: String): String {
+            var candidate = preferred
+            var counter = 1
+            while (!usedNames.add(candidate)) {
+                val dot = preferred.lastIndexOf('.')
+                candidate = if (dot > 0) {
+                    "${preferred.substring(0, dot)}_$counter${preferred.substring(dot)}"
+                } else {
+                    "${preferred}_$counter"
+                }
+                counter++
+            }
+            return candidate
+        }
+
+        ZipOutputStream(FileOutputStream(zipFile)).use { zip ->
+            entries.forEach { entry ->
+                if (entry.type == EntryType.TEXT) {
+                    val name = uniqueName("note_${entry.id}.txt")
+                    zip.putNextEntry(ZipEntry(name))
+                    zip.write(entry.content.toByteArray(Charsets.UTF_8))
+                    zip.closeEntry()
+                } else {
+                    val source = File(entry.content)
+                    if (source.exists()) {
+                        val name = uniqueName(entry.fileName ?: source.name)
+                        zip.putNextEntry(ZipEntry(name))
+                        FileInputStream(source).use { it.copyTo(zip) }
+                        zip.closeEntry()
+                    }
+                }
+            }
+        }
+        return zipFile
     }
 
     /**

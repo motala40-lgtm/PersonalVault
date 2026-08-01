@@ -86,6 +86,14 @@
     <string name="wrong_security_answer">پاسخ اشتباه است</string>
     <string name="confirm_action">تایید</string>
 
+    <!-- Folder actions -->
+    <string name="copy_folder">کپی پوشه</string>
+    <string name="delete_folder">حذف پوشه</string>
+    <string name="share_folder">اشتراک‌گذاری پوشه</string>
+    <string name="delete_folder_title">این پوشه و همه‌ی محتوای آن حذف بشه؟</string>
+    <string name="folder_copy_suffix"> (کپی)</string>
+    <string name="folder_share_empty_notice">این پوشه چیزی برای اشتراک‌گذاری ندارد</string>
+
     <!-- Folder lock -->
     <string name="enter_folder_password">رمز این پوشه رو وارد کن</string>
     <string name="lock_folder">قفل کردن پوشه</string>
@@ -172,8 +180,17 @@
     <string name="theme_light">روشن</string>
     <string name="theme_dark">تیره</string>
     <string name="app_language">زبان اپ</string>
-    <string name="language_fa">فارسی</string>
-    <string name="language_en">English</string>
+    <string name="language_fa" translatable="false">فارسی</string>
+    <string name="language_en" translatable="false">English</string>
+    <string name="language_fr" translatable="false">Français</string>
+    <string name="language_de" translatable="false">Deutsch</string>
+    <string name="language_es" translatable="false">Español</string>
+    <string name="language_ar" translatable="false">العربية</string>
+    <string name="language_ru" translatable="false">Русский</string>
+    <string name="language_zh" translatable="false">中文</string>
+    <string name="language_hi" translatable="false">हिन्दी</string>
+    <string name="language_tr" translatable="false">Türkçe</string>
+    <string name="language_sv" translatable="false">Svenska</string>
     <string name="security">امنیت</string>
     <string name="lock_with_password">قفل با رمز عبور</string>
     <string name="change_password">تغییر رمز عبور</string>

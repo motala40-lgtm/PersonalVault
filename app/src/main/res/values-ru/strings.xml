@@ -1,0 +1,197 @@
+<resources>
+    <string name="app_name">Easy Archive</string>
+    <string name="app_launcher_label" translatable="false">Easy Archive</string>
+
+    <!-- Common -->
+    <string name="back">Назад</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+    <string name="delete">Удалить</string>
+    <string name="create">Создать</string>
+    <string name="more_options">Ещё</string>
+
+    <!-- Navigation / section titles -->
+    <string name="nav_favorites">Избранное</string>
+    <string name="nav_reminders">Напоминания</string>
+    <string name="nav_contacts">Контакты</string>
+    <string name="add_contact">Добавить контакт</string>
+    <string name="edit_contact">Изменить контакт</string>
+    <string name="search_contacts_placeholder">Поиск по имени или номеру…</string>
+    <string name="no_contacts_yet">Контактов пока нет — добавьте кнопкой +</string>
+    <string name="contact_name_label">Имя</string>
+    <string name="contact_phone_label">Номер телефона</string>
+    <string name="contact_phone2_label">Второй номер (необязательно)</string>
+    <string name="contact_email_label">Эл. почта (необязательно)</string>
+    <string name="contact_note_label">Заметка (необязательно)</string>
+    <string name="contact_name_required_error">Укажите имя</string>
+    <string name="delete_contact_title">Удалить этот контакт?</string>
+    <string name="call">Звонок</string>
+    <string name="send_sms">Сообщение</string>
+
+    <!-- In-app help / user manual -->
+    <string name="help_screen_title">Как пользоваться приложением</string>
+
+    <string name="help_intro_title">Введение</string>
+    <string name="help_intro_body">Easy Archive — приватное приложение для надёжного хранения фото, файлов, сканов документов, заметок и контактов — всё хранится только на вашем телефоне, никогда на сервере или в интернете.</string>
+
+    <string name="help_folders_title">Папки</string>
+    <string name="help_folders_body">Создайте новую папку фиолетовой кнопкой + и выберите один из восьми пастельных цветов.\n\nЧтобы заблокировать папку: долгое нажатие на неё или меню из трёх точек → «Заблокировать папку». В этом же меню можно сменить пароль или снять блокировку.\n\nЗабыли пароль папки? Нажмите «Забыл пароль папки» при её открытии и ответьте на два контрольных вопроса (заданных заранее в настройках) — сразу же зададите новый пароль.</string>
+
+    <string name="help_content_title">Добавление и просмотр контента</string>
+    <string name="help_content_body">Внутри папки кнопка + предлагает четыре варианта: добавить фото (можно сразу несколько), добавить файл, отсканировать документ камерой или написать заметку.\n\nПри нажатии на элемент: фото открываются на весь экран с масштабированием, заметки показывают полный текст, а файлы/сканы открываются подходящим приложением на телефоне.\n\nДолгое нажатие включает режим множественного выбора. Меню из трёх точек каждого элемента предлагает закрепить, добавить в избранное, переименовать, поделиться или удалить.</string>
+
+    <string name="help_favtrash_title">Избранное и корзина</string>
+    <string name="help_favtrash_body">Избранные элементы (из любой папки) собираются в разделе «Избранное». Удалённые элементы сначала попадают в корзину и автоматически удаляются навсегда через 30 дней — до этого их можно восстановить.</string>
+
+    <string name="help_reminders_title">Напоминания</string>
+    <string name="help_reminders_body">Создавайте напоминания по времени, при желании привязывайте их к конкретной папке и повторяйте ежегодно, если нужно.</string>
+
+    <string name="help_contacts_title">Контакты</string>
+    <string name="help_contacts_body">Телефонная книга отдельно от контактов телефона, хранится только внутри приложения: добавляйте контакт с именем, номером, почтой и заметкой; ищите; звоните или пишите напрямую; отмечайте избранное.</string>
+
+    <string name="help_settings_title">Настройки</string>
+    <string name="help_settings_body">Светлая/тёмная/системная тема и цвет фона (один из восьми пастельных цветов или белый) находятся в разделе «Внешний вид». Смените язык кнопкой 🌍 на главном экране.\n\nБезопасность: общая блокировка паролем с контрольным вопросом, вход по отпечатку пальца, блокировка скриншотов и настройка двух ответов для восстановления доступа к папкам.</string>
+
+    <string name="help_backup_title">Полное резервное копирование</string>
+    <string name="help_backup_body">«Экспорт всех данных»: задайте пароль для файла — будет создан один зашифрованный файл, который можно отправить куда угодно (почта, Диск, Telegram).\n\n«Восстановление из резервного файла»: выберите файл и введите его пароль; всё заменит текущие данные. После восстановления обязательно полностью закройте и снова откройте приложение.</string>
+
+    <string name="help_support_title">Поддержка</string>
+    <string name="help_support_body">По любым вопросам нажмите «Связаться с поддержкой» на этом экране или напишите на newlifetech25@hotmail.com.</string>
+    <string name="nav_trash">Корзина</string>
+    <string name="nav_settings">Настройки</string>
+    <string name="folders_title">Папки</string>
+    <string name="search_placeholder">Поиск по названию, тексту, имени файла...</string>
+    <string name="search_results">Результаты поиска</string>
+    <string name="no_folders_yet">Папок пока нет — нажмите +, чтобы создать</string>
+    <string name="app_title">Easy Archive</string>
+    <string name="support">Поддержка</string>
+    <string name="contact_support">Связаться с поддержкой</string>
+
+    <!-- Folder -->
+    <string name="new_folder">Новая папка</string>
+    <string name="folder_name_label">Название папки</string>
+
+    <!-- Lock screen -->
+    <string name="vault_locked">Архив заблокирован</string>
+    <string name="password_label">Пароль</string>
+    <string name="wrong_password">Неверный пароль</string>
+    <string name="login">Разблокировать</string>
+    <string name="biometric_login">Вход по отпечатку пальца</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="reset_password_title">Сброс пароля</string>
+    <string name="no_security_question_set">Контрольный вопрос ещё не задан. Напишите на newlifetech25@hotmail.com за помощью.</string>
+    <string name="security_answer_label">Ответ</string>
+    <string name="wrong_security_answer">Неверный ответ</string>
+    <string name="confirm_action">Подтвердить</string>
+
+    <!-- Folder actions -->
+    <string name="copy_folder">Копировать папку</string>
+    <string name="delete_folder">Удалить папку</string>
+    <string name="share_folder">Поделиться папкой</string>
+    <string name="delete_folder_title">Удалить эту папку и всё её содержимое?</string>
+    <string name="folder_copy_suffix"> (копия)</string>
+    <string name="folder_share_empty_notice">В этой папке нечем поделиться</string>
+
+    <!-- Folder lock -->
+    <string name="enter_folder_password">Введите пароль этой папки</string>
+    <string name="lock_folder">Заблокировать папку</string>
+    <string name="remove_folder_lock">Снять блокировку папки</string>
+    <string name="change_folder_password">Изменить пароль папки</string>
+    <string name="set_folder_password_title">Задать пароль папки</string>
+    <string name="forgot_folder_password">Забыл пароль папки</string>
+    <string name="wrong_folder_recovery_answer">Эти ответы не совпадают</string>
+    <string name="no_folder_recovery_set_notice">Для восстановления сначала задайте ответы для восстановления папок в настройках.</string>
+    <string name="folder_recovery_question_pet">Как звали вашего первого питомца?</string>
+    <string name="folder_recovery_question_city">Назовите город, который вам нравится</string>
+    <string name="folder_recovery_section_title">Восстановление блокировки папок</string>
+    <string name="folder_recovery_section_hint">Эти ответы общие для всех заблокированных папок — их спросят, если вы забудете пароль какой-либо папки.</string>
+    <string name="set_folder_recovery_button">Задать ответы для восстановления</string>
+    <string name="folder_recovery_answers_required_error">Оба ответа обязательны</string>
+    <string name="backup_section_title">Полное резервное копирование</string>
+    <string name="backup_section_hint">Создаёт один зашифрованный файл со всеми вашими папками, заметками и файлами, который можно отправить куда угодно (почта, Диск, Telegram) и позже восстановить на любом телефоне.</string>
+    <string name="export_backup_button">Экспортировать все данные</string>
+    <string name="restore_backup_button">Восстановить из резервного файла</string>
+    <string name="set_backup_password_title">Задайте пароль для этого резервного файла</string>
+    <string name="enter_backup_password_title">Введите пароль этого резервного файла</string>
+    <string name="backup_export_failed">Не удалось выполнить экспорт</string>
+    <string name="backup_restore_success">Восстановление завершено. Пожалуйста, полностью закройте и снова откройте приложение.</string>
+    <string name="backup_restore_wrong_password">Неверный пароль или это не действительный резервный файл</string>
+    <string name="backup_restore_invalid_file">Это не действительный резервный файл</string>
+    <string name="help_section_title">Справка</string>
+    <string name="open_help_button">Как пользоваться приложением</string>
+
+    <!-- Folder screen (composer) -->
+    <string name="attach_image">Прикрепить фото или видео</string>
+    <string name="attach_file">Прикрепить файл</string>
+    <string name="scan_document">Сканировать документ</string>
+    <string name="note_placeholder">Напишите заметку...</string>
+    <string name="note_label">Заметка</string>
+    <string name="edit_note">Изменить заметку</string>
+    <string name="send">Отправить</string>
+    <string name="add_content">Добавить</string>
+    <string name="change_grid_size">Изменить размер отображения</string>
+    <string name="no_entries_yet">Эта папка пуста — нажмите +, чтобы начать</string>
+
+    <!-- Multi-selection -->
+    <string name="selected_count_format">Выбрано: %1$d</string>
+    <string name="cancel_selection">Отменить выбор</string>
+    <string name="delete_selected">Удалить выбранное</string>
+
+    <!-- Rename -->
+    <string name="rename">Переименовать</string>
+    <string name="rename_title">Переименовать файл</string>
+    <string name="rename_label">Новое имя</string>
+
+    <!-- Reminders -->
+    <string name="new_reminder">Новое напоминание</string>
+    <string name="yearly_suffix"> (ежегодно)</string>
+    <string name="event_title_label">Название события</string>
+    <string name="pick_date_time">Выбрать дату и время</string>
+    <string name="pick_date">Выбрать дату (день/месяц/год)</string>
+    <string name="pick_time">Выбрать время (часы/минуты)</string>
+    <string name="date_not_selected">Дата не выбрана</string>
+    <string name="time_not_selected">Время не выбрано</string>
+    <string name="reminder_past_error">Это время уже прошло; выберите будущую дату и время</string>
+    <string name="reminder_missing_fields_error">Сначала выберите дату и время</string>
+    <string name="exact_alarm_permission_notice">Чтобы напоминания срабатывали точно вовремя, разрешите этому приложению «Будильники и напоминания» в настройках системы.</string>
+    <string name="open_settings">Открыть настройки</string>
+    <string name="repeat_yearly">Повторять ежегодно</string>
+    <string name="sound_label">Звук</string>
+    <string name="vibrate_label">Вибрация</string>
+
+    <!-- Trash -->
+    <string name="trash_auto_delete_notice">Элементы автоматически удаляются навсегда через 30 дней.</string>
+    <string name="restore">Восстановить</string>
+    <string name="delete_permanently">Удалить навсегда</string>
+
+    <!-- Entry item -->
+    <string name="generic_file">Файл</string>
+    <string name="no_app_to_open_file">На вашем телефоне не найдено приложение для открытия этого файла</string>
+    <string name="pin_label">Закрепить</string>
+    <string name="favorite_label">Избранное</string>
+    <string name="share">Поделиться</string>
+
+    <!-- Settings -->
+    <string name="appearance">Внешний вид</string>
+    <string name="accent_color">Цвет фона</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="app_language">Язык приложения</string>
+    <string name="security">Безопасность</string>
+    <string name="lock_with_password">Блокировка паролем</string>
+    <string name="change_password">Изменить пароль</string>
+    <string name="block_screenshot">Блокировать скриншоты</string>
+    <string name="set_password_title">Задать пароль</string>
+    <string name="password_min_digits_label">Пароль (минимум 4 цифры)</string>
+    <string name="confirm_password_label">Подтвердите пароль</string>
+    <string name="password_min_error">Пароль должен содержать не менее 4 цифр</string>
+    <string name="passwords_mismatch_error">Пароли не совпадают</string>
+    <string name="security_question_hint">Будет использован позже для «Забыли пароль?»</string>
+    <string name="security_question_label">Контрольный вопрос</string>
+    <string name="security_question_required_error">При первом входе нужны контрольный вопрос и ответ</string>
+
+    <!-- Notifications -->
+    <string name="reminder_channel_description">Напоминания о событиях и встречах</string>
+    <string name="reminder_notification_title">Напоминание</string>
+</resources>

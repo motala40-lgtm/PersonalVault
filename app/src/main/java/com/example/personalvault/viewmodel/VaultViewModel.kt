@@ -69,6 +69,22 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { repository.deleteFolder(folder) }
     }
 
+    fun copyFolder(folder: Folder, copyNameSuffix: String) {
+        viewModelScope.launch { repository.copyFolder(folder, copyNameSuffix) }
+    }
+
+    /** Builds a shareable zip of [folder]'s contents in the background, then hands the file (or
+     * null if the folder was empty) back to [onReady] on the main thread. */
+    fun shareFolder(context: android.content.Context, folder: Folder, onReady: (java.io.File?) -> Unit) {
+        viewModelScope.launch {
+            val entries = repository.getEntriesSnapshotForFolder(folder.id)
+            val zip = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                com.example.personalvault.util.FileUtils.zipFolderForShare(context, folder.name, entries)
+            }
+            onReady(zip)
+        }
+    }
+
     fun updateFolder(folder: Folder) {
         viewModelScope.launch { repository.updateFolder(folder) }
     }

@@ -84,6 +84,14 @@
     <string name="wrong_security_answer">Incorrect answer</string>
     <string name="confirm_action">Confirm</string>
 
+    <!-- Folder actions -->
+    <string name="copy_folder">Copy folder</string>
+    <string name="delete_folder">Delete folder</string>
+    <string name="share_folder">Share folder</string>
+    <string name="delete_folder_title">Delete this folder and everything in it?</string>
+    <string name="folder_copy_suffix"> (Copy)</string>
+    <string name="folder_share_empty_notice">This folder has nothing to share</string>
+
     <!-- Folder lock -->
     <string name="enter_folder_password">Enter this folder\'s password</string>
     <string name="lock_folder">Lock folder</string>

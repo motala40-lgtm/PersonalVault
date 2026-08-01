@@ -1,0 +1,197 @@
+<resources>
+    <string name="app_name">Easy Archive</string>
+    <string name="app_launcher_label" translatable="false">Easy Archive</string>
+
+    <!-- Common -->
+    <string name="back">返回</string>
+    <string name="cancel">取消</string>
+    <string name="save">保存</string>
+    <string name="delete">删除</string>
+    <string name="create">创建</string>
+    <string name="more_options">更多选项</string>
+
+    <!-- Navigation / section titles -->
+    <string name="nav_favorites">收藏</string>
+    <string name="nav_reminders">提醒</string>
+    <string name="nav_contacts">通讯录</string>
+    <string name="add_contact">添加联系人</string>
+    <string name="edit_contact">编辑联系人</string>
+    <string name="search_contacts_placeholder">搜索姓名或号码…</string>
+    <string name="no_contacts_yet">还没有联系人，点击 + 添加一个</string>
+    <string name="contact_name_label">姓名</string>
+    <string name="contact_phone_label">电话号码</string>
+    <string name="contact_phone2_label">第二号码（可选）</string>
+    <string name="contact_email_label">电子邮箱（可选）</string>
+    <string name="contact_note_label">备注（可选）</string>
+    <string name="contact_name_required_error">请填写姓名</string>
+    <string name="delete_contact_title">删除此联系人？</string>
+    <string name="call">拨打电话</string>
+    <string name="send_sms">发短信</string>
+
+    <!-- In-app help / user manual -->
+    <string name="help_screen_title">应用使用说明</string>
+
+    <string name="help_intro_title">简介</string>
+    <string name="help_intro_body">Easy Archive 是一款私密应用，用于安全保存你的照片、文件、扫描文档、笔记和联系人——所有内容仅保存在你的手机上，绝不会上传到服务器或互联网。</string>
+
+    <string name="help_folders_title">文件夹</string>
+    <string name="help_folders_body">点击底部紫色的 + 按钮创建新文件夹，并选择八种柔和色之一。\n\n锁定文件夹：长按文件夹或点击三点菜单 →「锁定文件夹」。在同一菜单中可以修改密码或解除锁定。\n\n忘记文件夹密码？打开文件夹时点击「忘记文件夹密码」，回答两个安全问题（需提前在设置中设置好）——随即可设置新密码。</string>
+
+    <string name="help_content_title">添加与查看内容</string>
+    <string name="help_content_body">在文件夹内，点击 + 提供四个选项：添加照片（可多选）、添加文件、用相机扫描文档，或写一条笔记。\n\n点击某个项目：照片会全屏打开并可缩放，笔记会显示完整文本，文件/扫描件会用手机上合适的应用打开。\n\n长按可进入多选模式。每个项目的三点菜单提供置顶、收藏、重命名、分享或删除。</string>
+
+    <string name="help_favtrash_title">收藏与回收站</string>
+    <string name="help_favtrash_body">被收藏的项目（来自任意文件夹）会集中显示在「收藏」中。删除的项目会先进入回收站，30 天后自动永久删除——在此之前你都可以恢复它们。</string>
+
+    <string name="help_reminders_title">提醒</string>
+    <string name="help_reminders_body">创建按时间触发的提醒，可选择关联某个文件夹，也可以设置为每年重复。</string>
+
+    <string name="help_contacts_title">通讯录</string>
+    <string name="help_contacts_body">一个与手机通讯录分开、仅保存在应用内的通讯录：添加姓名、号码、邮箱和备注；搜索；直接拨打电话或发短信；标记收藏。</string>
+
+    <string name="help_settings_title">设置</string>
+    <string name="help_settings_body">浅色/深色/跟随系统主题以及背景颜色（八种柔和色之一，或白色）都在「外观」中。点击首页底部的 🌍 按钮切换语言。\n\n安全：应用整体密码锁加安全问题、指纹解锁、屏蔽截屏，以及设置文件夹锁的两个恢复答案。</string>
+
+    <string name="help_backup_title">完整备份</string>
+    <string name="help_backup_body">「导出所有数据」：为该文件设置一个密码，即可生成一个加密文件，可以发送到任何地方（邮箱、云盘、Telegram）。\n\n「从备份文件恢复」：选择文件并输入其密码；所有内容将替换当前数据。恢复完成后，请务必完全关闭应用后重新打开。</string>
+
+    <string name="help_support_title">支持</string>
+    <string name="help_support_body">如有任何问题，请在此界面点击「联系支持」，或发送邮件至 newlifetech25@hotmail.com。</string>
+    <string name="nav_trash">回收站</string>
+    <string name="nav_settings">设置</string>
+    <string name="folders_title">文件夹</string>
+    <string name="search_placeholder">搜索标题、文本、文件名...</string>
+    <string name="search_results">搜索结果</string>
+    <string name="no_folders_yet">还没有文件夹，点击 + 创建一个</string>
+    <string name="app_title">Easy Archive</string>
+    <string name="support">支持</string>
+    <string name="contact_support">联系支持</string>
+
+    <!-- Folder -->
+    <string name="new_folder">新建文件夹</string>
+    <string name="folder_name_label">文件夹名称</string>
+
+    <!-- Lock screen -->
+    <string name="vault_locked">保险库已锁定</string>
+    <string name="password_label">密码</string>
+    <string name="wrong_password">密码错误</string>
+    <string name="login">解锁</string>
+    <string name="biometric_login">使用指纹登录</string>
+    <string name="forgot_password">忘记密码？</string>
+    <string name="reset_password_title">重置密码</string>
+    <string name="no_security_question_set">尚未设置安全问题。发邮件至 newlifetech25@hotmail.com 获取帮助。</string>
+    <string name="security_answer_label">答案</string>
+    <string name="wrong_security_answer">答案错误</string>
+    <string name="confirm_action">确认</string>
+
+    <!-- Folder actions -->
+    <string name="copy_folder">复制文件夹</string>
+    <string name="delete_folder">删除文件夹</string>
+    <string name="share_folder">分享文件夹</string>
+    <string name="delete_folder_title">删除此文件夹及其全部内容？</string>
+    <string name="folder_copy_suffix">（副本）</string>
+    <string name="folder_share_empty_notice">此文件夹没有可分享的内容</string>
+
+    <!-- Folder lock -->
+    <string name="enter_folder_password">请输入此文件夹的密码</string>
+    <string name="lock_folder">锁定文件夹</string>
+    <string name="remove_folder_lock">解除文件夹锁定</string>
+    <string name="change_folder_password">修改文件夹密码</string>
+    <string name="set_folder_password_title">设置文件夹密码</string>
+    <string name="forgot_folder_password">忘记文件夹密码</string>
+    <string name="wrong_folder_recovery_answer">答案不匹配</string>
+    <string name="no_folder_recovery_set_notice">要恢复，请先在设置中设置文件夹恢复答案。</string>
+    <string name="folder_recovery_question_pet">你的第一只宠物叫什么名字？</string>
+    <string name="folder_recovery_question_city">说出一个你喜欢的城市</string>
+    <string name="folder_recovery_section_title">文件夹锁恢复</string>
+    <string name="folder_recovery_section_hint">这些答案对所有被锁定的文件夹通用——如果你忘记了某个文件夹的密码，系统会询问你这两个问题。</string>
+    <string name="set_folder_recovery_button">设置恢复答案</string>
+    <string name="folder_recovery_answers_required_error">两个答案都必须填写</string>
+    <string name="backup_section_title">完整备份</string>
+    <string name="backup_section_hint">生成一个包含你所有文件夹、笔记和文件的加密文件，可发送到任何地方（邮箱、云盘、Telegram），之后可在任意手机上恢复。</string>
+    <string name="export_backup_button">导出所有数据</string>
+    <string name="restore_backup_button">从备份文件恢复</string>
+    <string name="set_backup_password_title">为此备份文件设置密码</string>
+    <string name="enter_backup_password_title">请输入此备份文件的密码</string>
+    <string name="backup_export_failed">导出失败</string>
+    <string name="backup_restore_success">恢复完成。请完全关闭应用后重新打开。</string>
+    <string name="backup_restore_wrong_password">密码错误，或此文件不是有效的备份文件</string>
+    <string name="backup_restore_invalid_file">此文件不是有效的备份文件</string>
+    <string name="help_section_title">帮助</string>
+    <string name="open_help_button">应用使用说明</string>
+
+    <!-- Folder screen (composer) -->
+    <string name="attach_image">添加照片或视频</string>
+    <string name="attach_file">添加文件</string>
+    <string name="scan_document">扫描文档</string>
+    <string name="note_placeholder">写点什么...</string>
+    <string name="note_label">笔记</string>
+    <string name="edit_note">编辑笔记</string>
+    <string name="send">发送</string>
+    <string name="add_content">添加</string>
+    <string name="change_grid_size">更改显示大小</string>
+    <string name="no_entries_yet">此文件夹为空，点击 + 开始添加</string>
+
+    <!-- Multi-selection -->
+    <string name="selected_count_format">已选择 %1$d 项</string>
+    <string name="cancel_selection">取消选择</string>
+    <string name="delete_selected">删除所选</string>
+
+    <!-- Rename -->
+    <string name="rename">重命名</string>
+    <string name="rename_title">重命名文件</string>
+    <string name="rename_label">新名称</string>
+
+    <!-- Reminders -->
+    <string name="new_reminder">新建提醒</string>
+    <string name="yearly_suffix">（每年）</string>
+    <string name="event_title_label">事件标题</string>
+    <string name="pick_date_time">选择日期和时间</string>
+    <string name="pick_date">选择日期（日/月/年）</string>
+    <string name="pick_time">选择时间（时/分）</string>
+    <string name="date_not_selected">未选择日期</string>
+    <string name="time_not_selected">未选择时间</string>
+    <string name="reminder_past_error">该时间已过去，请选择未来的日期和时间</string>
+    <string name="reminder_missing_fields_error">请先选择日期和时间</string>
+    <string name="exact_alarm_permission_notice">要让提醒准时响铃，请在系统设置中为此应用开启「闹钟和提醒」权限。</string>
+    <string name="open_settings">打开设置</string>
+    <string name="repeat_yearly">每年重复</string>
+    <string name="sound_label">铃声</string>
+    <string name="vibrate_label">振动</string>
+
+    <!-- Trash -->
+    <string name="trash_auto_delete_notice">项目将在 30 天后自动永久删除。</string>
+    <string name="restore">恢复</string>
+    <string name="delete_permanently">永久删除</string>
+
+    <!-- Entry item -->
+    <string name="generic_file">文件</string>
+    <string name="no_app_to_open_file">在你的手机上未找到可打开此文件的应用</string>
+    <string name="pin_label">置顶</string>
+    <string name="favorite_label">收藏</string>
+    <string name="share">分享</string>
+
+    <!-- Settings -->
+    <string name="appearance">外观</string>
+    <string name="accent_color">背景颜色</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="app_language">应用语言</string>
+    <string name="security">安全</string>
+    <string name="lock_with_password">使用密码锁定</string>
+    <string name="change_password">修改密码</string>
+    <string name="block_screenshot">禁止截屏</string>
+    <string name="set_password_title">设置密码</string>
+    <string name="password_min_digits_label">密码（至少 4 位数字）</string>
+    <string name="confirm_password_label">确认密码</string>
+    <string name="password_min_error">密码至少需要 4 位数字</string>
+    <string name="passwords_mismatch_error">两次密码不一致</string>
+    <string name="security_question_hint">此问题将用于「忘记密码？」</string>
+    <string name="security_question_label">安全问题</string>
+    <string name="security_question_required_error">首次使用需要设置安全问题和答案</string>
+
+    <!-- Notifications -->
+    <string name="reminder_channel_description">事件和约会提醒</string>
+    <string name="reminder_notification_title">提醒</string>
+</resources>

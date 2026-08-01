@@ -44,6 +44,15 @@ interface EntryDao {
     @Query("DELETE FROM entries WHERE isDeleted = 1 AND deletedAt < :cutoffMillis")
     suspend fun purgeOldTrash(cutoffMillis: Long)
 
+    // One-shot (non-Flow) version of getEntriesForFolder, used by folder copy/share which
+    // need a plain list rather than an ongoing subscription.
+    @Query("""
+        SELECT * FROM entries
+        WHERE folderId = :folderId AND isDeleted = 0
+        ORDER BY isPinned DESC, createdAt ASC
+    """)
+    suspend fun getEntriesForFolderSnapshot(folderId: Long): List<Entry>
+
     // Used before deleting a folder, so callers can remove the underlying files first
     // (includes trashed entries too, since they still belong to the folder).
     @Query("SELECT * FROM entries WHERE folderId = :folderId")
