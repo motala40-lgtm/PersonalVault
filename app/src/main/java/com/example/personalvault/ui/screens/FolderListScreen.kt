@@ -43,9 +43,11 @@ import androidx.compose.ui.unit.sp
 import com.example.personalvault.R
 import com.example.personalvault.data.Folder
 import com.example.personalvault.ui.components.EntryItem
+import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.ui.theme.accentScreenBackground
 import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
+import com.example.personalvault.util.GridColumns
 import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.viewmodel.VaultViewModel
@@ -96,6 +98,7 @@ fun FolderListScreen(
     val shareChooserTitle = stringResource(R.string.share_folder)
     val shareEmptyNotice = stringResource(R.string.folder_share_empty_notice)
     val context = LocalContext.current
+    var folderGridColumns by remember { mutableStateOf(AppPreferences.getFolderGridColumns(context)) }
 
     fun runFolderAction(folder: Folder, action: FolderMenuAction) {
         when (action) {
@@ -127,23 +130,18 @@ fun FolderListScreen(
         }
     }
 
-    // The background gradient now follows whatever accent color the user picked in Settings
-    // (one of the pastel folder colors, or "White" for a plain background) instead of being
-    // a fixed sky blue. Dark theme always keeps the flat theme background regardless.
-    val accentHex = AppPreferences.getAccentColorHex(context)
-    val screenBackground = accentScreenBackground(accentHex, isDarkTheme)
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(screenBackground)
-    ) {
+    ScreenBackground(isDarkTheme) {
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(R.string.app_title)) },
                     actions = {
+                        IconButton(onClick = {
+                            folderGridColumns = AppPreferences.cycleFolderGridColumns(context)
+                        }) {
+                            Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
+                        }
                         Image(
                             painter = painterResource(R.drawable.logo_easy_archive),
                             contentDescription = null,
@@ -275,7 +273,7 @@ fun FolderListScreen(
                         }
                     } else {
                         LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
+                            columns = GridCells.Fixed(folderGridColumns.count),
                             modifier = Modifier.weight(1f).fillMaxWidth(),
                             contentPadding = PaddingValues(16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),

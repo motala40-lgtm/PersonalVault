@@ -114,18 +114,22 @@ class MainActivity : FragmentActivity() {
                         )
                         is Screen.Favorites -> FavoritesScreen(
                             viewModel = viewModel,
+                            isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Trash -> TrashScreen(
                             viewModel = viewModel,
+                            isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Reminders -> ReminderListScreen(
                             viewModel = viewModel,
+                            isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Contacts -> ContactsScreen(
                             viewModel = viewModel,
+                            isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Settings -> SettingsScreen(

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.personalvault.R
 import com.example.personalvault.data.Reminder
 import com.example.personalvault.data.RepeatType
+import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.util.ReminderScheduler
 import com.example.personalvault.viewmodel.VaultViewModel
 import java.text.SimpleDateFormat
@@ -23,19 +24,22 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReminderListScreen(viewModel: VaultViewModel, onBack: () -> Unit) {
+fun ReminderListScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> Unit) {
     val context = LocalContext.current
     val reminders by viewModel.reminders.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     val yearlySuffix = stringResource(R.string.yearly_suffix)
 
+    ScreenBackground(isDarkTheme) {
     Scaffold(
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.nav_reminders)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back)) }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
             )
         },
         floatingActionButton = {
@@ -94,6 +98,7 @@ fun ReminderListScreen(viewModel: VaultViewModel, onBack: () -> Unit) {
                 }
             }
         }
+    }
     }
 
     if (showAddDialog) {

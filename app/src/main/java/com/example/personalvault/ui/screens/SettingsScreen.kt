@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.example.personalvault.R
+import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.ui.theme.accentScreenBackground
 import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.BackupManager
@@ -49,6 +51,21 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
     var screenshotBlocked by remember { mutableStateOf(SecurityManager.isScreenshotBlockEnabled(context)) }
     var showPinDialog by remember { mutableStateOf(false) }
     var accentHex by remember { mutableStateOf(AppPreferences.getAccentColorHex(context)) }
+    var wallpaperPath by remember { mutableStateOf(AppPreferences.getCustomWallpaperPath(context)) }
+    val wallpaperPicker = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            val saved = com.example.personalvault.util.FileUtils.copyUriToInternalStorage(
+                context, uri, "wallpaper_${System.currentTimeMillis()}.jpg"
+            )
+            // Drop any previous custom wallpaper file so they don't pile up unused.
+            wallpaperPath?.let { old -> runCatching { java.io.File(old).delete() } }
+            wallpaperPath = saved.absolutePath
+            AppPreferences.setCustomWallpaperPath(context, saved.absolutePath)
+            onThemeOrLanguageChanged()
+        }
+    }
     var showFolderRecoveryDialog by remember { mutableStateOf(false) }
     var showExportPasswordDialog by remember { mutableStateOf(false) }
     var showRestorePasswordDialog by remember { mutableStateOf(false) }
@@ -65,11 +82,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
         }
     }
 
-    // Same colored background as the folder list, so Settings doesn't feel like a
-    // different, plainer app once the person has picked an accent color.
-    val screenBackground = accentScreenBackground(accentHex, isDarkTheme)
-
-    Box(Modifier.fillMaxSize().then(screenBackground)) {
+    // Same background as the folder list (accent color or custom photo), so Settings
+    // doesn't feel like a different, plainer app.
+    ScreenBackground(isDarkTheme) {
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -141,6 +156,36 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                             onThemeOrLanguageChanged()
                         }
                     )
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Text(
+                stringResource(R.string.custom_wallpaper_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedButton(onClick = {
+                    wallpaperPicker.launch(
+                        androidx.activity.result.PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly
+                        )
+                    )
+                }) {
+                    Text(stringResource(R.string.pick_wallpaper_button))
+                }
+                if (wallpaperPath != null) {
+                    Spacer(Modifier.width(8.dp))
+                    TextButton(onClick = {
+                        wallpaperPath?.let { runCatching { java.io.File(it).delete() } }
+                        wallpaperPath = null
+                        AppPreferences.setCustomWallpaperPath(context, null)
+                        onThemeOrLanguageChanged()
+                    }) {
+                        Text(stringResource(R.string.remove_wallpaper_button))
+                    }
                 }
             }
 
@@ -281,7 +326,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
             }
         }
     }
-    } // close Box(screenBackground)
+    } // close ScreenBackground
 
     if (showExportPasswordDialog) {
         BackupPasswordDialog(

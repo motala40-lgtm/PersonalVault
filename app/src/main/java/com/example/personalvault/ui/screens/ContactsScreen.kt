@@ -26,11 +26,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.personalvault.R
 import com.example.personalvault.data.Contact
+import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.viewmodel.VaultViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactsScreen(viewModel: VaultViewModel, onBack: () -> Unit) {
+fun ContactsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> Unit) {
     val context = LocalContext.current
     val contacts by viewModel.contacts.collectAsState()
     var query by remember { mutableStateOf("") }
@@ -52,13 +53,16 @@ fun ContactsScreen(viewModel: VaultViewModel, onBack: () -> Unit) {
         }
     }
 
+    ScreenBackground(isDarkTheme) {
     Scaffold(
+        containerColor = androidx.compose.ui.graphics.Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.nav_contacts)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back)) }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = androidx.compose.ui.graphics.Color.Transparent)
             )
         },
         floatingActionButton = {
@@ -106,6 +110,7 @@ fun ContactsScreen(viewModel: VaultViewModel, onBack: () -> Unit) {
                 }
             }
         }
+    }
     }
 
     if (showAddDialog) {

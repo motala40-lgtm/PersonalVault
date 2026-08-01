@@ -11,6 +11,7 @@ object AppPreferences {
     private const val KEY_THEME = "theme_mode"
     private const val KEY_LANGUAGE = "app_language"
     private const val KEY_GRID_COLUMNS = "grid_columns"
+    private const val KEY_FOLDER_GRID_COLUMNS = "folder_grid_columns"
     private const val KEY_ACCENT_COLOR = "accent_color_hex"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -23,6 +24,17 @@ object AppPreferences {
 
     fun setAccentColorHex(context: Context, hex: String?) {
         prefs(context).edit().putString(KEY_ACCENT_COLOR, hex).apply()
+    }
+
+    private const val KEY_CUSTOM_WALLPAPER_PATH = "custom_wallpaper_path"
+
+    /** Path to a photo (copied into app-private storage) used as the background instead of
+     *  the pastel accent gradient. Null means "no custom photo — use the accent color". */
+    fun getCustomWallpaperPath(context: Context): String? =
+        prefs(context).getString(KEY_CUSTOM_WALLPAPER_PATH, null)
+
+    fun setCustomWallpaperPath(context: Context, path: String?) {
+        prefs(context).edit().putString(KEY_CUSTOM_WALLPAPER_PATH, path).apply()
     }
 
     fun getThemeMode(context: Context): ThemeMode =
@@ -54,6 +66,26 @@ object AppPreferences {
             GridColumns.THREE -> GridColumns.ONE
         }
         setGridColumns(context, next)
+        return next
+    }
+
+    // Separate from the above — this is specifically for the folder-card grid on the home
+    // screen, so someone can have (say) 3-column folders but a 1-column photo view, or
+    // vice versa, without the two settings fighting each other.
+    fun getFolderGridColumns(context: Context): GridColumns =
+        GridColumns.valueOf(prefs(context).getString(KEY_FOLDER_GRID_COLUMNS, GridColumns.TWO.name) ?: GridColumns.TWO.name)
+
+    fun setFolderGridColumns(context: Context, columns: GridColumns) {
+        prefs(context).edit().putString(KEY_FOLDER_GRID_COLUMNS, columns.name).apply()
+    }
+
+    fun cycleFolderGridColumns(context: Context): GridColumns {
+        val next = when (getFolderGridColumns(context)) {
+            GridColumns.ONE -> GridColumns.TWO
+            GridColumns.TWO -> GridColumns.THREE
+            GridColumns.THREE -> GridColumns.ONE
+        }
+        setFolderGridColumns(context, next)
         return next
     }
 }

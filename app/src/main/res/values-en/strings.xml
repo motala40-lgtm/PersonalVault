@@ -50,7 +50,7 @@
     <string name="help_contacts_body">A phonebook separate from your phone\'s contacts, kept only inside the app: add a contact with name, number, email, and note; search; call or message directly; mark favorites.</string>
 
     <string name="help_settings_title">Settings</string>
-    <string name="help_settings_body">Light/dark/system theme and background color (one of eight pastel colors, or white) live under "Appearance". Switch language with the 🌍 button on the home screen.\n\nSecurity: app-wide password lock plus a security question, fingerprint unlock, screenshot blocking, and setting the two folder-recovery answers.</string>
+    <string name="help_settings_body">Light/dark/system theme and background color (one of eight pastel colors, or white) live under "Appearance". Instead of a color, you can also pick a photo from your own gallery as the background (blurred) — this background is shared across every screen (home, settings, favorites, trash, reminders, contacts). Folder card size (1/2/3 columns) can be changed with the icon next to the logo on the home screen. Switch language with the 🌍 button on the home screen.\n\nSecurity: app-wide password lock plus a security question, fingerprint unlock, screenshot blocking, and setting the two folder-recovery answers.</string>
 
     <string name="help_backup_title">Full backup</string>
     <string name="help_backup_body">"Export all data": choose a password for the file and it builds one encrypted file you can send anywhere (email, Drive, Telegram).\n\n"Restore from backup file": pick the file and enter its password; everything replaces your current data. After restoring, be sure to fully close and reopen the app.</string>
@@ -174,6 +174,9 @@
     <!-- Settings -->
     <string name="appearance">Appearance</string>
     <string name="accent_color">Background color</string>
+    <string name="custom_wallpaper_hint">Or pick a photo from your own gallery to use as the background instead (blurred)</string>
+    <string name="pick_wallpaper_button">Choose photo from gallery</string>
+    <string name="remove_wallpaper_button">Remove photo</string>
     <string name="theme_system">System default</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
