@@ -16,9 +16,29 @@ android {
         versionName = "1.1"
     }
 
+    signingConfigs {
+        create("release") {
+            // Populated by the GitHub Actions workflow from repo secrets — never hardcode
+            // real values here, since this file is public in the repo.
+            val keystorePath = System.getenv("KEYSTORE_PATH")
+            if (keystorePath != null) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            // Only actually signs when the KEYSTORE_PATH env var is present (CI with secrets
+            // configured); a plain local `gradle bundleRelease` without it just won't sign,
+            // rather than crashing the build.
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 
