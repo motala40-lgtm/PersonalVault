@@ -99,6 +99,10 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { repository.updateEntry(entry.copy(content = newText)) }
     }
 
+    fun duplicateEntry(entry: Entry) {
+        viewModelScope.launch { repository.duplicateEntry(entry) }
+    }
+
     fun addFileEntry(folderId: Long, type: EntryType, path: String, fileName: String) {
         viewModelScope.launch { repository.addFileEntry(folderId, type, path, fileName) }
     }

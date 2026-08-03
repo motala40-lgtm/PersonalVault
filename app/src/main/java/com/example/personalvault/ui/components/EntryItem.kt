@@ -40,6 +40,7 @@ fun EntryItem(
     onTogglePin: () -> Unit,
     onToggleFavorite: () -> Unit,
     onDelete: () -> Unit,
+    onDuplicate: (() -> Unit)? = null,
     inTrash: Boolean = false,
     onRestore: (() -> Unit)? = null,
     onDeletePermanently: (() -> Unit)? = null
@@ -148,6 +149,11 @@ fun EntryItem(
                                 Icon(Icons.Default.Download, contentDescription = stringResource(R.string.save_to_device))
                             }
                         }
+                        if (onDuplicate != null) {
+                            IconButton(onClick = onDuplicate) {
+                                Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.duplicate))
+                            }
+                        }
                         IconButton(onClick = onDelete) {
                             Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete))
                         }
@@ -174,6 +180,7 @@ fun EntryGridCard(
     onTogglePin: () -> Unit,
     onToggleFavorite: () -> Unit,
     onDelete: () -> Unit,
+    onDuplicate: () -> Unit,
     onRename: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -294,6 +301,11 @@ fun EntryGridCard(
                                         onClick = { menuExpanded = false; saveEntryToDeviceWithFeedback(context, entry) }
                                     )
                                 }
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.duplicate)) },
+                                    leadingIcon = { Icon(Icons.Default.ContentCopy, contentDescription = null) },
+                                    onClick = { menuExpanded = false; onDuplicate() }
+                                )
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.delete)) },
                                     leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },

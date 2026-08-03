@@ -26,6 +26,28 @@ class VaultRepository(private val appContext: Context) {
     suspend fun updateFolder(folder: Folder) = folderDao.updateFolder(folder)
     suspend fun updateEntry(entry: Entry) = entryDao.updateEntry(entry)
 
+    /** Duplicates a single entry (photo/video/file/note) within the same folder — the
+     *  per-file equivalent of [copyFolder]. */
+    suspend fun duplicateEntry(entry: Entry) {
+        val newContent = if (entry.type == EntryType.TEXT) {
+            entry.content
+        } else {
+            val original = File(entry.content)
+            val copy = File(original.parentFile, "${java.util.UUID.randomUUID()}_${original.name}")
+            runCatching { original.copyTo(copy, overwrite = true) }
+            copy.path
+        }
+        entryDao.insertEntry(
+            entry.copy(
+                id = 0,
+                content = newContent,
+                isPinned = false,
+                isDeleted = false,
+                deletedAt = null
+            )
+        )
+    }
+
     // Deleting a folder also deletes every entry (and its file) that belongs to it,
     // including ones already in the trash, so nothing is left orphaned on disk or in the DB.
     suspend fun deleteFolder(folder: Folder) {

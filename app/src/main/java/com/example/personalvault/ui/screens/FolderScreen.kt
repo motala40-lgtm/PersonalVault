@@ -276,6 +276,7 @@ fun FolderScreen(
                         onTogglePin = { viewModel.togglePin(entry) },
                         onToggleFavorite = { viewModel.toggleFavorite(entry) },
                         onDelete = { viewModel.moveToTrash(entry) },
+                        onDuplicate = { viewModel.duplicateEntry(entry) },
                         onRename = { newName -> viewModel.renameEntry(entry, newName) }
                     )
                 }

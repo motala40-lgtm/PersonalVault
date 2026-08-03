@@ -39,12 +39,10 @@ fun accentScreenBackground(accentHex: String?, isDarkTheme: Boolean): Modifier {
 /**
  * Shared background wrapper for every main screen (folder list, settings, favorites, trash,
  * reminders, contacts) so they all stay visually consistent with whatever the person picked:
- * a custom photo from their gallery (blurred, with a soft scrim so content stays readable),
- * one of the pastel accent colors, or plain white — matching the same source of truth
+ * a custom photo from their gallery (shown clear/sharp, cropped to fill the screen like a
+ * normal phone wallpaper, with a soft scrim so content on top stays readable), one of the
+ * pastel accent colors, or plain white — matching the same source of truth
  * ([AppPreferences]) everywhere instead of each screen deciding independently.
- *
- * Note: the blur only renders on Android 12+ (API 31) — Compose's blur modifier has no effect
- * on older versions, so the photo shows unblurred there instead of failing outright.
  */
 @Composable
 fun ScreenBackground(isDarkTheme: Boolean, content: @Composable BoxScope.() -> Unit) {
@@ -63,9 +61,9 @@ fun ScreenBackground(isDarkTheme: Boolean, content: @Composable BoxScope.() -> U
                     painter = rememberAsyncImagePainter(wallpaperFile),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize().blur(24.dp)
+                    modifier = Modifier.fillMaxSize()
                 )
-                Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.18f)))
+                Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.22f)))
             }
             else -> {
                 Box(modifier = Modifier.fillMaxSize().then(accentScreenBackground(accentHex, isDarkTheme)))

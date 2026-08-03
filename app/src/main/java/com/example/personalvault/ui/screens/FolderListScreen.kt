@@ -136,6 +136,20 @@ fun FolderListScreen(
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(R.string.app_title)) },
+                    actions = {
+                        IconButton(onClick = {
+                            folderGridColumns = AppPreferences.cycleFolderGridColumns(context)
+                        }) {
+                            Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
+                        }
+                        Image(
+                            painter = painterResource(R.drawable.logo_easy_archive),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(64.dp)
+                                .padding(end = 8.dp)
+                        )
+                    },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             },
@@ -216,24 +230,8 @@ fun FolderListScreen(
                         .padding(16.dp),
                     placeholder = { Text(stringResource(R.string.search_placeholder)) },
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            folderGridColumns = AppPreferences.cycleFolderGridColumns(context)
-                        }) {
-                            Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
-                        }
-                    },
                     shape = RoundedCornerShape(16.dp),
                     singleLine = true
-                )
-
-                Image(
-                    painter = painterResource(R.drawable.logo_easy_archive),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .size(72.dp)
-                        .padding(bottom = 8.dp)
                 )
 
                 if (query.isNotBlank()) {

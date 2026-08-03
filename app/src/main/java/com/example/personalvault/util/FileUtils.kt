@@ -175,19 +175,7 @@ object FileUtils {
         }
     }
 
-    /** Copies one of the app's bundled preset background images (res/raw) into app-private
-     *  storage, reusing exactly the same file the custom-gallery-photo picker writes to —
-     *  so the rest of the app doesn't need to know whether a wallpaper came from a preset or
-     *  the person's own gallery. Pure byte copy, no re-encoding, so quality is untouched. */
-    fun copyRawResourceToInternalStorage(context: Context, rawResId: Int, fileName: String): File {
-        val outFile = File(vaultDir(context).parentFile, fileName)
-        context.resources.openRawResource(rawResId).use { input ->
-            FileOutputStream(outFile).use { output -> input.copyTo(output) }
-        }
-        return outFile
-    }
-
-
+    /** Creates a new empty file inside app-private storage for the camera to write a full-res photo into. */
     fun createImageCaptureFile(context: Context): File {
         return File(vaultDir(context), "scan_${UUID.randomUUID()}.jpg")
     }
