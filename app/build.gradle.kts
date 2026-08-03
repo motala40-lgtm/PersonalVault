@@ -17,6 +17,17 @@ android {
     }
 
     signingConfigs {
+        // Fixed, checked-in debug key (harmless to commit — debug keys carry no real
+        // security value) so every CI build is signed identically. Without this, Gradle's
+        // auto-generated debug key differs on every fresh GitHub Actions runner, which is
+        // exactly why every previous debug APK required Uninstall before reinstalling.
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+
         create("release") {
             // Populated by the GitHub Actions workflow from repo secrets — never hardcode
             // real values here, since this file is public in the repo.
