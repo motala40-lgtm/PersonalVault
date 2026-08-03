@@ -1,6 +1,7 @@
 package com.example.personalvault.ui.components
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -140,6 +141,11 @@ fun EntryItem(
                                 shareEntry(context, entry, shareText)
                             }) {
                                 Icon(Icons.Default.Share, contentDescription = shareText)
+                            }
+                            IconButton(onClick = {
+                                saveEntryToDeviceWithFeedback(context, entry)
+                            }) {
+                                Icon(Icons.Default.Download, contentDescription = stringResource(R.string.save_to_device))
                             }
                         }
                         IconButton(onClick = onDelete) {
@@ -282,6 +288,11 @@ fun EntryGridCard(
                                         leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
                                         onClick = { menuExpanded = false; shareEntry(context, entry, shareText) }
                                     )
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.save_to_device)) },
+                                        leadingIcon = { Icon(Icons.Default.Download, contentDescription = null) },
+                                        onClick = { menuExpanded = false; saveEntryToDeviceWithFeedback(context, entry) }
+                                    )
                                 }
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.delete)) },
@@ -364,4 +375,18 @@ private fun shareEntry(context: android.content.Context, entry: Entry, shareChoo
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     context.startActivity(Intent.createChooser(intent, shareChooserTitle))
+}
+
+/** Runs the actual file copy on a plain background thread (no ViewModel/coroutine scope is
+ *  available at this level) and reports success/failure with a Toast on the main thread. */
+private fun saveEntryToDeviceWithFeedback(context: android.content.Context, entry: Entry) {
+    val successMsg = context.getString(R.string.save_to_device_success)
+    val failMsg = context.getString(R.string.save_to_device_failed)
+    val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    Thread {
+        val success = com.example.personalvault.util.FileUtils.exportEntryToDevice(context, entry)
+        mainHandler.post {
+            Toast.makeText(context, if (success) successMsg else failMsg, Toast.LENGTH_LONG).show()
+        }
+    }.start()
 }

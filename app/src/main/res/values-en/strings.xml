@@ -170,6 +170,9 @@
     <string name="pin_label">Pin</string>
     <string name="favorite_label">Favorite</string>
     <string name="share">Share</string>
+    <string name="save_to_device">Save to device</string>
+    <string name="save_to_device_success">Saved to your device at full original quality</string>
+    <string name="save_to_device_failed">Couldn\'t save the file</string>
 
     <!-- Settings -->
     <string name="appearance">Appearance</string>
@@ -177,6 +180,10 @@
     <string name="custom_wallpaper_hint">Or pick a photo from your own gallery to use as the background instead (blurred)</string>
     <string name="pick_wallpaper_button">Choose photo from gallery</string>
     <string name="remove_wallpaper_button">Remove photo</string>
+    <string name="nature_themes_hint">Or pick one of these ready-made nature-inspired themes:</string>
+    <string name="nature_forest">Forest</string>
+    <string name="nature_ocean">Ocean</string>
+    <string name="nature_sunset">Sunset</string>
     <string name="theme_system">System default</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>

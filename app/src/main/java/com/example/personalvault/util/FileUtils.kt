@@ -115,7 +115,79 @@ object FileUtils {
         return outFile
     }
 
-    /** Creates a new empty file inside app-private storage for the camera to write a full-res photo into. */
+    /**
+     * Saves a copy of a vault entry's file out to the device's public storage (Downloads for
+     * files/PDFs, the Pictures/EasyArchive album for photos, Movies/EasyArchive for videos) —
+     * a plain byte-for-byte copy, so quality is identical to the original. Uses MediaStore on
+     * Android 10+ (no permission needed) and falls back to a direct file write + media-scanner
+     * nudge on older versions. Blocking — call from a background thread/coroutine.
+     */
+    fun exportEntryToDevice(context: Context, entry: Entry): Boolean {
+        if (entry.type == EntryType.TEXT) return false
+        val source = File(entry.content)
+        if (!source.exists()) return false
+        val displayName = entry.fileName ?: source.name
+        val extension = displayName.substringAfterLast('.', "").lowercase()
+        val mimeType = android.webkit.MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+            ?: "application/octet-stream"
+
+        return try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                val (collection, relativeDir) = when (entry.type) {
+                    EntryType.IMAGE -> android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI to
+                        (android.os.Environment.DIRECTORY_PICTURES + "/EasyArchive")
+                    EntryType.VIDEO -> android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI to
+                        (android.os.Environment.DIRECTORY_MOVIES + "/EasyArchive")
+                    else -> android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI to
+                        (android.os.Environment.DIRECTORY_DOWNLOADS + "/EasyArchive")
+                }
+                val values = android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, displayName)
+                    put(android.provider.MediaStore.MediaColumns.MIME_TYPE, mimeType)
+                    put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, relativeDir)
+                    put(android.provider.MediaStore.MediaColumns.IS_PENDING, 1)
+                }
+                val uri = context.contentResolver.insert(collection, values) ?: return false
+                context.contentResolver.openOutputStream(uri)?.use { out ->
+                    FileInputStream(source).use { it.copyTo(out) }
+                } ?: return false
+                values.clear()
+                values.put(android.provider.MediaStore.MediaColumns.IS_PENDING, 0)
+                context.contentResolver.update(uri, values, null, null)
+            } else {
+                @Suppress("DEPRECATION")
+                val baseDir = when (entry.type) {
+                    EntryType.IMAGE -> android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_PICTURES)
+                    EntryType.VIDEO -> android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_MOVIES)
+                    else -> android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
+                }
+                val targetDir = File(baseDir, "EasyArchive")
+                if (!targetDir.exists()) targetDir.mkdirs()
+                val destFile = File(targetDir, displayName)
+                FileInputStream(source).use { input ->
+                    FileOutputStream(destFile).use { output -> input.copyTo(output) }
+                }
+                android.media.MediaScannerConnection.scanFile(context, arrayOf(destFile.absolutePath), null, null)
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    /** Copies one of the app's bundled preset background images (res/raw) into app-private
+     *  storage, reusing exactly the same file the custom-gallery-photo picker writes to —
+     *  so the rest of the app doesn't need to know whether a wallpaper came from a preset or
+     *  the person's own gallery. Pure byte copy, no re-encoding, so quality is untouched. */
+    fun copyRawResourceToInternalStorage(context: Context, rawResId: Int, fileName: String): File {
+        val outFile = File(vaultDir(context).parentFile, fileName)
+        context.resources.openRawResource(rawResId).use { input ->
+            FileOutputStream(outFile).use { output -> input.copyTo(output) }
+        }
+        return outFile
+    }
+
+
     fun createImageCaptureFile(context: Context): File {
         return File(vaultDir(context), "scan_${UUID.randomUUID()}.jpg")
     }

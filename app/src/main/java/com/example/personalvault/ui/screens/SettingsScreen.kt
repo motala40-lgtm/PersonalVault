@@ -12,6 +12,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -27,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import coil.compose.AsyncImage
 import com.example.personalvault.R
 import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.ui.theme.accentScreenBackground
@@ -186,6 +189,45 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                     }) {
                         Text(stringResource(R.string.remove_wallpaper_button))
                     }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+            Text(
+                stringResource(R.string.nature_themes_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(8.dp))
+            Row {
+                NatureThemeThumb(
+                    rawResId = R.raw.nature_forest,
+                    fileName = "wallpaper_forest.png",
+                    label = stringResource(R.string.nature_forest)
+                ) { path ->
+                    wallpaperPath = path
+                    AppPreferences.setCustomWallpaperPath(context, path)
+                    onThemeOrLanguageChanged()
+                }
+                Spacer(Modifier.width(12.dp))
+                NatureThemeThumb(
+                    rawResId = R.raw.nature_ocean,
+                    fileName = "wallpaper_ocean.png",
+                    label = stringResource(R.string.nature_ocean)
+                ) { path ->
+                    wallpaperPath = path
+                    AppPreferences.setCustomWallpaperPath(context, path)
+                    onThemeOrLanguageChanged()
+                }
+                Spacer(Modifier.width(12.dp))
+                NatureThemeThumb(
+                    rawResId = R.raw.nature_sunset,
+                    fileName = "wallpaper_sunset.png",
+                    label = stringResource(R.string.nature_sunset)
+                ) { path ->
+                    wallpaperPath = path
+                    AppPreferences.setCustomWallpaperPath(context, path)
+                    onThemeOrLanguageChanged()
                 }
             }
 
@@ -517,6 +559,33 @@ private fun SetFolderRecoveryDialog(onDismiss: () -> Unit, onConfirm: (pet: Stri
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
     )
+}
+
+@Composable
+private fun NatureThemeThumb(rawResId: Int, fileName: String, label: String, onPicked: (String) -> Unit) {
+    val context = LocalContext.current
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .clickable {
+                    val file = com.example.personalvault.util.FileUtils.copyRawResourceToInternalStorage(
+                        context, rawResId, fileName
+                    )
+                    onPicked(file.absolutePath)
+                }
+        ) {
+            AsyncImage(
+                model = "android.resource://${context.packageName}/$rawResId",
+                contentDescription = label,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        Spacer(Modifier.height(4.dp))
+        Text(label, style = MaterialTheme.typography.labelSmall)
+    }
 }
 
 @Composable

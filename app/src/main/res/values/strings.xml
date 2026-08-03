@@ -172,6 +172,9 @@
     <string name="pin_label">پین</string>
     <string name="favorite_label">علاقه‌مندی</string>
     <string name="share">اشتراک‌گذاری</string>
+    <string name="save_to_device">ذخیره در گوشی</string>
+    <string name="save_to_device_success">فایل با کیفیت اصلی در گوشی ذخیره شد</string>
+    <string name="save_to_device_failed">ذخیره‌سازی فایل با خطا مواجه شد</string>
 
     <!-- Settings -->
     <string name="appearance">ظاهر</string>
@@ -179,6 +182,10 @@
     <string name="custom_wallpaper_hint">یا به‌جاش یه عکس از گالری خودت به‌عنوان پس‌زمینه انتخاب کن (با افکت محو)</string>
     <string name="pick_wallpaper_button">انتخاب عکس از گالری</string>
     <string name="remove_wallpaper_button">حذف عکس</string>
+    <string name="nature_themes_hint">یا یکی از تم‌های آماده‌ی الهام‌گرفته از طبیعت رو انتخاب کن:</string>
+    <string name="nature_forest">جنگل</string>
+    <string name="nature_ocean">اقیانوس</string>
+    <string name="nature_sunset">غروب</string>
     <string name="theme_system">پیش‌فرض سیستم</string>
     <string name="theme_light">روشن</string>
     <string name="theme_dark">تیره</string>

@@ -136,15 +136,6 @@ fun FolderListScreen(
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(R.string.app_title)) },
-                    actions = {
-                        Image(
-                            painter = painterResource(R.drawable.logo_easy_archive),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .padding(end = 8.dp)
-                        )
-                    },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
             },
@@ -234,6 +225,15 @@ fun FolderListScreen(
                     },
                     shape = RoundedCornerShape(16.dp),
                     singleLine = true
+                )
+
+                Image(
+                    painter = painterResource(R.drawable.logo_easy_archive),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .size(72.dp)
+                        .padding(bottom = 8.dp)
                 )
 
                 if (query.isNotBlank()) {
