@@ -5,6 +5,7 @@ import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -75,7 +76,10 @@ fun ReminderListScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: 
                 val dateStr = remember(reminder.dateTimeMillis) {
                     SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault()).format(Date(reminder.dateTimeMillis))
                 }
-                Card(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                Card(
+                    Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
                     Row(
                         Modifier.padding(12.dp).fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
