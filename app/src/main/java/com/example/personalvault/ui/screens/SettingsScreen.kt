@@ -363,7 +363,14 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                         }
                         context.startActivity(Intent.createChooser(intent, null))
                     } else {
-                        Toast.makeText(context, context.getString(R.string.backup_export_failed), Toast.LENGTH_LONG).show()
+                        // Temporary diagnostic: show the real exception message so we can
+                        // pin down what's actually failing, instead of a generic notice.
+                        val detail = result.exceptionOrNull()?.let { ": ${it.javaClass.simpleName} - ${it.message}" } ?: ""
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.backup_export_failed) + detail,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
