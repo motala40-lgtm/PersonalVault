@@ -76,6 +76,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
     var showRestorePasswordDialog by remember { mutableStateOf(false) }
     var pendingRestoreUri by remember { mutableStateOf<Uri?>(null) }
     var backupInProgress by remember { mutableStateOf(false) }
+    var showRestoreSuccessDialog by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
     val restorePicker = rememberLauncherForActivityResult(
@@ -375,6 +376,24 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
         )
     }
 
+    if (showRestoreSuccessDialog) {
+        AlertDialog(
+            onDismissRequest = { /* must restart to continue safely — no dismiss-without-action */ },
+            title = { Text(stringResource(R.string.backup_restore_success)) },
+            text = { Text(stringResource(R.string.restore_restart_notice)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    // A full process restart — every screen needs to reopen the database
+                    // that restore just replaced, not keep using stale connections/state.
+                    val restartIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                    restartIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(restartIntent)
+                    Runtime.getRuntime().exit(0)
+                }) { Text(stringResource(R.string.restart_now)) }
+            }
+        )
+    }
+
     exportErrorDetail?.let { detail ->
         AlertDialog(
             onDismissRequest = { exportErrorDetail = null },
@@ -418,12 +437,18 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                         }
                         backupInProgress = false
                         pendingRestoreUri = null
-                        val messageRes = when (restoreResult) {
-                            is BackupManager.RestoreResult.Success -> R.string.backup_restore_success
-                            is BackupManager.RestoreResult.WrongPassword -> R.string.backup_restore_wrong_password
-                            is BackupManager.RestoreResult.InvalidFile -> R.string.backup_restore_invalid_file
+                        if (restoreResult is BackupManager.RestoreResult.Success) {
+                            // The old database connection is now closed and pointing at
+                            // replaced files — every screen must reopen it fresh, so a full
+                            // app restart is required rather than just showing a toast.
+                            showRestoreSuccessDialog = true
+                        } else {
+                            val messageRes = when (restoreResult) {
+                                is BackupManager.RestoreResult.WrongPassword -> R.string.backup_restore_wrong_password
+                                else -> R.string.backup_restore_invalid_file
+                            }
+                            Toast.makeText(context, context.getString(messageRes), Toast.LENGTH_LONG).show()
                         }
-                        Toast.makeText(context, context.getString(messageRes), Toast.LENGTH_LONG).show()
                     }
                 }
             }

@@ -120,6 +120,8 @@
     <string name="enter_backup_password_title">رمز این فایل پشتیبان رو وارد کن</string>
     <string name="backup_export_failed">خروجی گرفتن با خطا مواجه شد</string>
     <string name="backup_restore_success">بازیابی انجام شد. لطفاً اپ رو کامل ببند و دوباره باز کن.</string>
+    <string name="restore_restart_notice">همه‌ی اطلاعات با موفقیت بازیابی شد. برای دیدن اطلاعات جدید، اپ باید یک‌بار دوباره باز بشه.</string>
+    <string name="restart_now">راه‌اندازی مجدد</string>
     <string name="backup_restore_wrong_password">رمز اشتباهه یا این فایل، فایل پشتیبان معتبری نیست</string>
     <string name="backup_restore_invalid_file">این فایل، فایل پشتیبان معتبری نیست</string>
     <string name="help_section_title">راهنمای استفاده</string>
