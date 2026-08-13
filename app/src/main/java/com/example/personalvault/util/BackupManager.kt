@@ -14,6 +14,8 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import javax.crypto.Cipher
+import javax.crypto.CipherInputStream
+import javax.crypto.CipherOutputStream
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
@@ -28,6 +30,12 @@ import javax.crypto.spec.SecretKeySpec
  * Container format (after encryption): [4-byte magic "EAB1"] [16-byte salt] [12-byte IV]
  * [AES-256-GCM ciphertext of a plain zip containing personal_vault.db + vault_files/...].
  *
+ * Both directions are STREAMED through the cipher in fixed-size chunks (CipherOutputStream /
+ * CipherInputStream) rather than reading the whole file into a byte array first — a vault
+ * with a couple hundred MB of photos/videos previously meant holding the entire zip AND its
+ * ciphertext in RAM simultaneously, which reliably threw OutOfMemoryError. Streaming keeps
+ * memory use constant regardless of vault size.
+ *
  * This deliberately does NOT use Android Keystore / EncryptedFile: keys backed by Keystore
  * don't survive an uninstall, which would make the backup useless for its actual purpose.
  * Instead the key is derived from the person's own password via PBKDF2, so the file can be
@@ -38,6 +46,7 @@ object BackupManager {
     private const val MAGIC = "EAB1"
     private const val PBKDF2_ITERATIONS = 150_000
     private const val KEY_LENGTH_BITS = 256
+    private const val STREAM_BUFFER_SIZE = 64 * 1024
 
     sealed class RestoreResult {
         object Success : RestoreResult()
@@ -76,39 +85,45 @@ object BackupManager {
         checkpointDatabase(context)
 
         val stagingZip = File(backupsDir(context), "staging_${System.currentTimeMillis()}.zip")
-        ZipOutputStream(FileOutputStream(stagingZip)).use { zip ->
-            dbFile(context).takeIf { it.exists() }?.let { db ->
-                zip.putNextEntry(ZipEntry("personal_vault.db"))
-                FileInputStream(db).use { it.copyTo(zip) }
-                zip.closeEntry()
-            }
-            vaultFilesDir(context).listFiles()?.forEach { file ->
-                if (file.isFile) {
-                    zip.putNextEntry(ZipEntry("vault_files/${file.name}"))
-                    FileInputStream(file).use { it.copyTo(zip) }
+        try {
+            ZipOutputStream(FileOutputStream(stagingZip)).use { zip ->
+                dbFile(context).takeIf { it.exists() }?.let { db ->
+                    zip.putNextEntry(ZipEntry("personal_vault.db"))
+                    FileInputStream(db).use { it.copyTo(zip, STREAM_BUFFER_SIZE) }
                     zip.closeEntry()
                 }
+                vaultFilesDir(context).listFiles()?.forEach { file ->
+                    if (file.isFile) {
+                        zip.putNextEntry(ZipEntry("vault_files/${file.name}"))
+                        FileInputStream(file).use { it.copyTo(zip, STREAM_BUFFER_SIZE) }
+                        zip.closeEntry()
+                    }
+                }
             }
+
+            val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
+            val iv = ByteArray(12).also { SecureRandom().nextBytes(it) }
+            val key = deriveKey(password, salt)
+
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, iv))
+
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
+            val outFile = File(backupsDir(context), "EasyArchive_backup_$timestamp.eabackup")
+            FileOutputStream(outFile).use { out ->
+                out.write(MAGIC.toByteArray(Charsets.US_ASCII))
+                out.write(salt)
+                out.write(iv)
+                // Streams the zip through the cipher in STREAM_BUFFER_SIZE chunks instead of
+                // loading it whole — this is the fix for the OutOfMemoryError on larger vaults.
+                CipherOutputStream(out, cipher).use { cipherOut ->
+                    FileInputStream(stagingZip).use { it.copyTo(cipherOut, STREAM_BUFFER_SIZE) }
+                }
+            }
+            return outFile
+        } finally {
+            stagingZip.delete()
         }
-
-        val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-        val iv = ByteArray(12).also { SecureRandom().nextBytes(it) }
-        val key = deriveKey(password, salt)
-
-        val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-        cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, iv))
-        val cipherBytes = cipher.doFinal(stagingZip.readBytes())
-        stagingZip.delete()
-
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
-        val outFile = File(backupsDir(context), "EasyArchive_backup_$timestamp.eabackup")
-        FileOutputStream(outFile).use { out ->
-            out.write(MAGIC.toByteArray(Charsets.US_ASCII))
-            out.write(salt)
-            out.write(iv)
-            out.write(cipherBytes)
-        }
-        return outFile
     }
 
     /**
@@ -120,52 +135,68 @@ object BackupManager {
      * would otherwise crash or silently keep showing pre-restore data.
      */
     fun importBackup(context: Context, uri: Uri, password: String): RestoreResult {
-        val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            ?: return RestoreResult.InvalidFile
-        if (bytes.size < 4 + 16 + 12 || String(bytes, 0, 4, Charsets.US_ASCII) != MAGIC) {
-            return RestoreResult.InvalidFile
-        }
-        val salt = bytes.copyOfRange(4, 20)
-        val iv = bytes.copyOfRange(20, 32)
-        val cipherBytes = bytes.copyOfRange(32, bytes.size)
-        val key = deriveKey(password, salt)
-
-        val plainBytes = try {
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
-            cipher.doFinal(cipherBytes)
-        } catch (e: Exception) {
-            // A wrong password produces a GCM authentication failure here, which is exactly
-            // the signal we want — GCM won't silently decrypt to garbage.
-            return RestoreResult.WrongPassword
-        }
-
-        AppDatabase.closeInstance()
-        // Stale WAL/SHM files from the pre-restore database must not linger next to the
-        // restored .db file, or SQLite could try to "recover" using old, mismatched data.
-        File(dbFile(context).path + "-wal").delete()
-        File(dbFile(context).path + "-shm").delete()
-
-        val filesDir = vaultFilesDir(context)
-        filesDir.listFiles()?.forEach { it.delete() }
-        if (!filesDir.exists()) filesDir.mkdirs()
-
-        ZipInputStream(plainBytes.inputStream()).use { zip ->
-            var entry = zip.nextEntry
-            while (entry != null) {
-                val outFile = when {
-                    entry.name == "personal_vault.db" -> dbFile(context)
-                    entry.name.startsWith("vault_files/") -> File(filesDir, entry.name.removePrefix("vault_files/"))
-                    else -> null
+        val stagingPlainZip = File(backupsDir(context), "staging_restore_${System.currentTimeMillis()}.zip")
+        try {
+            val input = context.contentResolver.openInputStream(uri) ?: return RestoreResult.InvalidFile
+            input.use { stream ->
+                val header = ByteArray(4 + 16 + 12)
+                var total = 0
+                while (total < header.size) {
+                    val n = stream.read(header, total, header.size - total)
+                    if (n == -1) return RestoreResult.InvalidFile
+                    total += n
                 }
-                if (outFile != null) {
-                    outFile.parentFile?.mkdirs()
-                    FileOutputStream(outFile).use { out -> zip.copyTo(out) }
+                if (String(header, 0, 4, Charsets.US_ASCII) != MAGIC) return RestoreResult.InvalidFile
+                val salt = header.copyOfRange(4, 20)
+                val iv = header.copyOfRange(20, 32)
+                val key = deriveKey(password, salt)
+
+                val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+                cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
+
+                try {
+                    // Streamed decrypt, same reasoning as exportBackup — a wrong password
+                    // still surfaces as an exception (GCM's auth tag check) once the stream
+                    // is fully consumed, just without holding the whole file in RAM first.
+                    CipherInputStream(stream, cipher).use { cipherIn ->
+                        FileOutputStream(stagingPlainZip).use { out -> cipherIn.copyTo(out, STREAM_BUFFER_SIZE) }
+                    }
+                } catch (e: Exception) {
+                    return RestoreResult.WrongPassword
                 }
-                zip.closeEntry()
-                entry = zip.nextEntry
             }
+
+            AppDatabase.closeInstance()
+            // Stale WAL/SHM files from the pre-restore database must not linger next to the
+            // restored .db file, or SQLite could try to "recover" using old, mismatched data.
+            File(dbFile(context).path + "-wal").delete()
+            File(dbFile(context).path + "-shm").delete()
+
+            val filesDir = vaultFilesDir(context)
+            filesDir.listFiles()?.forEach { it.delete() }
+            if (!filesDir.exists()) filesDir.mkdirs()
+
+            ZipInputStream(FileInputStream(stagingPlainZip)).use { zip ->
+                var entry = zip.nextEntry
+                while (entry != null) {
+                    val outFile = when {
+                        entry.name == "personal_vault.db" -> dbFile(context)
+                        entry.name.startsWith("vault_files/") -> File(filesDir, entry.name.removePrefix("vault_files/"))
+                        else -> null
+                    }
+                    if (outFile != null) {
+                        outFile.parentFile?.mkdirs()
+                        FileOutputStream(outFile).use { out -> zip.copyTo(out, STREAM_BUFFER_SIZE) }
+                    }
+                    zip.closeEntry()
+                    entry = zip.nextEntry
+                }
+            }
+            return RestoreResult.Success
+        } catch (e: Exception) {
+            return RestoreResult.InvalidFile
+        } finally {
+            stagingPlainZip.delete()
         }
-        return RestoreResult.Success
     }
 }
