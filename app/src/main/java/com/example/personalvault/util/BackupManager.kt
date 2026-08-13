@@ -6,6 +6,8 @@ import com.example.personalvault.data.AppDatabase
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -14,8 +16,6 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import javax.crypto.Cipher
-import javax.crypto.CipherInputStream
-import javax.crypto.CipherOutputStream
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
@@ -30,11 +30,11 @@ import javax.crypto.spec.SecretKeySpec
  * Container format (after encryption): [4-byte magic "EAB1"] [16-byte salt] [12-byte IV]
  * [AES-256-GCM ciphertext of a plain zip containing personal_vault.db + vault_files/...].
  *
- * Both directions are STREAMED through the cipher in fixed-size chunks (CipherOutputStream /
- * CipherInputStream) rather than reading the whole file into a byte array first — a vault
- * with a couple hundred MB of photos/videos previously meant holding the entire zip AND its
- * ciphertext in RAM simultaneously, which reliably threw OutOfMemoryError. Streaming keeps
- * memory use constant regardless of vault size.
+ * Both directions are streamed through the cipher in fixed-size chunks via manual
+ * Cipher.update()/doFinal() calls — NOT CipherInputStream/CipherOutputStream. Those classes
+ * are documented to be extremely slow (sometimes multiple minutes) or to hang entirely with
+ * AES/GCM on a number of real Android devices; manual chunked update/doFinal is both
+ * memory-safe (no whole-file buffering, so no OutOfMemoryError on larger vaults) and fast.
  *
  * This deliberately does NOT use Android Keystore / EncryptedFile: keys backed by Keystore
  * don't survive an uninstall, which would make the backup useless for its actual purpose.
@@ -67,6 +67,23 @@ object BackupManager {
         val spec = PBEKeySpec(password.toCharArray(), salt, PBKDF2_ITERATIONS, KEY_LENGTH_BITS)
         val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
         return SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
+    }
+
+    /** Runs [input] through [cipher] in [STREAM_BUFFER_SIZE] chunks and writes the result to
+     *  [output] — the manual equivalent of Cipher{Input,Output}Stream, chosen specifically to
+     *  avoid their known slowness/hangs with AES/GCM. Works for both encrypt and decrypt
+     *  depending on how [cipher] was initialized; for decrypt, a wrong password/corrupted
+     *  file surfaces as an exception from the final [Cipher.doFinal] call (GCM's tag check). */
+    private fun runCipherStreamed(input: InputStream, output: OutputStream, cipher: Cipher) {
+        val buffer = ByteArray(STREAM_BUFFER_SIZE)
+        while (true) {
+            val n = input.read(buffer)
+            if (n == -1) break
+            val chunk = cipher.update(buffer, 0, n)
+            if (chunk != null && chunk.isNotEmpty()) output.write(chunk)
+        }
+        val final = cipher.doFinal()
+        if (final.isNotEmpty()) output.write(final)
     }
 
     /** Merges the write-ahead log into the main .db file so a plain file copy is consistent. */
@@ -114,11 +131,7 @@ object BackupManager {
                 out.write(MAGIC.toByteArray(Charsets.US_ASCII))
                 out.write(salt)
                 out.write(iv)
-                // Streams the zip through the cipher in STREAM_BUFFER_SIZE chunks instead of
-                // loading it whole — this is the fix for the OutOfMemoryError on larger vaults.
-                CipherOutputStream(out, cipher).use { cipherOut ->
-                    FileInputStream(stagingZip).use { it.copyTo(cipherOut, STREAM_BUFFER_SIZE) }
-                }
+                FileInputStream(stagingZip).use { input -> runCipherStreamed(input, out, cipher) }
             }
             return outFile
         } finally {
@@ -155,13 +168,10 @@ object BackupManager {
                 cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
 
                 try {
-                    // Streamed decrypt, same reasoning as exportBackup — a wrong password
-                    // still surfaces as an exception (GCM's auth tag check) once the stream
-                    // is fully consumed, just without holding the whole file in RAM first.
-                    CipherInputStream(stream, cipher).use { cipherIn ->
-                        FileOutputStream(stagingPlainZip).use { out -> cipherIn.copyTo(out, STREAM_BUFFER_SIZE) }
-                    }
+                    FileOutputStream(stagingPlainZip).use { out -> runCipherStreamed(stream, out, cipher) }
                 } catch (e: Exception) {
+                    // A wrong password (or a corrupted/tampered file) fails GCM's authentication
+                    // tag check inside the final doFinal() call — exactly the signal we want.
                     return RestoreResult.WrongPassword
                 }
             }
