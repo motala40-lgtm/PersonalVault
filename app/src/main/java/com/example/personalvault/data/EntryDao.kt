@@ -3,6 +3,10 @@ package com.example.personalvault.data
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
+/** Row shape for [EntryDao.getFolderItemCounts]. */
+data class FolderItemCount(val folderId: Long, val count: Int)
+
+
 @Dao
 interface EntryDao {
     // Pinned items first, then by creation time. Deleted (trashed) items are excluded.
@@ -12,6 +16,15 @@ interface EntryDao {
         ORDER BY isPinned DESC, createdAt ASC
     """)
     fun getEntriesForFolder(folderId: Long): Flow<List<Entry>>
+
+    /** Live item count per folder (excluding trashed entries) — used for the "N items"
+     *  label on each folder card. */
+    @Query("""
+        SELECT folderId, COUNT(*) as count FROM entries
+        WHERE isDeleted = 0
+        GROUP BY folderId
+    """)
+    fun getFolderItemCounts(): Flow<List<FolderItemCount>>
 
     @Query("""
         SELECT * FROM entries

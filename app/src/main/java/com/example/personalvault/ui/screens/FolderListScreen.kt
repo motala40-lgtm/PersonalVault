@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,6 +50,7 @@ import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.GridColumns
 import com.example.personalvault.util.PastelPalette
+import com.example.personalvault.util.PastelPaletteDark
 import com.example.personalvault.util.SecurityManager
 import com.example.personalvault.viewmodel.VaultViewModel
 
@@ -72,6 +74,7 @@ fun FolderListScreen(
     onSearch: (String) -> Unit
 ) {
     val folders by viewModel.folders.collectAsState()
+    val folderItemCounts by viewModel.folderItemCounts.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf("") }
@@ -282,6 +285,7 @@ fun FolderListScreen(
                             items(folders, key = { it.id }) { folder ->
                                 FolderCard(
                                     folder = folder,
+                                    itemCount = folderItemCounts[folder.id] ?: 0,
                                     onClick = {
                                         if (folder.isLocked) openingFolder = folder else onOpenFolder(folder)
                                     },
@@ -461,6 +465,7 @@ private fun EmojiIconChip(
 @Composable
 private fun FolderCard(
     folder: Folder,
+    itemCount: Int,
     onClick: () -> Unit,
     onLockFolder: () -> Unit,
     onRemoveLock: () -> Unit,
@@ -470,59 +475,83 @@ private fun FolderCard(
     onShareFolder: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
+    val baseColor = remember(folder.colorHex) { Color(android.graphics.Color.parseColor(folder.colorHex)) }
+    val tabColor = remember(folder.colorHex) {
+        // A slightly deeper shade of the same pastel, for the little folder-tab accent
+        // patch in the corner — falls back to the base color for any custom/legacy hex
+        // that isn't one of our known pastel swatches.
+        val idx = PastelPalette.indexOf(folder.colorHex)
+        if (idx in PastelPaletteDark.indices) Color(android.graphics.Color.parseColor(PastelPaletteDark[idx])) else baseColor
+    }
+    val onColor = Color(0xFF1A1C1A)
 
-    Box {
-        Card(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(4f / 3f)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(20.dp),
+                ambientColor = Color.Black.copy(alpha = 0.10f),
+                spotColor = Color.Black.copy(alpha = 0.10f)
+            )
+            .clip(RoundedCornerShape(20.dp))
+            .background(baseColor)
+            .combinedClickable(onClick = onClick, onLongClick = { showMenu = true })
+    ) {
+        // The little "folder tab" accent patch — what makes this read as a folder rather
+        // than just a plain color card.
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .combinedClickable(onClick = onClick, onLongClick = { showMenu = true }),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                .align(Alignment.TopStart)
+                .fillMaxWidth(0.4f)
+                .fillMaxHeight(0.22f)
+                .background(tabColor, RoundedCornerShape(bottomEnd = 14.dp))
+        )
+
+        Row(
+            modifier = Modifier.align(Alignment.TopEnd).padding(2.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Box(
+            if (folder.isLocked) {
+                Icon(
+                    Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = onColor.copy(alpha = 0.7f),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .background(Color(android.graphics.Color.parseColor(folder.colorHex))),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        Icons.Default.Folder,
-                        contentDescription = null,
-                        tint = Color(0xFF5A5A5A),
-                        modifier = Modifier.size(32.dp)
-                    )
-                    if (folder.isLocked) {
-                        Icon(
-                            Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = Color(0xFF5A5A5A),
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(6.dp)
-                                .size(18.dp)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        folder.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 12.dp, top = 12.dp, bottom = 12.dp)
-                    )
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_options))
-                    }
-                }
+                        .padding(end = 4.dp)
+                        .size(16.dp)
+                )
             }
+            IconButton(onClick = { showMenu = true }, modifier = Modifier.size(32.dp)) {
+                Icon(
+                    Icons.Default.MoreVert,
+                    contentDescription = stringResource(R.string.more_options),
+                    tint = onColor.copy(alpha = 0.7f),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+        ) {
+            Text(
+                folder.name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = onColor,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(Modifier.height(2.dp))
+            Text(
+                stringResource(R.string.item_count, itemCount),
+                style = MaterialTheme.typography.bodySmall,
+                color = onColor.copy(alpha = 0.65f)
+            )
         }
 
         DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {

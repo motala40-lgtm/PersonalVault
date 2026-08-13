@@ -12,6 +12,7 @@ import com.example.personalvault.repository.VaultRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,11 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     val folders: StateFlow<List<Folder>> = repository.getAllFolders()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    /** folderId -> live item count, for the "N items" label on each folder card. */
+    val folderItemCounts: StateFlow<Map<Long, Int>> = repository.getFolderItemCounts()
+        .map { list -> list.associate { it.folderId to it.count } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
     val favorites: StateFlow<List<Entry>> = repository.getFavorites()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

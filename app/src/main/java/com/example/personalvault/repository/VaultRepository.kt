@@ -89,6 +89,7 @@ class VaultRepository(private val appContext: Context) {
 
     // Entries
     fun getEntriesForFolder(folderId: Long): Flow<List<Entry>> = entryDao.getEntriesForFolder(folderId)
+    fun getFolderItemCounts(): Flow<List<FolderItemCount>> = entryDao.getFolderItemCounts()
     suspend fun getEntriesSnapshotForFolder(folderId: Long): List<Entry> = entryDao.getEntriesForFolderSnapshot(folderId)
     fun getFavorites(): Flow<List<Entry>> = entryDao.getFavorites()
     fun getTrash(): Flow<List<Entry>> = entryDao.getTrash()

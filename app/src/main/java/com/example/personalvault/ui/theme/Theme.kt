@@ -37,10 +37,54 @@ private val DarkColors = darkColorScheme(
     onError = Color(0xFF121212)
 )
 
+// "Warm Security" design system colors — a warm, cream-toned palette meant to feel like a
+// cozy personal archive rather than a cold, clinical vault.
+val WarmPrimary = Color(0xFFA04111)
+val WarmOnPrimary = Color(0xFFFFFFFF)
+val WarmPrimaryContainer = Color(0xFFF27E4B)
+val WarmOnPrimaryContainer = Color(0xFF622000)
+val WarmSecondary = Color(0xFF306854)
+val WarmOnSecondary = Color(0xFFFFFFFF)
+val WarmSecondaryContainer = Color(0xFFB1ECD3)
+val WarmOnSecondaryContainer = Color(0xFF346D58)
+val WarmTertiary = Color(0xFF645E50)
+val WarmOnTertiary = Color(0xFFFFFFFF)
+val WarmTertiaryContainer = Color(0xFFA59E8E)
+val WarmOnTertiaryContainer = Color(0xFF3A3529)
+val WarmBackground = Color(0xFFFAF9F6)
+val WarmOnBackground = Color(0xFF1A1C1A)
+val WarmSurfaceVariant = Color(0xFFE3E2E0)
+val WarmOnSurfaceVariant = Color(0xFF56423A)
+val WarmOutline = Color(0xFF8A7269)
+val WarmError = Color(0xFFBA1A1A)
+val WarmOnError = Color(0xFFFFFFFF)
+val WarmErrorContainer = Color(0xFFFFDAD6)
+val WarmOnErrorContainer = Color(0xFF93000A)
+
 private val LightColors = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = WarmPrimary,
+    onPrimary = WarmOnPrimary,
+    primaryContainer = WarmPrimaryContainer,
+    onPrimaryContainer = WarmOnPrimaryContainer,
+    secondary = WarmSecondary,
+    onSecondary = WarmOnSecondary,
+    secondaryContainer = WarmSecondaryContainer,
+    onSecondaryContainer = WarmOnSecondaryContainer,
+    tertiary = WarmTertiary,
+    onTertiary = WarmOnTertiary,
+    tertiaryContainer = WarmTertiaryContainer,
+    onTertiaryContainer = WarmOnTertiaryContainer,
+    background = WarmBackground,
+    onBackground = WarmOnBackground,
+    surface = WarmBackground,
+    onSurface = WarmOnBackground,
+    surfaceVariant = WarmSurfaceVariant,
+    onSurfaceVariant = WarmOnSurfaceVariant,
+    outline = WarmOutline,
+    error = WarmError,
+    onError = WarmOnError,
+    errorContainer = WarmErrorContainer,
+    onErrorContainer = WarmOnErrorContainer
 )
 
 @Composable

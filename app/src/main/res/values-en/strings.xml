@@ -139,6 +139,7 @@
 
     <!-- Rename -->
     <string name="rename">Rename</string>
+    <string name="item_count">%d items</string>
     <string name="duplicate">Duplicate</string>
     <string name="rename_title">Rename file</string>
     <string name="rename_label">New name</string>
