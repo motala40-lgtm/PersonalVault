@@ -53,7 +53,7 @@ object AppPreferences {
     }
 
     fun getLanguage(context: Context): AppLanguage =
-        AppLanguage.valueOf(prefs(context).getString(KEY_LANGUAGE, AppLanguage.FA.name) ?: AppLanguage.FA.name)
+        AppLanguage.valueOf(prefs(context).getString(KEY_LANGUAGE, AppLanguage.EN.name) ?: AppLanguage.EN.name)
 
     fun setLanguage(context: Context, language: AppLanguage) {
         prefs(context).edit().putString(KEY_LANGUAGE, language.name).apply()
