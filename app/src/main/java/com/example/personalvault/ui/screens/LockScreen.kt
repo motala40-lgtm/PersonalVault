@@ -1,22 +1,34 @@
 package com.example.personalvault.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentActivity
+import androidx.compose.ui.unit.sp
 import com.example.personalvault.R
 import com.example.personalvault.util.SecurityManager
+
+private const val PIN_LENGTH = 4
 
 @Composable
 fun LockScreen(
@@ -34,50 +46,151 @@ fun LockScreen(
         if (biometricEnabled) onRequestBiometric()
     }
 
+    fun tryUnlock() {
+        if (SecurityManager.verifyPin(context, pin)) {
+            onUnlocked()
+        } else {
+            error = wrongPasswordText
+            pin = ""
+        }
+    }
+
+    fun onDigit(digit: Int) {
+        if (pin.length >= PIN_LENGTH) return
+        error = null
+        pin += digit
+        if (pin.length == PIN_LENGTH) tryUnlock()
+    }
+
+    fun onBackspace() {
+        if (pin.isEmpty()) return
+        error = null
+        pin = pin.dropLast(1)
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.linearGradient(
+                    listOf(Color(0xFFFFDBCE), Color(0xFFFAF9F6), Color(0xFFEAE2D0))
+                )
+            )
+            .padding(horizontal = 24.dp, vertical = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(48.dp))
-        Spacer(Modifier.height(16.dp))
-        Text(stringResource(R.string.vault_locked), style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(24.dp))
 
-        OutlinedTextField(
-            value = pin,
-            onValueChange = { pin = it; error = null },
-            label = { Text(stringResource(R.string.password_label)) },
-            visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.NumberPassword)
+        Box(
+            modifier = Modifier
+                .size(96.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFFFDBCE)),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.logo_easy_archive),
+                contentDescription = null,
+                modifier = Modifier.size(64.dp)
+            )
+        }
+        Spacer(Modifier.height(20.dp))
+        Text(
+            stringResource(R.string.vault_locked),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF1A1C1A)
         )
-        error?.let {
-            Spacer(Modifier.height(8.dp))
-            Text(it, color = MaterialTheme.colorScheme.error)
-        }
-        Spacer(Modifier.height(16.dp))
-        Button(onClick = {
-            if (SecurityManager.verifyPin(context, pin)) {
-                onUnlocked()
-            } else {
-                error = wrongPasswordText
+        Spacer(Modifier.height(6.dp))
+        Text(
+            stringResource(R.string.password_label),
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color(0xFF56423A)
+        )
+
+        Spacer(Modifier.height(20.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            repeat(PIN_LENGTH) { index ->
+                val filled = index < pin.length
+                Box(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clip(CircleShape)
+                        .then(
+                            if (filled) {
+                                Modifier.background(Color(0xFFA04111))
+                            } else {
+                                Modifier
+                                    .border(2.dp, Color(0xFFDDC0B6), CircleShape)
+                                    .background(Color(0xFFFAF9F6))
+                            }
+                        )
+                )
             }
-        }) {
-            Text(stringResource(R.string.login))
         }
+
+        error?.let {
+            Spacer(Modifier.height(12.dp))
+            Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        val digitRows = listOf(
+            listOf(1, 2, 3),
+            listOf(4, 5, 6),
+            listOf(7, 8, 9)
+        )
+        digitRows.forEach { row ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                row.forEach { digit ->
+                    PinPadButton(digit.toString(), onClick = { onDigit(digit) })
+                }
+            }
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Spacer(Modifier.size(64.dp))
+            PinPadButton("0", onClick = { onDigit(0) })
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .clickable { onBackspace() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Default.Backspace, contentDescription = stringResource(R.string.back), tint = Color(0xFFA04111))
+            }
+        }
+
+        Spacer(Modifier.weight(1f))
 
         if (biometricEnabled) {
-            Spacer(Modifier.height(16.dp))
-            OutlinedButton(onClick = onRequestBiometric) {
-                Icon(Icons.Default.Fingerprint, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.biometric_login))
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFFFFFFF))
+                    .clickable(onClick = onRequestBiometric),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Default.Fingerprint,
+                    contentDescription = stringResource(R.string.biometric_login),
+                    tint = Color(0xFFA04111),
+                    modifier = Modifier.size(32.dp)
+                )
             }
+            Spacer(Modifier.height(12.dp))
         }
 
-        Spacer(Modifier.height(8.dp))
         TextButton(onClick = { showForgotDialog = true }) {
-            Text(stringResource(R.string.forgot_password))
+            Text(stringResource(R.string.forgot_password), color = Color(0xFF56423A))
         }
     }
 
@@ -88,6 +201,25 @@ fun LockScreen(
                 showForgotDialog = false
                 onUnlocked()
             }
+        )
+    }
+}
+
+@Composable
+private fun PinPadButton(label: String, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(64.dp)
+            .clip(CircleShape)
+            .background(Color(0xFFF27E4B).copy(alpha = 0.9f))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            label,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = Color(0xFF622000)
         )
     }
 }

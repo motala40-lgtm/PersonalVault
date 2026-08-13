@@ -88,8 +88,14 @@ class MainActivity : FragmentActivity() {
 
             PersonalVaultTheme(darkTheme = darkTheme) {
                 var screen by remember { mutableStateOf<Screen>(Screen.FolderList) }
+                var showOnboarding by remember { mutableStateOf(!AppPreferences.hasSeenOnboarding(this)) }
 
-                if (!unlocked) {
+                if (showOnboarding) {
+                    WelcomeScreen(onGetStarted = {
+                        AppPreferences.setHasSeenOnboarding(this, true)
+                        showOnboarding = false
+                    })
+                } else if (!unlocked) {
                     LockScreen(
                         onUnlocked = { unlocked = true },
                         onRequestBiometric = { showBiometricPrompt { unlocked = true } }

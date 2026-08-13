@@ -64,6 +64,9 @@
     <string name="search_results">Search results</string>
     <string name="no_folders_yet">No folders yet — tap + to create one</string>
     <string name="app_title">Easy Archive</string>
+    <string name="welcome_tagline">Complete security, fully offline</string>
+    <string name="get_started">Get Started</string>
+    <string name="learn_about_privacy">Learn more about our privacy</string>
     <string name="support">Support</string>
     <string name="contact_support">Contact support</string>
 

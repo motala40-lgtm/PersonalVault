@@ -66,6 +66,9 @@
     <string name="search_results">نتایج جستجو</string>
     <string name="no_folders_yet">هنوز پوشه‌ای نساختی؛ با دکمه‌ی + یکی بساز</string>
     <string name="app_title">ایزی آرشیو</string>
+    <string name="welcome_tagline">امنیت کامل، کاملاً آفلاین</string>
+    <string name="get_started">شروع کنید</string>
+    <string name="learn_about_privacy">درباره حریم خصوصی ما بیشتر بدانید</string>
     <string name="support">پشتیبانی</string>
     <string name="contact_support">تماس با پشتیبانی</string>
 

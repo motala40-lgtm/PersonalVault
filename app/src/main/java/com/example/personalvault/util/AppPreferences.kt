@@ -13,8 +13,16 @@ object AppPreferences {
     private const val KEY_GRID_COLUMNS = "grid_columns"
     private const val KEY_FOLDER_GRID_COLUMNS = "folder_grid_columns"
     private const val KEY_ACCENT_COLOR = "accent_color_hex"
+    private const val KEY_HAS_SEEN_ONBOARDING = "has_seen_onboarding"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    /** True once the person has tapped "Get Started" on the first-launch welcome screen. */
+    fun hasSeenOnboarding(context: Context): Boolean = prefs(context).getBoolean(KEY_HAS_SEEN_ONBOARDING, false)
+
+    fun setHasSeenOnboarding(context: Context, seen: Boolean) {
+        prefs(context).edit().putBoolean(KEY_HAS_SEEN_ONBOARDING, seen).apply()
+    }
 
     // Null/blank means "White" — no colored background gradient, just the plain theme background.
     fun getAccentColorHex(context: Context): String? {
