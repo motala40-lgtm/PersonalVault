@@ -9,11 +9,14 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.personalvault"
+        // The public Google Play identity — permanent once published, and deliberately NOT
+        // "com.example.*" (which Play rejects). The internal `namespace` above stays as the
+        // original package so no source files need moving; only this outward-facing ID changes.
+        applicationId = "com.newlifetech.easyarchive"
         minSdk = 24
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.1"
+        versionCode = 5
+        versionName = "1.0"
     }
 
     signingConfigs {

@@ -11,7 +11,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.layout.ContentScale
@@ -72,7 +71,6 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
     }
     var showFolderRecoveryDialog by remember { mutableStateOf(false) }
     var showExportPasswordDialog by remember { mutableStateOf(false) }
-    var exportErrorDetail by remember { mutableStateOf<String?>(null) }
     var showRestorePasswordDialog by remember { mutableStateOf(false) }
     var pendingRestoreUri by remember { mutableStateOf<Uri?>(null) }
     var backupInProgress by remember { mutableStateOf(false) }
@@ -366,10 +364,11 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                         }
                         context.startActivity(Intent.createChooser(intent, null))
                     } else {
-                        // Temporary diagnostic: a full stack trace (not just the message) so
-                        // we can pin down exactly which line is still allocating too much.
-                        exportErrorDetail = result.exceptionOrNull()?.stackTraceToString()
-                            ?: "Unknown error (no exception captured)"
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.backup_export_failed),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
@@ -390,30 +389,6 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                     context.startActivity(restartIntent)
                     Runtime.getRuntime().exit(0)
                 }) { Text(stringResource(R.string.restart_now)) }
-            }
-        )
-    }
-
-    exportErrorDetail?.let { detail ->
-        AlertDialog(
-            onDismissRequest = { exportErrorDetail = null },
-            title = { Text("Export failed (diagnostic)") },
-            text = {
-                Box(Modifier.heightIn(max = 400.dp).verticalScroll(rememberScrollState())) {
-                    SelectionContainer {
-                        Text(detail, style = MaterialTheme.typography.bodySmall)
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val clipboard = context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                    clipboard.setPrimaryClip(android.content.ClipData.newPlainText("error", detail))
-                    exportErrorDetail = null
-                }) { Text("Copy & close") }
-            },
-            dismissButton = {
-                TextButton(onClick = { exportErrorDetail = null }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
