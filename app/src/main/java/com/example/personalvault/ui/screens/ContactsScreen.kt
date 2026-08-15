@@ -337,11 +337,13 @@ private fun ContactEditDialog(
 private fun dialNumber(context: android.content.Context, phone: String?) {
     if (phone.isNullOrBlank()) return
     val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
+    com.example.personalvault.markAwaitingExternalResult(context)
     runCatching { context.startActivity(intent) }
 }
 
 private fun sendSms(context: android.content.Context, phone: String?) {
     if (phone.isNullOrBlank()) return
     val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phone"))
+    com.example.personalvault.markAwaitingExternalResult(context)
     runCatching { context.startActivity(intent) }
 }

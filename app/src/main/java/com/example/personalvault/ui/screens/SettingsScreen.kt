@@ -181,6 +181,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
             Spacer(Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(onClick = {
+                    com.example.personalvault.markAwaitingExternalResult(context)
                     wallpaperPicker.launch(
                         androidx.activity.result.PickVisualMediaRequest(
                             ActivityResultContracts.PickVisualMedia.ImageOnly
@@ -298,7 +299,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
             }
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
-                onClick = { restorePicker.launch(arrayOf("*/*")) },
+                onClick = { com.example.personalvault.markAwaitingExternalResult(context); restorePicker.launch(arrayOf("*/*")) },
                 enabled = !backupInProgress,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -331,6 +332,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("mailto:$SUPPORT_EMAIL")
                 }
+                com.example.personalvault.markAwaitingExternalResult(context)
                 runCatching { context.startActivity(intent) }
             }) {
                 Icon(Icons.Default.Email, contentDescription = null)
@@ -362,6 +364,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                             putExtra(Intent.EXTRA_STREAM, uri)
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         }
+                        com.example.personalvault.markAwaitingExternalResult(context)
                         context.startActivity(Intent.createChooser(intent, null))
                     } else {
                         Toast.makeText(

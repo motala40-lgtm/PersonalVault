@@ -387,6 +387,7 @@ private fun shareEntry(context: android.content.Context, entry: Entry, shareChoo
         putExtra(Intent.EXTRA_STREAM, uri)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
+    com.example.personalvault.markAwaitingExternalResult(context)
     context.startActivity(Intent.createChooser(intent, shareChooserTitle))
 }
 

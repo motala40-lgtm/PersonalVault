@@ -124,6 +124,7 @@ fun FolderScreen(
         val file = FileUtils.createImageCaptureFile(context)
         pendingCameraFile = file
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+        com.example.personalvault.markAwaitingExternalResult(context)
         cameraLauncher.launch(uri)
     }
 
@@ -188,13 +189,13 @@ fun FolderScreen(
                             leadingIcon = { Icon(Icons.Default.Image, contentDescription = null) },
                             onClick = {
                                 showAddMenu = false
-                                mediaPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                                com.example.personalvault.markAwaitingExternalResult(context); mediaPicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
                             }
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.attach_file)) },
                             leadingIcon = { Icon(Icons.Default.AttachFile, contentDescription = null) },
-                            onClick = { showAddMenu = false; filePicker.launch("*/*") }
+                            onClick = { showAddMenu = false; com.example.personalvault.markAwaitingExternalResult(context); filePicker.launch("*/*") }
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.scan_document)) },
@@ -342,6 +343,7 @@ private fun openEntryExternally(context: android.content.Context, entry: Entry) 
         setDataAndType(uri, mime)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
+    com.example.personalvault.markAwaitingExternalResult(context)
     runCatching { context.startActivity(intent) }
         .onFailure {
             Toast.makeText(context, context.getString(R.string.no_app_to_open_file), Toast.LENGTH_LONG).show()
@@ -422,7 +424,14 @@ private fun VideoViewerDialog(entry: Entry, onDismiss: () -> Unit) {
             AndroidView(
                 factory = { ctx ->
                     android.widget.VideoView(ctx).apply {
-                        setVideoPath(FileUtils.resolveVaultFile(ctx, entry.content).absolutePath)
+                        // VideoView.setVideoPath on a file in the app's private dir often fails
+                        // silently (no read access for the media player process). Going through
+                        // FileProvider grants a proper content:// URI the player can actually read.
+                        val file = FileUtils.resolveVaultFile(ctx, entry.content)
+                        val uri = androidx.core.content.FileProvider.getUriForFile(
+                            ctx, "${ctx.packageName}.fileprovider", file
+                        )
+                        setVideoURI(uri)
                         val controller = android.widget.MediaController(ctx)
                         controller.setAnchorView(this)
                         setMediaController(controller)

@@ -54,11 +54,28 @@ class MainActivity : FragmentActivity() {
     // Re-lock the vault whenever the entire app (every screen, not just one Activity call like
     // opening the camera) leaves the foreground. Without this, once unlocked the vault stayed
     // open forever until the app process was killed.
+    //
+    // Beyond re-locking, we also finish() the Activity on background so returning via the
+    // Recents screen starts the app fresh (folder list / lock screen) rather than resuming
+    // wherever the person left off. We only do this when the whole TASK is no longer visible
+    // (isFinishing==false but the app genuinely backgrounded), and never while we're waiting on
+    // a picker/camera/share result we launched ourselves.
     private val lockOnBackgroundObserver = LifecycleEventObserver { _, event ->
-        if (event == Lifecycle.Event.ON_STOP && SecurityManager.isLockEnabled(this)) {
-            unlocked = false
+        if (event == Lifecycle.Event.ON_STOP) {
+            if (SecurityManager.isLockEnabled(this)) {
+                unlocked = false
+            }
+            if (!isChangingConfigurations && !awaitingExternalResult) {
+                finish()
+            }
+            // One-shot: clear the guard so the next real backgrounding finishes normally.
+            awaitingExternalResult = false
         }
     }
+
+    // Set to true right before launching an external picker/camera/share intent, so the
+    // background-finish above doesn't kill us while we're legitimately waiting for its result.
+    var awaitingExternalResult: Boolean = false
 
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op either way */ }
@@ -203,5 +220,19 @@ class MainActivity : FragmentActivity() {
             .setNegativeButtonText(getString(R.string.cancel))
             .build()
         prompt.authenticate(promptInfo)
+    }
+}
+
+/**
+ * Marks that an external picker/camera/share intent is about to be launched, so the app's
+ * background-finish logic (which otherwise restarts the app fresh whenever it leaves the
+ * foreground) doesn't kill the Activity while it's legitimately waiting for that result.
+ * Safe no-op if the context isn't a MainActivity.
+ */
+fun markAwaitingExternalResult(context: android.content.Context) {
+    var c = context
+    while (c is android.content.ContextWrapper) {
+        if (c is MainActivity) { c.awaitingExternalResult = true; return }
+        c = c.baseContext
     }
 }
