@@ -111,7 +111,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
             ThemeMode.values().forEach { mode ->
                 Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
@@ -133,11 +133,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.accent_color), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.accent_color), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
             Row {
                 // "White" — the plain/no-gradient option — always comes first.
@@ -203,11 +201,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.security), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.security), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
 
             Row(
@@ -266,11 +262,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 )
             }
 
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.folder_recovery_section_title), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.folder_recovery_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.folder_recovery_section_hint),
@@ -282,11 +276,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 Text(stringResource(R.string.set_folder_recovery_button))
             }
 
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.backup_section_title), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.backup_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(4.dp))
             Text(stringResource(R.string.backup_section_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
@@ -310,11 +302,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
 
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.help_section_title), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.help_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = onOpenHelp, modifier = Modifier.fillMaxWidth()) {
                 Icon(Icons.Default.Info, contentDescription = null)
@@ -322,11 +312,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 Text(stringResource(R.string.open_help_button))
             }
 
-            Spacer(Modifier.height(16.dp))
-            Divider()
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.support), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
+            Text(stringResource(R.string.support), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = {
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
