@@ -23,6 +23,25 @@ object FileUtils {
         return dir
     }
 
+    /**
+     * Resolves the on-disk file for an entry's stored `content` path, resiliently.
+     *
+     * Historically `content` held an ABSOLUTE path that embedded the app's private data dir
+     * (…/files/vault_files/NAME). That path bakes in the applicationId, so after the Play
+     * Store rename (com.example.personalvault → com.newlifetech.easyarchive) — or any restore
+     * onto a different install — the stored absolute path no longer exists, and photos show
+     * as blank cards even though the actual file was restored correctly.
+     *
+     * This always re-derives the real location from just the file NAME, under the CURRENT
+     * install's vault_files dir. Falls back to the raw stored path only if that lookup misses,
+     * so nothing regresses for entries that were fine already.
+     */
+    fun resolveVaultFile(context: Context, storedContent: String): File {
+        val byName = File(vaultDir(context), File(storedContent).name)
+        if (byName.exists()) return byName
+        return File(storedContent)
+    }
+
     private fun sharesDir(context: Context): File {
         val dir = File(context.cacheDir, "shares")
         if (!dir.exists()) dir.mkdirs()
@@ -70,7 +89,7 @@ object FileUtils {
                     zip.write(entry.content.toByteArray(Charsets.UTF_8))
                     zip.closeEntry()
                 } else {
-                    val source = File(entry.content)
+                    val source = resolveVaultFile(context, entry.content)
                     if (source.exists()) {
                         val name = uniqueName(entry.fileName ?: source.name)
                         zip.putNextEntry(ZipEntry(name))
@@ -124,7 +143,7 @@ object FileUtils {
      */
     fun exportEntryToDevice(context: Context, entry: Entry): Boolean {
         if (entry.type == EntryType.TEXT) return false
-        val source = File(entry.content)
+        val source = resolveVaultFile(context, entry.content)
         if (!source.exists()) return false
         val displayName = entry.fileName ?: source.name
         val extension = displayName.substringAfterLast('.', "").lowercase()

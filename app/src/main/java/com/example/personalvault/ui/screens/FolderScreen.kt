@@ -333,7 +333,7 @@ fun FolderScreen(
 
 /** Opens a FILE/PDF_SCAN entry in whatever external app the device has for its type. */
 private fun openEntryExternally(context: android.content.Context, entry: Entry) {
-    val file = File(entry.content)
+    val file = com.example.personalvault.util.FileUtils.resolveVaultFile(context, entry.content)
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     val mime = context.contentResolver.getType(uri)
         ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension.lowercase())
@@ -355,6 +355,7 @@ private fun openEntryExternally(context: android.content.Context, entry: Entry) 
 @Composable
 private fun ImageViewerDialog(images: List<Entry>, initialIndex: Int, onDismiss: () -> Unit) {
     val pagerState = rememberPagerState(initialPage = initialIndex) { images.size }
+    val context = LocalContext.current
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Box(
@@ -369,7 +370,7 @@ private fun ImageViewerDialog(images: List<Entry>, initialIndex: Int, onDismiss:
                 val entry = images[page]
 
                 AsyncImage(
-                    model = File(entry.content),
+                    model = FileUtils.resolveVaultFile(context, entry.content),
                     contentDescription = entry.fileName,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
@@ -421,7 +422,7 @@ private fun VideoViewerDialog(entry: Entry, onDismiss: () -> Unit) {
             AndroidView(
                 factory = { ctx ->
                     android.widget.VideoView(ctx).apply {
-                        setVideoPath(entry.content)
+                        setVideoPath(FileUtils.resolveVaultFile(ctx, entry.content).absolutePath)
                         val controller = android.widget.MediaController(ctx)
                         controller.setAnchorView(this)
                         setMediaController(controller)

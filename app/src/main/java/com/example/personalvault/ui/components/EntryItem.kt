@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import com.example.personalvault.R
+import com.example.personalvault.util.FileUtils
 import com.example.personalvault.data.Entry
 import com.example.personalvault.data.EntryType
 import java.io.File
@@ -68,7 +69,7 @@ fun EntryItem(
                 }
                 EntryType.IMAGE -> {
                     AsyncImage(
-                        model = File(entry.content),
+                        model = FileUtils.resolveVaultFile(context, entry.content),
                         contentDescription = entry.fileName,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -225,7 +226,7 @@ fun EntryGridCard(
                         }
                         EntryType.IMAGE -> {
                             AsyncImage(
-                                model = File(entry.content),
+                                model = FileUtils.resolveVaultFile(context, entry.content),
                                 contentDescription = entry.fileName,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
@@ -379,7 +380,7 @@ fun EntryGridCard(
 }
 
 private fun shareEntry(context: android.content.Context, entry: Entry, shareChooserTitle: String) {
-    val file = File(entry.content)
+    val file = com.example.personalvault.util.FileUtils.resolveVaultFile(context, entry.content)
     val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = context.contentResolver.getType(uri) ?: "*/*"
