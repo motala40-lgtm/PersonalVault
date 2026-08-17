@@ -16,8 +16,8 @@
     <application
         android:allowBackup="false"
         android:largeHeap="true"
-        android:icon="@drawable/logo_easy_archive"
-        android:roundIcon="@drawable/logo_easy_archive"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_launcher_label"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
