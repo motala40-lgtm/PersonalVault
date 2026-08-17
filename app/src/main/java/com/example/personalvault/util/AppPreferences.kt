@@ -14,6 +14,7 @@ object AppPreferences {
     private const val KEY_FOLDER_GRID_COLUMNS = "folder_grid_columns"
     private const val KEY_ACCENT_COLOR = "accent_color_hex"
     private const val KEY_HAS_SEEN_ONBOARDING = "has_seen_onboarding"
+    private const val KEY_HAS_SEEN_EMPTY_VAULT_PROMPT = "has_seen_empty_vault_prompt"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
@@ -22,6 +23,16 @@ object AppPreferences {
 
     fun setHasSeenOnboarding(context: Context, seen: Boolean) {
         prefs(context).edit().putBoolean(KEY_HAS_SEEN_ONBOARDING, seen).apply()
+    }
+
+    /** True once the person has dismissed (or acted on) the one-time "vault is empty — do you
+     *  have a backup?" prompt shown on the folder list. Prevents it from nagging on every
+     *  launch once someone has genuinely started using an empty vault on purpose. */
+    fun hasSeenEmptyVaultPrompt(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_HAS_SEEN_EMPTY_VAULT_PROMPT, false)
+
+    fun setHasSeenEmptyVaultPrompt(context: Context, seen: Boolean) {
+        prefs(context).edit().putBoolean(KEY_HAS_SEEN_EMPTY_VAULT_PROMPT, seen).apply()
     }
 
     // Null/blank means "White" — no colored background gradient, just the plain theme background.

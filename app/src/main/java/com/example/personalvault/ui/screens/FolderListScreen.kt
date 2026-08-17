@@ -76,6 +76,8 @@ fun FolderListScreen(
     val folders by viewModel.folders.collectAsState()
     val folderItemCounts by viewModel.folderItemCounts.collectAsState()
     val searchResults by viewModel.searchResults.collectAsState()
+
+    var showEmptyVaultPrompt by remember { mutableStateOf(false) }
     var showAddDialog by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf("") }
 
@@ -102,6 +104,17 @@ fun FolderListScreen(
     val shareEmptyNotice = stringResource(R.string.folder_share_empty_notice)
     val context = LocalContext.current
     var folderGridColumns by remember { mutableStateOf(AppPreferences.getFolderGridColumns(context)) }
+
+    // One-time nudge: if the vault is empty the very first time this screen is checked
+    // (fresh install, reinstall, or a restore that silently failed), ask whether the person
+    // has a backup to restore before they start adding folders into what might otherwise
+    // look like just a normal empty state. Never shown again after the first dismissal, so
+    // it doesn't nag someone who is genuinely starting fresh on purpose.
+    LaunchedEffect(folders) {
+        if (folders.isEmpty() && !AppPreferences.hasSeenEmptyVaultPrompt(context)) {
+            showEmptyVaultPrompt = true
+        }
+    }
 
     fun runFolderAction(folder: Folder, action: FolderMenuAction) {
         when (action) {
@@ -402,6 +415,27 @@ fun FolderListScreen(
 
     if (showLanguageDialog) {
         LanguageDialog(onDismiss = { showLanguageDialog = false })
+    }
+
+    if (showEmptyVaultPrompt) {
+        AlertDialog(
+            onDismissRequest = { /* require an explicit choice, not a tap-outside dismiss */ },
+            title = { Text(stringResource(R.string.empty_vault_prompt_title)) },
+            text = { Text(stringResource(R.string.empty_vault_prompt_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    AppPreferences.setHasSeenEmptyVaultPrompt(context, true)
+                    showEmptyVaultPrompt = false
+                    onOpenSettings()
+                }) { Text(stringResource(R.string.empty_vault_prompt_restore)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    AppPreferences.setHasSeenEmptyVaultPrompt(context, true)
+                    showEmptyVaultPrompt = false
+                }) { Text(stringResource(R.string.empty_vault_prompt_continue)) }
+            }
+        )
     }
 }
 

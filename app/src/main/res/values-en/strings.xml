@@ -118,6 +118,10 @@
     <string name="enter_backup_password_title">Enter this backup file\'s password</string>
     <string name="backup_export_failed">Export failed</string>
     <string name="backup_restore_success">Restore complete. Please fully close and reopen the app.</string>
+    <string name="empty_vault_prompt_title">Your vault is empty</string>
+    <string name="empty_vault_prompt_body">If you\'ve used this app before and have a backup file (.eabackup), we suggest restoring it now — before creating any new folders. If this is your first time, or the vault should genuinely be empty, you can skip this.</string>
+    <string name="empty_vault_prompt_restore">Restore from backup</string>
+    <string name="empty_vault_prompt_continue">No, continue</string>
     <string name="restore_restart_notice">All your data has been restored successfully. The app needs to reopen once to show it.</string>
     <string name="restart_now">Restart now</string>
     <string name="backup_restore_wrong_password">Wrong password, or this isn\'t a valid backup file</string>
