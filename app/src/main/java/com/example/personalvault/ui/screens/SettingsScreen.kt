@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -332,9 +333,12 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
     } // close ScreenBackground
 
     if (showExportPasswordDialog) {
+        val appPasswordExists = SecurityManager.hasPinSet(context)
         BackupPasswordDialog(
-            title = stringResource(R.string.set_backup_password_title),
+            title = if (appPasswordExists) stringResource(R.string.confirm_app_password_title) else stringResource(R.string.set_backup_password_title),
             confirmRequired = true,
+            verifyAgainstAppPassword = appPasswordExists,
+            hint = if (appPasswordExists) stringResource(R.string.confirm_app_password_hint) else stringResource(R.string.set_backup_password_no_recovery_hint),
             onDismiss = { showExportPasswordDialog = false },
             onConfirm = { password ->
                 showExportPasswordDialog = false
@@ -388,6 +392,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
         BackupPasswordDialog(
             title = stringResource(R.string.enter_backup_password_title),
             confirmRequired = false,
+            hint = stringResource(R.string.enter_backup_password_hint),
             onDismiss = {
                 showRestorePasswordDialog = false
                 pendingRestoreUri = null
@@ -451,20 +456,32 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
 private fun BackupPasswordDialog(
     title: String,
     confirmRequired: Boolean,
+    // When true, this dialog is verifying the person's EXISTING app-wide password (for
+    // export) rather than inventing a brand-new one-off backup password — so there's no
+    // confirm field, and a wrong entry is caught immediately via SecurityManager.verifyPin
+    // instead of silently producing a backup encrypted with an unintended value.
+    verifyAgainstAppPassword: Boolean = false,
+    hint: String? = null,
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
+    val context = LocalContext.current
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
     val minLengthError = stringResource(R.string.password_min_error)
     val mismatchError = stringResource(R.string.passwords_mismatch_error)
+    val wrongAppPasswordError = stringResource(R.string.wrong_password)
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
             Column {
+                hint?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.height(8.dp))
+                }
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -472,7 +489,7 @@ private fun BackupPasswordDialog(
                     visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
                     singleLine = true
                 )
-                if (confirmRequired) {
+                if (confirmRequired && !verifyAgainstAppPassword) {
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
                         value = confirmPassword,
@@ -492,7 +509,8 @@ private fun BackupPasswordDialog(
             TextButton(onClick = {
                 when {
                     password.length < 4 -> error = minLengthError
-                    confirmRequired && password != confirmPassword -> error = mismatchError
+                    verifyAgainstAppPassword && !SecurityManager.verifyPin(context, password) -> error = wrongAppPasswordError
+                    confirmRequired && !verifyAgainstAppPassword && password != confirmPassword -> error = mismatchError
                     else -> onConfirm(password)
                 }
             }) { Text(stringResource(R.string.save)) }
@@ -571,12 +589,23 @@ private fun AccentSwatch(hex: String?, selected: Boolean, onClick: () -> Unit) {
     )
 }
 
+private val PRESET_SECURITY_QUESTIONS = listOf(
+    "preset_q_pet",
+    "preset_q_city",
+    "preset_q_school",
+    "preset_q_mother_name"
+)
+
 @Composable
 private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (pin: String, question: String?, answer: String?) -> Unit) {
     val context = LocalContext.current
     var pin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
-    var question by remember { mutableStateOf(SecurityManager.getSecurityQuestion(context) ?: "") }
+    val existingQuestion = SecurityManager.getSecurityQuestion(context)
+    var selectedQuestionKey by remember {
+        mutableStateOf(PRESET_SECURITY_QUESTIONS.firstOrNull() ?: "preset_q_pet")
+    }
+    var questionMenuExpanded by remember { mutableStateOf(false) }
     var answer by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
     val minDigitsError = stringResource(R.string.password_min_error)
@@ -585,6 +614,12 @@ private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (pin: String, questio
     // A security question is only mandatory the first time — once one exists, changing the
     // password doesn't force the user to redo it (they can still edit it here if they want).
     val needsSecuritySetup = !SecurityManager.hasSecurityQuestion(context)
+    // Preset questions (not free-typed text) so the exact wording is always known and
+    // consistent — matching the same pattern already used for folder-lock recovery.
+    val questionLabels = PRESET_SECURITY_QUESTIONS.associateWith { key ->
+        stringResource(id = context.resources.getIdentifier(key, "string", context.packageName))
+    }
+    val selectedQuestionText = questionLabels[selectedQuestionKey] ?: ""
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -612,12 +647,29 @@ private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (pin: String, questio
                 Spacer(Modifier.height(8.dp))
                 Text(stringResource(R.string.security_question_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = question,
-                    onValueChange = { question = it },
-                    label = { Text(stringResource(R.string.security_question_label)) },
-                    singleLine = true
-                )
+                Box {
+                    OutlinedTextField(
+                        value = selectedQuestionText,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.security_question_label)) },
+                        trailingIcon = {
+                            IconButton(onClick = { questionMenuExpanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().clickable { questionMenuExpanded = true },
+                        singleLine = true
+                    )
+                    DropdownMenu(expanded = questionMenuExpanded, onDismissRequest = { questionMenuExpanded = false }) {
+                        PRESET_SECURITY_QUESTIONS.forEach { key ->
+                            DropdownMenuItem(
+                                text = { Text(questionLabels[key] ?: "") },
+                                onClick = { selectedQuestionKey = key; questionMenuExpanded = false }
+                            )
+                        }
+                    }
+                }
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = answer,
@@ -634,6 +686,7 @@ private fun SetPinDialog(onDismiss: () -> Unit, onConfirm: (pin: String, questio
         },
         confirmButton = {
             TextButton(onClick = {
+                val question = selectedQuestionText
                 when {
                     pin.length < 4 -> error = minDigitsError
                     pin != confirmPin -> error = mismatchError

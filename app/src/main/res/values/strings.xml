@@ -122,6 +122,10 @@
     <string name="restore_backup_button">بازیابی از فایل پشتیبان</string>
     <string name="set_backup_password_title">یه رمز برای این فایل پشتیبان تنظیم کن</string>
     <string name="enter_backup_password_title">رمز این فایل پشتیبان رو وارد کن</string>
+    <string name="confirm_app_password_title">رمز اپتون رو تأیید کنید</string>
+    <string name="confirm_app_password_hint">فایل پشتیبان با همون رمزی که برای باز کردن اپ استفاده می‌کنید رمزگذاری می‌شه — این‌طوری لازم نیست یه رمز جدا و جدید رو به‌خاطر بسپارید.</string>
+    <string name="set_backup_password_no_recovery_hint">چون هنوز رمز کلی برای اپ تنظیم نکردید، باید یه رمز جدا برای این فایل پشتیبان بسازید. توجه: این رمز هیچ راه بازیابی‌ای نداره — اگه فراموشش کنید، فایل برای همیشه غیرقابل‌بازشدنه. توصیه می‌کنیم اول از تنظیمات، «قفل با رمز عبور» رو فعال کنید.</string>
+    <string name="enter_backup_password_hint">معمولاً همون رمزیه که برای باز کردن اپ استفاده می‌کنید (مگر اینکه این فایل رو قبل از عوض کردن رمزتون گرفته باشید).</string>
     <string name="backup_export_failed">خروجی گرفتن با خطا مواجه شد</string>
     <string name="backup_restore_success">بازیابی انجام شد. لطفاً اپ رو کامل ببند و دوباره باز کن.</string>
     <string name="empty_vault_prompt_title">گاوصندوق خالیه</string>
@@ -223,6 +227,10 @@
     <string name="passwords_mismatch_error">رمزها یکسان نیستند</string>
     <string name="security_question_hint">این سوال بعداً برای «رمز رو فراموش کردم؟» استفاده می‌شه</string>
     <string name="security_question_label">سوال امنیتی</string>
+    <string name="preset_q_pet">اسم اولین حیوان خانگیتون چیه؟</string>
+    <string name="preset_q_city">توی کدوم شهر به‌دنیا اومدید؟</string>
+    <string name="preset_q_school">اسم اولین مدرسه‌تون چیه؟</string>
+    <string name="preset_q_mother_name">اسم کوچیک مادرتون چیه؟</string>
     <string name="security_question_required_error">برای اولین بار، سوال و پاسخ امنیتی لازمه</string>
 
     <!-- Notifications -->

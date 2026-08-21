@@ -120,6 +120,10 @@
     <string name="restore_backup_button">Restore from backup file</string>
     <string name="set_backup_password_title">Set a password for this backup file</string>
     <string name="enter_backup_password_title">Enter this backup file\'s password</string>
+    <string name="confirm_app_password_title">Confirm your app password</string>
+    <string name="confirm_app_password_hint">The backup will be encrypted with the same password you use to unlock the app — so you don\'t have to remember a separate new one.</string>
+    <string name="set_backup_password_no_recovery_hint">Since you haven\'t set an app-wide password yet, you\'ll need a separate password just for this backup file. Note: this password has no recovery option — if you forget it, the file becomes permanently unreadable. We recommend turning on "Lock with password" in Settings first.</string>
+    <string name="enter_backup_password_hint">This is usually the same password you use to unlock the app (unless this backup was made before you last changed your password).</string>
     <string name="backup_export_failed">Export failed</string>
     <string name="backup_restore_success">Restore complete. Please fully close and reopen the app.</string>
     <string name="empty_vault_prompt_title">Your vault is empty</string>
@@ -212,6 +216,10 @@
     <string name="passwords_mismatch_error">Passwords do not match</string>
     <string name="security_question_hint">Used later for \"Forgot password?\"</string>
     <string name="security_question_label">Security question</string>
+    <string name="preset_q_pet">What was the name of your first pet?</string>
+    <string name="preset_q_city">What city were you born in?</string>
+    <string name="preset_q_school">What was the name of your first school?</string>
+    <string name="preset_q_mother_name">What is your mother\'s first name?</string>
     <string name="security_question_required_error">A security question and answer are required the first time</string>
 
     <!-- Notifications -->
