@@ -56,7 +56,7 @@
     <string name="help_backup_body">「导出所有数据」：为该文件设置一个密码，即可生成一个加密文件，可以发送到任何地方（邮箱、云盘、Telegram）。\n\n「从备份文件恢复」：选择文件并输入其密码；所有内容将替换当前数据。恢复完成后，请务必完全关闭应用后重新打开。</string>
 
     <string name="help_support_title">支持</string>
-    <string name="help_support_body">如有任何问题，请在此界面点击「联系支持」，或发送邮件至 newlifetech25@hotmail.com。</string>
+    <string name="help_support_body">如有任何问题，请在此界面点击「联系支持」，或发送邮件至 Newlifetech25@hotmail.com。</string>
     <string name="nav_trash">回收站</string>
     <string name="nav_settings">设置</string>
     <string name="folders_title">文件夹</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">使用指纹登录</string>
     <string name="forgot_password">忘记密码？</string>
     <string name="reset_password_title">重置密码</string>
-    <string name="no_security_question_set">尚未设置安全问题。发邮件至 newlifetech25@hotmail.com 获取帮助。</string>
+    <string name="no_security_question_set">尚未设置安全问题。发邮件至 Newlifetech25@hotmail.com 获取帮助。</string>
     <string name="security_answer_label">答案</string>
     <string name="wrong_security_answer">答案错误</string>
     <string name="confirm_action">确认</string>

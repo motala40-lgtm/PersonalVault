@@ -56,7 +56,7 @@
     <string name="help_backup_body">«تصدير جميع البيانات»: اختر كلمة مرور للملف ليُنشأ ملف مشفّر واحد يمكنك إرساله إلى أي مكان (بريد إلكتروني، درايف، تيليجرام).\n\n«استعادة من ملف نسخة احتياطية»: اختر الملف وأدخل كلمة مروره؛ سيستبدل كل شيء بياناتك الحالية. بعد الاستعادة، احرص على إغلاق التطبيق تمامًا وإعادة فتحه.</string>
 
     <string name="help_support_title">الدعم</string>
-    <string name="help_support_body">لأي سؤال أو مشكلة، اضغط على «التواصل مع الدعم» في هذه الشاشة أو راسلنا على newlifetech25@hotmail.com.</string>
+    <string name="help_support_body">لأي سؤال أو مشكلة، اضغط على «التواصل مع الدعم» في هذه الشاشة أو راسلنا على Newlifetech25@hotmail.com.</string>
     <string name="nav_trash">سلة المحذوفات</string>
     <string name="nav_settings">الإعدادات</string>
     <string name="folders_title">المجلدات</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">تسجيل الدخول بالبصمة</string>
     <string name="forgot_password">هل نسيت كلمة المرور؟</string>
     <string name="reset_password_title">إعادة تعيين كلمة المرور</string>
-    <string name="no_security_question_set">لم يُضبط سؤال أمان بعد. راسل newlifetech25@hotmail.com للمساعدة.</string>
+    <string name="no_security_question_set">لم يُضبط سؤال أمان بعد. راسل Newlifetech25@hotmail.com للمساعدة.</string>
     <string name="security_answer_label">الإجابة</string>
     <string name="wrong_security_answer">إجابة غير صحيحة</string>
     <string name="confirm_action">تأكيد</string>

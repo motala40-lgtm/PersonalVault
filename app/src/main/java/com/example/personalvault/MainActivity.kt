@@ -12,6 +12,10 @@ import androidx.activity.viewModels
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
 import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -23,6 +27,7 @@ import com.example.personalvault.data.Folder
 import com.example.personalvault.ui.screens.*
 import com.example.personalvault.ui.theme.PersonalVaultTheme
 import com.example.personalvault.util.SecurityManager
+import com.example.personalvault.util.CrashReporter
 import com.example.personalvault.util.ThemeMode
 import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.LocaleHelper
@@ -86,6 +91,7 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CrashReporter.install(this)
 
         unlocked = !SecurityManager.isLockEnabled(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(lockOnBackgroundObserver)
@@ -106,6 +112,7 @@ class MainActivity : FragmentActivity() {
             PersonalVaultTheme(darkTheme = darkTheme) {
                 var screen by remember { mutableStateOf<Screen>(Screen.FolderList) }
                 var showOnboarding by remember { mutableStateOf(!AppPreferences.hasSeenOnboarding(this)) }
+                var pendingCrashReport by remember { mutableStateOf(CrashReporter.getPendingCrashReport(this)) }
 
                 if (showOnboarding) {
                     WelcomeScreen(onGetStarted = {
@@ -168,6 +175,28 @@ class MainActivity : FragmentActivity() {
                             onBack = { screen = Screen.Settings }
                         )
                     }
+                }
+
+                pendingCrashReport?.let { report ->
+                    AlertDialog(
+                        onDismissRequest = { /* require an explicit choice */ },
+                        title = { Text(stringResource(R.string.crash_report_title)) },
+                        text = { Text(stringResource(R.string.crash_report_body)) },
+                        confirmButton = {
+                            TextButton(onClick = {
+                                val intent = CrashReporter.buildCrashEmailIntent(report)
+                                runCatching { startActivity(intent) }
+                                CrashReporter.clearPendingCrashReport(this)
+                                pendingCrashReport = null
+                            }) { Text(stringResource(R.string.crash_report_send)) }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {
+                                CrashReporter.clearPendingCrashReport(this)
+                                pendingCrashReport = null
+                            }) { Text(stringResource(R.string.crash_report_decline)) }
+                        }
+                    )
                 }
             }
         }

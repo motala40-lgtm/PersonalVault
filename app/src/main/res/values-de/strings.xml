@@ -56,7 +56,7 @@
     <string name="help_backup_body">„Alle Daten exportieren“: Lege ein Passwort für die Datei fest, und es wird eine verschlüsselte Datei erstellt, die du überallhin senden kannst (E-Mail, Drive, Telegram).\n\n„Aus Backup-Datei wiederherstellen“: Datei und Passwort auswählen; alles ersetzt deine aktuellen Daten. Schließe die App nach der Wiederherstellung unbedingt vollständig und öffne sie erneut.</string>
 
     <string name="help_support_title">Support</string>
-    <string name="help_support_body">Bei Fragen oder Problemen tippe auf diesem Bildschirm auf „Support kontaktieren“ oder schreibe an newlifetech25@hotmail.com.</string>
+    <string name="help_support_body">Bei Fragen oder Problemen tippe auf diesem Bildschirm auf „Support kontaktieren“ oder schreibe an Newlifetech25@hotmail.com.</string>
     <string name="nav_trash">Papierkorb</string>
     <string name="nav_settings">Einstellungen</string>
     <string name="folders_title">Ordner</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">Mit Fingerabdruck anmelden</string>
     <string name="forgot_password">Passwort vergessen?</string>
     <string name="reset_password_title">Passwort zurücksetzen</string>
-    <string name="no_security_question_set">Noch keine Sicherheitsfrage festgelegt. Schreibe für Hilfe an newlifetech25@hotmail.com.</string>
+    <string name="no_security_question_set">Noch keine Sicherheitsfrage festgelegt. Schreibe für Hilfe an Newlifetech25@hotmail.com.</string>
     <string name="security_answer_label">Antwort</string>
     <string name="wrong_security_answer">Falsche Antwort</string>
     <string name="confirm_action">Bestätigen</string>

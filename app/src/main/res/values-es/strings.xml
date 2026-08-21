@@ -56,7 +56,7 @@
     <string name="help_backup_body">«Exportar todos los datos»: elige una contraseña para el archivo y se crea un archivo cifrado que puedes enviar a cualquier lugar (correo, Drive, Telegram).\n\n«Restaurar desde archivo de copia»: elige el archivo e introduce su contraseña; todo reemplazará tus datos actuales. Después de restaurar, asegúrate de cerrar completamente la aplicación y volver a abrirla.</string>
 
     <string name="help_support_title">Soporte</string>
-    <string name="help_support_body">Para cualquier duda o problema, pulsa «Contactar con soporte» en esta pantalla o escribe a newlifetech25@hotmail.com.</string>
+    <string name="help_support_body">Para cualquier duda o problema, pulsa «Contactar con soporte» en esta pantalla o escribe a Newlifetech25@hotmail.com.</string>
     <string name="nav_trash">Papelera</string>
     <string name="nav_settings">Ajustes</string>
     <string name="folders_title">Carpetas</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">Iniciar sesión con huella dactilar</string>
     <string name="forgot_password">¿Olvidaste tu contraseña?</string>
     <string name="reset_password_title">Restablecer contraseña</string>
-    <string name="no_security_question_set">Aún no hay pregunta de seguridad configurada. Escribe a newlifetech25@hotmail.com para obtener ayuda.</string>
+    <string name="no_security_question_set">Aún no hay pregunta de seguridad configurada. Escribe a Newlifetech25@hotmail.com para obtener ayuda.</string>
     <string name="security_answer_label">Respuesta</string>
     <string name="wrong_security_answer">Respuesta incorrecta</string>
     <string name="confirm_action">Confirmar</string>

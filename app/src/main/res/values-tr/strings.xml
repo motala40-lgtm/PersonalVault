@@ -56,7 +56,7 @@
     <string name="help_backup_body">«Tüm verileri dışa aktar»: dosya için bir şifre seçin, her yere (e-posta, Drive, Telegram) gönderebileceğiniz şifrelenmiş tek bir dosya oluşturulur.\n\n«Yedek dosyadan geri yükle»: dosyayı seçin ve şifresini girin; her şey mevcut verilerinizin yerini alır. Geri yükledikten sonra uygulamayı tamamen kapatıp yeniden açtığınızdan emin olun.</string>
 
     <string name="help_support_title">Destek</string>
-    <string name="help_support_body">Herhangi bir soru veya sorun için bu ekrandaki «Destekle iletişime geç»e dokunun veya newlifetech25@hotmail.com adresine yazın.</string>
+    <string name="help_support_body">Herhangi bir soru veya sorun için bu ekrandaki «Destekle iletişime geç»e dokunun veya Newlifetech25@hotmail.com adresine yazın.</string>
     <string name="nav_trash">Çöp Kutusu</string>
     <string name="nav_settings">Ayarlar</string>
     <string name="folders_title">Klasörler</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">Parmak iziyle giriş yap</string>
     <string name="forgot_password">Şifreni mi unuttun?</string>
     <string name="reset_password_title">Şifreyi sıfırla</string>
-    <string name="no_security_question_set">Henüz güvenlik sorusu belirlenmedi. Yardım için newlifetech25@hotmail.com adresine e-posta gönderin.</string>
+    <string name="no_security_question_set">Henüz güvenlik sorusu belirlenmedi. Yardım için Newlifetech25@hotmail.com adresine e-posta gönderin.</string>
     <string name="security_answer_label">Cevap</string>
     <string name="wrong_security_answer">Cevap yanlış</string>
     <string name="confirm_action">Onayla</string>

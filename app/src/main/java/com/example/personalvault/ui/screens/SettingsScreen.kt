@@ -42,7 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-private const val SUPPORT_EMAIL = "newlifetech25@hotmail.com"
+private const val SUPPORT_EMAIL = "Newlifetech25@hotmail.com"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

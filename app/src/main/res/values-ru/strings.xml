@@ -56,7 +56,7 @@
     <string name="help_backup_body">«Экспорт всех данных»: задайте пароль для файла — будет создан один зашифрованный файл, который можно отправить куда угодно (почта, Диск, Telegram).\n\n«Восстановление из резервного файла»: выберите файл и введите его пароль; всё заменит текущие данные. После восстановления обязательно полностью закройте и снова откройте приложение.</string>
 
     <string name="help_support_title">Поддержка</string>
-    <string name="help_support_body">По любым вопросам нажмите «Связаться с поддержкой» на этом экране или напишите на newlifetech25@hotmail.com.</string>
+    <string name="help_support_body">По любым вопросам нажмите «Связаться с поддержкой» на этом экране или напишите на Newlifetech25@hotmail.com.</string>
     <string name="nav_trash">Корзина</string>
     <string name="nav_settings">Настройки</string>
     <string name="folders_title">Папки</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">Вход по отпечатку пальца</string>
     <string name="forgot_password">Забыли пароль?</string>
     <string name="reset_password_title">Сброс пароля</string>
-    <string name="no_security_question_set">Контрольный вопрос ещё не задан. Напишите на newlifetech25@hotmail.com за помощью.</string>
+    <string name="no_security_question_set">Контрольный вопрос ещё не задан. Напишите на Newlifetech25@hotmail.com за помощью.</string>
     <string name="security_answer_label">Ответ</string>
     <string name="wrong_security_answer">Неверный ответ</string>
     <string name="confirm_action">Подтвердить</string>

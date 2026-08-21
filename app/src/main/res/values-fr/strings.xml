@@ -56,7 +56,7 @@
     <string name="help_backup_body">« Exporter toutes les données » : choisissez un mot de passe pour le fichier et un fichier chiffré unique est créé, que vous pouvez envoyer n\'importe où (e-mail, Drive, Telegram).\n\n« Restaurer depuis un fichier de sauvegarde » : choisissez le fichier et saisissez son mot de passe ; tout remplace vos données actuelles. Après la restauration, pensez à fermer complètement puis rouvrir l\'application.</string>
 
     <string name="help_support_title">Assistance</string>
-    <string name="help_support_body">Pour toute question ou problème, appuyez sur « Contacter l\'assistance » sur cet écran ou écrivez à newlifetech25@hotmail.com.</string>
+    <string name="help_support_body">Pour toute question ou problème, appuyez sur « Contacter l\'assistance » sur cet écran ou écrivez à Newlifetech25@hotmail.com.</string>
     <string name="nav_trash">Corbeille</string>
     <string name="nav_settings">Paramètres</string>
     <string name="folders_title">Dossiers</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">Connexion par empreinte digitale</string>
     <string name="forgot_password">Mot de passe oublié ?</string>
     <string name="reset_password_title">Réinitialiser le mot de passe</string>
-    <string name="no_security_question_set">Aucune question de sécurité définie. Écrivez à newlifetech25@hotmail.com pour de l\'aide.</string>
+    <string name="no_security_question_set">Aucune question de sécurité définie. Écrivez à Newlifetech25@hotmail.com pour de l\'aide.</string>
     <string name="security_answer_label">Réponse</string>
     <string name="wrong_security_answer">Réponse incorrecte</string>
     <string name="confirm_action">Confirmer</string>

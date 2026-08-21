@@ -56,7 +56,7 @@
     <string name="help_backup_body">«Exportera all data»: välj ett lösenord för filen så skapas en enda krypterad fil som du kan skicka vart som helst (e-post, Drive, Telegram).\n\n«Återställ från säkerhetskopia»: välj filen och ange dess lösenord; allt ersätter din nuvarande data. Se till att stänga appen helt och öppna den igen efter återställningen.</string>
 
     <string name="help_support_title">Support</string>
-    <string name="help_support_body">Vid frågor eller problem, tryck på «Kontakta support» på den här skärmen eller mejla newlifetech25@hotmail.com.</string>
+    <string name="help_support_body">Vid frågor eller problem, tryck på «Kontakta support» på den här skärmen eller mejla Newlifetech25@hotmail.com.</string>
     <string name="nav_trash">Papperskorg</string>
     <string name="nav_settings">Inställningar</string>
     <string name="folders_title">Mappar</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">Logga in med fingeravtryck</string>
     <string name="forgot_password">Glömt lösenordet?</string>
     <string name="reset_password_title">Återställ lösenord</string>
-    <string name="no_security_question_set">Ingen säkerhetsfråga inställd än. Mejla newlifetech25@hotmail.com för hjälp.</string>
+    <string name="no_security_question_set">Ingen säkerhetsfråga inställd än. Mejla Newlifetech25@hotmail.com för hjälp.</string>
     <string name="security_answer_label">Svar</string>
     <string name="wrong_security_answer">Fel svar</string>
     <string name="confirm_action">Bekräfta</string>

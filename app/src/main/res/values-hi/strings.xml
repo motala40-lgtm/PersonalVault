@@ -56,7 +56,7 @@
     <string name="help_backup_body">«सभी डेटा एक्सपोर्ट करें»: फ़ाइल के लिए एक पासवर्ड चुनें और यह एक एन्क्रिप्टेड फ़ाइल बनाता है जिसे आप कहीं भी (ईमेल, ड्राइव, टेलीग्राम) भेज सकते हैं।\n\n«बैकअप फ़ाइल से रीस्टोर करें»: फ़ाइल चुनें और उसका पासवर्ड डालें; सब कुछ आपके मौजूदा डेटा की जगह ले लेगा। रीस्टोर के बाद, ऐप को पूरी तरह बंद करके दोबारा खोलना न भूलें।</string>
 
     <string name="help_support_title">सहायता</string>
-    <string name="help_support_body">किसी भी सवाल या समस्या के लिए, इस स्क्रीन पर «सहायता से संपर्क करें» टैप करें या newlifetech25@hotmail.com पर संपर्क करें।</string>
+    <string name="help_support_body">किसी भी सवाल या समस्या के लिए, इस स्क्रीन पर «सहायता से संपर्क करें» टैप करें या Newlifetech25@hotmail.com पर संपर्क करें।</string>
     <string name="nav_trash">ट्रैश</string>
     <string name="nav_settings">सेटिंग्स</string>
     <string name="folders_title">फ़ोल्डर</string>
@@ -79,7 +79,7 @@
     <string name="biometric_login">फिंगरप्रिंट से लॉगिन करें</string>
     <string name="forgot_password">पासवर्ड भूल गए?</string>
     <string name="reset_password_title">पासवर्ड रीसेट करें</string>
-    <string name="no_security_question_set">अभी तक कोई सुरक्षा प्रश्न सेट नहीं है। मदद के लिए newlifetech25@hotmail.com पर ईमेल करें।</string>
+    <string name="no_security_question_set">अभी तक कोई सुरक्षा प्रश्न सेट नहीं है। मदद के लिए Newlifetech25@hotmail.com पर ईमेल करें।</string>
     <string name="security_answer_label">उत्तर</string>
     <string name="wrong_security_answer">उत्तर गलत है</string>
     <string name="confirm_action">पुष्टि करें</string>
