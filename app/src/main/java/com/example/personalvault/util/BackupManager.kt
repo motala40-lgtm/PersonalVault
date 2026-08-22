@@ -27,14 +27,18 @@ import javax.crypto.spec.SecretKeySpec
  * email, Drive, Telegram Saved Messages, whatever — via the normal Android share sheet, and
  * later restore after reinstalling the app.
  *
- * Container format (after encryption): [4-byte magic "EAB1"] [16-byte salt] [12-byte IV]
- * [AES-256-GCM ciphertext of a plain zip containing personal_vault.db + vault_files/...].
+ * Container format (after the 4-byte magic "EAB2" + 16-byte salt): a sequence of independently
+ * encrypted CHUNKs, each: [4-byte chunk ciphertext length][12-byte IV][ciphertext+16-byte tag].
+ * The plaintext being chunked is a zip containing personal_vault.db + vault_files/...
  *
- * Both directions are streamed through the cipher in fixed-size chunks via manual
- * Cipher.update()/doFinal() calls — NOT CipherInputStream/CipherOutputStream. Those classes
- * are documented to be extremely slow (sometimes multiple minutes) or to hang entirely with
- * AES/GCM on a number of real Android devices; manual chunked update/doFinal is both
- * memory-safe (no whole-file buffering, so no OutOfMemoryError on larger vaults) and fast.
+ * WHY CHUNKED (this replaced a whole-file-single-Cipher-session approach): Android's AES/GCM
+ * provider (Conscrypt) buffers the ENTIRE input internally — regardless of whether the calling
+ * code feeds it via update() in small pieces — and only produces output at doFinal(). For a
+ * multi-hundred-MB vault this alone caused OutOfMemoryError, independent of how carefully the
+ * surrounding Kotlin code streamed file I/O. Encrypting in fixed-size independent chunks (each
+ * with its own IV and auth tag, each finalized with its own doFinal()) keeps every single
+ * Cipher operation bounded to CHUNK_SIZE, so memory use stays flat no matter how large the
+ * vault grows.
  *
  * This deliberately does NOT use Android Keystore / EncryptedFile: keys backed by Keystore
  * don't survive an uninstall, which would make the backup useless for its actual purpose.
@@ -43,10 +47,13 @@ import javax.crypto.spec.SecretKeySpec
  */
 object BackupManager {
 
-    private const val MAGIC = "EAB1"
+    private const val MAGIC = "EAB2"
     private const val PBKDF2_ITERATIONS = 150_000
     private const val KEY_LENGTH_BITS = 256
     private const val STREAM_BUFFER_SIZE = 64 * 1024
+    // Each chunk is encrypted/decrypted in one Cipher.doFinal() call, so this bounds the
+    // memory a single crypto operation can use — independent of total vault size.
+    private const val CHUNK_SIZE = 4 * 1024 * 1024
 
     sealed class RestoreResult {
         object Success : RestoreResult()
@@ -69,21 +76,70 @@ object BackupManager {
         return SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
     }
 
-    /** Runs [input] through [cipher] in [STREAM_BUFFER_SIZE] chunks and writes the result to
-     *  [output] — the manual equivalent of Cipher{Input,Output}Stream, chosen specifically to
-     *  avoid their known slowness/hangs with AES/GCM. Works for both encrypt and decrypt
-     *  depending on how [cipher] was initialized; for decrypt, a wrong password/corrupted
-     *  file surfaces as an exception from the final [Cipher.doFinal] call (GCM's tag check). */
-    private fun runCipherStreamed(input: InputStream, output: OutputStream, cipher: Cipher) {
-        val buffer = ByteArray(STREAM_BUFFER_SIZE)
-        while (true) {
-            val n = input.read(buffer)
-            if (n == -1) break
-            val chunk = cipher.update(buffer, 0, n)
-            if (chunk != null && chunk.isNotEmpty()) output.write(chunk)
+    private fun writeInt(out: OutputStream, value: Int) {
+        out.write((value ushr 24) and 0xFF)
+        out.write((value ushr 16) and 0xFF)
+        out.write((value ushr 8) and 0xFF)
+        out.write(value and 0xFF)
+    }
+
+    private fun readInt(input: InputStream): Int {
+        val b0 = input.read(); val b1 = input.read(); val b2 = input.read(); val b3 = input.read()
+        if (b0 == -1 || b1 == -1 || b2 == -1 || b3 == -1) throw java.io.EOFException()
+        return (b0 shl 24) or (b1 shl 16) or (b2 shl 8) or b3
+    }
+
+    private fun readFully(input: InputStream, buffer: ByteArray) {
+        var off = 0
+        while (off < buffer.size) {
+            val n = input.read(buffer, off, buffer.size - off)
+            if (n == -1) throw java.io.EOFException()
+            off += n
         }
-        val final = cipher.doFinal()
-        if (final.isNotEmpty()) output.write(final)
+    }
+
+    /** Encrypts [input] into [output] as a sequence of independent [CHUNK_SIZE]-bounded
+     *  AES-GCM chunks — see the class doc for why this exists instead of one long Cipher
+     *  session. */
+    private fun encryptChunked(input: InputStream, output: OutputStream, key: SecretKeySpec) {
+        val buffer = ByteArray(CHUNK_SIZE)
+        while (true) {
+            var filled = 0
+            while (filled < buffer.size) {
+                val n = input.read(buffer, filled, buffer.size - filled)
+                if (n == -1) break
+                filled += n
+            }
+            if (filled == 0) break
+            val iv = ByteArray(12).also { SecureRandom().nextBytes(it) }
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, iv))
+            val ciphertext = cipher.doFinal(buffer, 0, filled)
+            writeInt(output, ciphertext.size)
+            output.write(iv)
+            output.write(ciphertext)
+            if (filled < buffer.size) break // that was the last, short chunk
+        }
+    }
+
+    /** Decrypts the chunk sequence produced by [encryptChunked]. A wrong password or a
+     *  corrupted/tampered chunk surfaces as an exception from that chunk's doFinal() (GCM's
+     *  per-chunk authentication tag check). */
+    private fun decryptChunked(input: InputStream, output: OutputStream, key: SecretKeySpec) {
+        while (true) {
+            val length = try {
+                readInt(input)
+            } catch (e: java.io.EOFException) {
+                break
+            }
+            val iv = ByteArray(12)
+            readFully(input, iv)
+            val ciphertext = ByteArray(length)
+            readFully(input, ciphertext)
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
+            output.write(cipher.doFinal(ciphertext))
+        }
     }
 
     /** Merges the write-ahead log into the main .db file so a plain file copy is consistent. */
@@ -119,19 +175,14 @@ object BackupManager {
             }
 
             val salt = ByteArray(16).also { SecureRandom().nextBytes(it) }
-            val iv = ByteArray(12).also { SecureRandom().nextBytes(it) }
             val key = deriveKey(password, salt)
-
-            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-            cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(128, iv))
 
             val timestamp = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
             val outFile = File(backupsDir(context), "EasyArchive_backup_$timestamp.eabackup")
             FileOutputStream(outFile).use { out ->
                 out.write(MAGIC.toByteArray(Charsets.US_ASCII))
                 out.write(salt)
-                out.write(iv)
-                FileInputStream(stagingZip).use { input -> runCipherStreamed(input, out, cipher) }
+                FileInputStream(stagingZip).use { input -> encryptChunked(input, out, key) }
             }
             return outFile
         } finally {
@@ -152,26 +203,17 @@ object BackupManager {
         try {
             val input = context.contentResolver.openInputStream(uri) ?: return RestoreResult.InvalidFile
             input.use { stream ->
-                val header = ByteArray(4 + 16 + 12)
-                var total = 0
-                while (total < header.size) {
-                    val n = stream.read(header, total, header.size - total)
-                    if (n == -1) return RestoreResult.InvalidFile
-                    total += n
-                }
+                val header = ByteArray(4 + 16)
+                readFully(stream, header)
                 if (String(header, 0, 4, Charsets.US_ASCII) != MAGIC) return RestoreResult.InvalidFile
                 val salt = header.copyOfRange(4, 20)
-                val iv = header.copyOfRange(20, 32)
                 val key = deriveKey(password, salt)
 
-                val cipher = Cipher.getInstance("AES/GCM/NoPadding")
-                cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, iv))
-
                 try {
-                    FileOutputStream(stagingPlainZip).use { out -> runCipherStreamed(stream, out, cipher) }
+                    FileOutputStream(stagingPlainZip).use { out -> decryptChunked(stream, out, key) }
                 } catch (e: Exception) {
                     // A wrong password (or a corrupted/tampered file) fails GCM's authentication
-                    // tag check inside the final doFinal() call — exactly the signal we want.
+                    // tag check on the very first chunk — exactly the signal we want.
                     return RestoreResult.WrongPassword
                 }
             }

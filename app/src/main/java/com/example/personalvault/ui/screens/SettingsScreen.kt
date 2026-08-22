@@ -359,10 +359,9 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                         com.example.personalvault.markAwaitingExternalResult(context)
                         context.startActivity(Intent.createChooser(intent, null))
                     } else {
-                        val detail = result.exceptionOrNull()?.let { ": ${it.javaClass.simpleName} - ${it.message}" } ?: ""
                         Toast.makeText(
                             context,
-                            context.getString(R.string.backup_export_failed) + detail,
+                            context.getString(R.string.backup_export_failed),
                             Toast.LENGTH_LONG
                         ).show()
                     }
