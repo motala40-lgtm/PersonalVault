@@ -19,6 +19,32 @@ import kotlinx.coroutines.launch
 class VaultViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = VaultRepository(application)
 
+    // Tracks how many database writes launched through [launchTracked] are still in flight.
+    // Every write in this ViewModel (creating a folder, adding a photo, renaming something,
+    // etc.) goes through this instead of a bare fire-and-forget viewModelScope.launch — so
+    // that anything that needs a consistent snapshot of the vault (specifically, backup
+    // export) can call [awaitPendingWrites] first and be sure nothing recently triggered by
+    // the person is still mid-write. Without this, exporting right after quickly adding
+    // several items could silently leave the newest one(s) out of the backup.
+    private val pendingWrites = java.util.concurrent.atomic.AtomicInteger(0)
+
+    private fun launchTracked(block: suspend () -> Unit) {
+        pendingWrites.incrementAndGet()
+        viewModelScope.launch {
+            try {
+                block()
+            } finally {
+                pendingWrites.decrementAndGet()
+            }
+        }
+    }
+
+    suspend fun awaitPendingWrites() {
+        while (pendingWrites.get() > 0) {
+            kotlinx.coroutines.delay(20)
+        }
+    }
+
     val folders: StateFlow<List<Folder>> = repository.getAllFolders()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -68,15 +94,15 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         }
 
     fun createFolder(name: String, colorHex: String, iconName: String) {
-        viewModelScope.launch { repository.createFolder(name, colorHex, iconName) }
+        launchTracked { repository.createFolder(name, colorHex, iconName) }
     }
 
     fun deleteFolder(folder: Folder) {
-        viewModelScope.launch { repository.deleteFolder(folder) }
+        launchTracked { repository.deleteFolder(folder) }
     }
 
     fun copyFolder(folder: Folder, copyNameSuffix: String) {
-        viewModelScope.launch { repository.copyFolder(folder, copyNameSuffix) }
+        launchTracked { repository.copyFolder(folder, copyNameSuffix) }
     }
 
     /** Builds a shareable zip of [folder]'s contents in the background, then hands the file (or
@@ -92,64 +118,55 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateFolder(folder: Folder) {
-        viewModelScope.launch { repository.updateFolder(folder) }
+        launchTracked { repository.updateFolder(folder) }
     }
 
     fun addTextEntry(folderId: Long, text: String) {
         if (text.isBlank()) return
-        viewModelScope.launch { repository.addTextEntry(folderId, text) }
+        launchTracked { repository.addTextEntry(folderId, text) }
     }
 
     fun updateTextEntry(entry: Entry, newText: String) {
         if (newText.isBlank()) return
-        viewModelScope.launch { repository.updateEntry(entry.copy(content = newText)) }
+        launchTracked { repository.updateEntry(entry.copy(content = newText)) }
     }
 
     fun duplicateEntry(entry: Entry) {
-        viewModelScope.launch { repository.duplicateEntry(entry) }
+        launchTracked { repository.duplicateEntry(entry) }
     }
 
     fun addFileEntry(folderId: Long, type: EntryType, path: String, fileName: String) {
-        viewModelScope.launch { repository.addFileEntry(folderId, type, path, fileName) }
-    }
-
-    /** Same as [addFileEntry], but actually waits for the database write to finish before
-     *  returning — needed anywhere multiple entries are added in a batch (e.g. picking several
-     *  photos at once) and something right afterward (like a backup export) reads the database
-     *  directly. Without this, a fire-and-forget add could still be mid-flight when an export
-     *  triggered moments later takes its snapshot, silently leaving the newest item(s) out. */
-    suspend fun addFileEntryAwait(folderId: Long, type: EntryType, path: String, fileName: String) {
-        repository.addFileEntry(folderId, type, path, fileName)
+        launchTracked { repository.addFileEntry(folderId, type, path, fileName) }
     }
 
     fun togglePin(entry: Entry) {
-        viewModelScope.launch { repository.togglePin(entry) }
+        launchTracked { repository.togglePin(entry) }
     }
 
     fun toggleFavorite(entry: Entry) {
-        viewModelScope.launch { repository.toggleFavorite(entry) }
+        launchTracked { repository.toggleFavorite(entry) }
     }
 
     fun renameEntry(entry: Entry, newName: String) {
         if (newName.isBlank()) return
-        viewModelScope.launch { repository.renameEntry(entry, newName) }
+        launchTracked { repository.renameEntry(entry, newName) }
     }
 
     fun moveToTrash(entry: Entry) {
-        viewModelScope.launch { repository.moveToTrash(entry) }
+        launchTracked { repository.moveToTrash(entry) }
     }
 
     fun moveEntriesToTrash(entries: List<Entry>) {
         if (entries.isEmpty()) return
-        viewModelScope.launch { repository.moveEntriesToTrash(entries) }
+        launchTracked { repository.moveEntriesToTrash(entries) }
     }
 
     fun restoreFromTrash(entry: Entry) {
-        viewModelScope.launch { repository.restoreFromTrash(entry) }
+        launchTracked { repository.restoreFromTrash(entry) }
     }
 
     fun deletePermanently(entry: Entry) {
-        viewModelScope.launch { repository.deleteEntryPermanently(entry) }
+        launchTracked { repository.deleteEntryPermanently(entry) }
     }
 
     fun addReminder(reminder: Reminder, onCreated: (Reminder) -> Unit) {
@@ -160,20 +177,20 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteReminder(reminder: Reminder) {
-        viewModelScope.launch { repository.deleteReminder(reminder) }
+        launchTracked { repository.deleteReminder(reminder) }
     }
 
     fun addContact(contact: Contact) {
         if (contact.name.isBlank()) return
-        viewModelScope.launch { repository.addContact(contact) }
+        launchTracked { repository.addContact(contact) }
     }
 
     fun updateContact(contact: Contact) {
-        viewModelScope.launch { repository.updateContact(contact) }
+        launchTracked { repository.updateContact(contact) }
     }
 
     fun deleteContact(contact: Contact) {
-        viewModelScope.launch { repository.deleteContact(contact) }
+        launchTracked { repository.deleteContact(contact) }
     }
 
     fun toggleContactFavorite(contact: Contact) {

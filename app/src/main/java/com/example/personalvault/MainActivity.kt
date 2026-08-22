@@ -163,6 +163,7 @@ class MainActivity : FragmentActivity() {
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Settings -> SettingsScreen(
+                            viewModel = viewModel,
                             isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList },
                             onOpenHelp = { screen = Screen.Help },

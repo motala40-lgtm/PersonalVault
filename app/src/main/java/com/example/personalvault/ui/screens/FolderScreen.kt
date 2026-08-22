@@ -62,7 +62,6 @@ fun FolderScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     // BUG FIX: entriesForFolder(id) calls .stateIn(...) internally, which starts a *new*
     // coroutine and a *new* StateFlow every time it's called. Without `remember`, every
     // recomposition called it again — creating StateFlow after StateFlow in an endless
@@ -97,18 +96,12 @@ fun FolderScreen(
     val mediaPicker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia()
     ) { uris: List<Uri> ->
-        // Awaited sequentially (not fire-and-forget) so that if the person hits "Export" right
-        // after picking several photos, every one of them is already committed to the database
-        // — otherwise a backup taken moments later could silently miss whichever items were
-        // still mid-write.
-        coroutineScope.launch {
-            uris.forEach { uri ->
-                val displayName = FileUtils.getDisplayName(context, uri) ?: autoName()
-                val mimeType = context.contentResolver.getType(uri) ?: ""
-                val saved = FileUtils.copyUriToInternalStorage(context, uri, displayName)
-                val type = if (mimeType.startsWith("video/")) EntryType.VIDEO else EntryType.IMAGE
-                viewModel.addFileEntryAwait(folder.id, type, saved.absolutePath, displayName)
-            }
+        uris.forEach { uri ->
+            val displayName = FileUtils.getDisplayName(context, uri) ?: autoName()
+            val mimeType = context.contentResolver.getType(uri) ?: ""
+            val saved = FileUtils.copyUriToInternalStorage(context, uri, displayName)
+            val type = if (mimeType.startsWith("video/")) EntryType.VIDEO else EntryType.IMAGE
+            viewModel.addFileEntry(folder.id, type, saved.absolutePath, displayName)
         }
     }
 
@@ -116,9 +109,7 @@ fun FolderScreen(
         uri?.let {
             val displayName = FileUtils.getDisplayName(context, it) ?: autoName()
             val saved = FileUtils.copyUriToInternalStorage(context, it, displayName)
-            coroutineScope.launch {
-                viewModel.addFileEntryAwait(folder.id, EntryType.FILE, saved.absolutePath, displayName)
-            }
+            viewModel.addFileEntry(folder.id, EntryType.FILE, saved.absolutePath, displayName)
         }
     }
 
@@ -126,9 +117,7 @@ fun FolderScreen(
         val file = pendingCameraFile
         if (success && file != null) {
             val pdf = FileUtils.imageFileToPdf(context, file)
-            coroutineScope.launch {
-                viewModel.addFileEntryAwait(folder.id, EntryType.PDF_SCAN, pdf.absolutePath, pdf.name)
-            }
+            viewModel.addFileEntry(folder.id, EntryType.PDF_SCAN, pdf.absolutePath, pdf.name)
         }
     }
 

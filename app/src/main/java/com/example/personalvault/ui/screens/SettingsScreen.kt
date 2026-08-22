@@ -38,6 +38,7 @@ import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.BackupManager
 import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.SecurityManager
+import com.example.personalvault.viewmodel.VaultViewModel
 import com.example.personalvault.util.ThemeMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +48,7 @@ private const val SUPPORT_EMAIL = "Newlifetech25@hotmail.com"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
+fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
     val context = LocalContext.current
     var themeMode by remember { mutableStateOf(AppPreferences.getThemeMode(context)) }
     var lockEnabled by remember { mutableStateOf(SecurityManager.isLockEnabled(context)) }
@@ -344,6 +345,11 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                 showExportPasswordDialog = false
                 backupInProgress = true
                 coroutineScope.launch {
+                    // Make sure nothing the person just did (adding a photo, creating a
+                    // folder, etc.) is still mid-write before taking the backup's snapshot —
+                    // otherwise it could silently be left out even though it's already
+                    // visible on screen.
+                    viewModel.awaitPendingWrites()
                     val result = runCatching {
                         withContext(Dispatchers.IO) { BackupManager.exportBackup(context, password) }
                     }
