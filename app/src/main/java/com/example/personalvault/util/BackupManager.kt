@@ -198,6 +198,22 @@ object BackupManager {
                     FileInputStream(db).use { it.copyTo(zip, STREAM_BUFFER_SIZE) }
                     zip.closeEntry()
                 }
+                // Belt-and-suspenders alongside checkpointDatabase(): Room/SQLite normally
+                // keeps the most recently written rows in a separate "-wal" file until a
+                // checkpoint merges them into the main .db file. If that checkpoint above
+                // silently failed for any reason, backing up ONLY personal_vault.db would
+                // capture a stale snapshot — missing whatever was written most recently (this
+                // is exactly what caused newly created folders/photos to vanish after a
+                // restore even though export reported success). Including these companion
+                // files whenever they exist means the freshest data is preserved either way.
+                for (suffix in listOf("-wal", "-shm")) {
+                    val companion = File(dbFile(context).path + suffix)
+                    if (companion.exists()) {
+                        zip.putNextEntry(ZipEntry("personal_vault.db$suffix"))
+                        FileInputStream(companion).use { it.copyTo(zip, STREAM_BUFFER_SIZE) }
+                        zip.closeEntry()
+                    }
+                }
                 vaultFilesDir(context).listFiles()?.forEach { file ->
                     if (file.isFile) {
                         zip.putNextEntry(ZipEntry("vault_files/${file.name}"))
@@ -277,6 +293,8 @@ object BackupManager {
                 while (entry != null) {
                     val outFile = when {
                         entry.name == "personal_vault.db" -> dbFile(context)
+                        entry.name == "personal_vault.db-wal" -> File(dbFile(context).path + "-wal")
+                        entry.name == "personal_vault.db-shm" -> File(dbFile(context).path + "-shm")
                         entry.name.startsWith("vault_files/") -> File(filesDir, entry.name.removePrefix("vault_files/"))
                         else -> null
                     }
