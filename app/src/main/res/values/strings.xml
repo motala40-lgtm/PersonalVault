@@ -136,6 +136,7 @@
     <string name="restart_now">راه‌اندازی مجدد</string>
     <string name="backup_restore_wrong_password">رمز اشتباهه یا این فایل، فایل پشتیبان معتبری نیست</string>
     <string name="backup_restore_invalid_file">این فایل، فایل پشتیبان معتبری نیست</string>
+    <string name="backup_restore_incomplete">این فایل پشتیبان کامل نرسیده (احتمالاً موقع انتقال قطع شده). گاوصندوق فعلی شما دست‌نخورده مونده — لطفاً فایل رو دوباره از مبدأ (مثلاً تلگرام یا درایو) کپی کنید و دوباره امتحان کنید.</string>
     <string name="help_section_title">راهنمای استفاده</string>
     <string name="open_help_button">راهنمای استفاده از اپ</string>
 

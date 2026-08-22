@@ -416,6 +416,7 @@ fun SettingsScreen(isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> U
                         } else {
                             val messageRes = when (restoreResult) {
                                 is BackupManager.RestoreResult.WrongPassword -> R.string.backup_restore_wrong_password
+                                is BackupManager.RestoreResult.IncompleteFile -> R.string.backup_restore_incomplete
                                 else -> R.string.backup_restore_invalid_file
                             }
                             Toast.makeText(context, context.getString(messageRes), Toast.LENGTH_LONG).show()

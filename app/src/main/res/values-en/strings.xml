@@ -134,6 +134,7 @@
     <string name="restart_now">Restart now</string>
     <string name="backup_restore_wrong_password">Wrong password, or this isn\'t a valid backup file</string>
     <string name="backup_restore_invalid_file">This isn\'t a valid backup file</string>
+    <string name="backup_restore_incomplete">This backup file didn\'t arrive complete (likely cut short during a transfer). Your current vault was NOT touched — please re-copy the file from its source (e.g. Telegram or Drive) and try again.</string>
     <string name="help_section_title">Help</string>
     <string name="open_help_button">How to use the app</string>
 
