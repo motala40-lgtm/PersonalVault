@@ -113,6 +113,15 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch { repository.addFileEntry(folderId, type, path, fileName) }
     }
 
+    /** Same as [addFileEntry], but actually waits for the database write to finish before
+     *  returning — needed anywhere multiple entries are added in a batch (e.g. picking several
+     *  photos at once) and something right afterward (like a backup export) reads the database
+     *  directly. Without this, a fire-and-forget add could still be mid-flight when an export
+     *  triggered moments later takes its snapshot, silently leaving the newest item(s) out. */
+    suspend fun addFileEntryAwait(folderId: Long, type: EntryType, path: String, fileName: String) {
+        repository.addFileEntry(folderId, type, path, fileName)
+    }
+
     fun togglePin(entry: Entry) {
         viewModelScope.launch { repository.togglePin(entry) }
     }
