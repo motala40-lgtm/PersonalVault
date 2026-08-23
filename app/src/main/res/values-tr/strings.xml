@@ -66,6 +66,7 @@
     <string name="app_title">Easy Archive</string>
     <string name="support">Destek</string>
     <string name="contact_support">Destekle iletişime geç</string>
+    <string name="version_label">Sürüm %1$s</string>
 
     <!-- Folder -->
     <string name="new_folder">Yeni Klasör</string>

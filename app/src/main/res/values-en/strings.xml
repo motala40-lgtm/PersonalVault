@@ -73,6 +73,7 @@
     <string name="learn_about_privacy">Learn more about our privacy</string>
     <string name="support">Support</string>
     <string name="contact_support">Contact support</string>
+    <string name="version_label">Version %1$s</string>
 
     <!-- Folder -->
     <string name="new_folder">New Folder</string>
@@ -125,12 +126,7 @@
     <string name="set_backup_password_no_recovery_hint">Since you haven\'t set an app-wide password yet, you\'ll need a separate password just for this backup file. Note: this password has no recovery option — if you forget it, the file becomes permanently unreadable. We recommend turning on "Lock with password" in Settings first.</string>
     <string name="enter_backup_password_hint">This is usually the same password you use to unlock the app (unless this backup was made before you last changed your password).</string>
     <string name="backup_export_failed">Export failed</string>
-    <string name="backup_restore_success">Restore complete. Please fully close and reopen the app.</string>
-    <string name="empty_vault_prompt_title">Your vault is empty</string>
-    <string name="empty_vault_prompt_body">If you\'ve used this app before and have a backup file (.eabackup), we suggest restoring it now — before creating any new folders. If this is your first time, or the vault should genuinely be empty, you can skip this.</string>
-    <string name="empty_vault_prompt_restore">Restore from backup</string>
-    <string name="empty_vault_prompt_continue">No, continue</string>
-    <string name="restore_restart_notice">All your data has been restored successfully. The app needs to reopen once to show it.</string>
+    <string name="backup_restore_success">Restore complete. Please fully close and reopen the app.</string>    <string name="restore_restart_notice">All your data has been restored successfully. The app needs to reopen once to show it.</string>
     <string name="restart_now">Restart now</string>
     <string name="backup_restore_wrong_password">Wrong password, or this isn\'t a valid backup file</string>
     <string name="backup_restore_invalid_file">This isn\'t a valid backup file</string>

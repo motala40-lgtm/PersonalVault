@@ -329,6 +329,21 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                 Spacer(Modifier.width(8.dp))
                 Text(stringResource(R.string.contact_support))
             }
+
+            Spacer(Modifier.height(28.dp))
+            val versionLabel = remember {
+                runCatching {
+                    val pkgInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                    "${pkgInfo.versionName} (${androidx.core.content.pm.PackageInfoCompat.getLongVersionCode(pkgInfo)})"
+                }.getOrDefault("")
+            }
+            Text(
+                stringResource(R.string.version_label, versionLabel),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
         }
     }
     } // close ScreenBackground

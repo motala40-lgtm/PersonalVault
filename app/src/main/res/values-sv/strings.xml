@@ -66,6 +66,7 @@
     <string name="app_title">Easy Archive</string>
     <string name="support">Support</string>
     <string name="contact_support">Kontakta support</string>
+    <string name="version_label">Version %1$s</string>
 
     <!-- Folder -->
     <string name="new_folder">Ny mapp</string>

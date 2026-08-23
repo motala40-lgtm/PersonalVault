@@ -75,6 +75,7 @@
     <string name="learn_about_privacy">درباره حریم خصوصی ما بیشتر بدانید</string>
     <string name="support">پشتیبانی</string>
     <string name="contact_support">تماس با پشتیبانی</string>
+    <string name="version_label">نسخه %1$s</string>
 
     <!-- Folder -->
     <string name="new_folder">پوشه جدید</string>
@@ -127,12 +128,7 @@
     <string name="set_backup_password_no_recovery_hint">چون هنوز رمز کلی برای اپ تنظیم نکردید، باید یه رمز جدا برای این فایل پشتیبان بسازید. توجه: این رمز هیچ راه بازیابی‌ای نداره — اگه فراموشش کنید، فایل برای همیشه غیرقابل‌بازشدنه. توصیه می‌کنیم اول از تنظیمات، «قفل با رمز عبور» رو فعال کنید.</string>
     <string name="enter_backup_password_hint">معمولاً همون رمزیه که برای باز کردن اپ استفاده می‌کنید (مگر اینکه این فایل رو قبل از عوض کردن رمزتون گرفته باشید).</string>
     <string name="backup_export_failed">خروجی گرفتن با خطا مواجه شد</string>
-    <string name="backup_restore_success">بازیابی انجام شد. لطفاً اپ رو کامل ببند و دوباره باز کن.</string>
-    <string name="empty_vault_prompt_title">گاوصندوق خالیه</string>
-    <string name="empty_vault_prompt_body">اگه قبلاً از این اپ استفاده می‌کردید و یه فایل پشتیبان (.eabackup) دارید، پیشنهاد می‌کنیم همین الان بازیابیش کنید — قبل از این‌که پوشه‌ی جدیدی بسازید. اگه دفعه‌ی اولتونه یا گاوصندوق واقعاً باید خالی بمونه، می‌تونید رد کنید.</string>
-    <string name="empty_vault_prompt_restore">بازیابی از پشتیبان</string>
-    <string name="empty_vault_prompt_continue">نه، ادامه بده</string>
-    <string name="restore_restart_notice">همه‌ی اطلاعات با موفقیت بازیابی شد. برای دیدن اطلاعات جدید، اپ باید یک‌بار دوباره باز بشه.</string>
+    <string name="backup_restore_success">بازیابی انجام شد. لطفاً اپ رو کامل ببند و دوباره باز کن.</string>    <string name="restore_restart_notice">همه‌ی اطلاعات با موفقیت بازیابی شد. برای دیدن اطلاعات جدید، اپ باید یک‌بار دوباره باز بشه.</string>
     <string name="restart_now">راه‌اندازی مجدد</string>
     <string name="backup_restore_wrong_password">رمز اشتباهه یا این فایل، فایل پشتیبان معتبری نیست</string>
     <string name="backup_restore_invalid_file">این فایل، فایل پشتیبان معتبری نیست</string>

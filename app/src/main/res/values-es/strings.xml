@@ -66,6 +66,7 @@
     <string name="app_title">Easy Archive</string>
     <string name="support">Soporte</string>
     <string name="contact_support">Contactar con soporte</string>
+    <string name="version_label">Versión %1$s</string>
 
     <!-- Folder -->
     <string name="new_folder">Nueva carpeta</string>
