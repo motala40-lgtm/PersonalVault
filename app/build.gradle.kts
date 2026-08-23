@@ -15,7 +15,7 @@ android {
         applicationId = "com.newlifetech.easyarchive"
         minSdk = 24
         targetSdk = 35
-        versionCode = 11
+        versionCode = 12
         versionName = "1.0"
     }
 
@@ -68,6 +68,21 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
+    }
+
+    // CRITICAL for an app with in-app language switching: without this, Google Play's App
+    // Bundle delivery splits resources per-language and only installs the ONE language split
+    // matching the device's SYSTEM locale (plus the default/first-created language as a
+    // fallback bucket). A device whose system language isn't one of our 11 supported
+    // languages (e.g. Swedish) then never receives the English — or any other non-default —
+    // language resources at all: switching the in-app language silently falls back to
+    // whatever the untagged default `values/` folder contains, because the requested
+    // language's resources were never downloaded to that device in the first place.
+    // Disabling language splitting ships every language's strings in every install.
+    bundle {
+        language {
+            enableSplit = false
+        }
     }
 }
 
