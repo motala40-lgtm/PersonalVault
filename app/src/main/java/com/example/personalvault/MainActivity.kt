@@ -10,7 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.biometric.BiometricPrompt
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.*
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -47,7 +47,11 @@ sealed class Screen {
     object Settings : Screen()
 }
 
-class MainActivity : FragmentActivity() {
+// AppCompatActivity (a strict superset of FragmentActivity — all Fragment/ActivityResult
+// APIs still work) is required for AppCompatDelegate.setApplicationLocales() to correctly
+// auto-recreate this Activity when the app language changes; a plain FragmentActivity
+// doesn't wire up that hook.
+class MainActivity : AppCompatActivity() {
 
     private val viewModel: VaultViewModel by viewModels()
     private var recomposeTrigger by mutableStateOf(0)
@@ -86,7 +90,10 @@ class MainActivity : FragmentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op either way */ }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LocaleHelper.applyStoredLanguage(newBase))
+        // Side-effecting call (sets the app-wide per-app language via AppCompatDelegate)
+        // rather than wrapping the Context — see LocaleHelper for why.
+        LocaleHelper.applyStoredLanguage(newBase)
+        super.attachBaseContext(newBase)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

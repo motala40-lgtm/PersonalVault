@@ -18,7 +18,7 @@ import java.util.Calendar
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val id = intent.getLongExtra("reminder_id", 0L)
-        val defaultTitle = LocaleHelper.applyStoredLanguage(context).getString(R.string.reminder_notification_title)
+        val defaultTitle = LocaleHelper.contextForStoredLanguage(context).getString(R.string.reminder_notification_title)
         val title = intent.getStringExtra("title") ?: defaultTitle
         val soundEnabled = intent.getBooleanExtra("sound_enabled", true)
         val vibrateEnabled = intent.getBooleanExtra("vibrate_enabled", true)

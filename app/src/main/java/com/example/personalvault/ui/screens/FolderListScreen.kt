@@ -656,6 +656,11 @@ private fun LanguageDialog(onDismiss: () -> Unit) {
                                 if (language != lang) {
                                     language = lang
                                     AppPreferences.setLanguage(context, lang)
+                                    LocaleHelper.apply(lang)
+                                    // Safety net alongside AppCompatDelegate's own automatic
+                                    // recreate hook, so the UI refreshes immediately even if
+                                    // that hook's timing doesn't line up within this dialog's
+                                    // composition.
                                     (context as? Activity)?.recreate()
                                 }
                             }

@@ -13,7 +13,7 @@ object NotificationHelper {
 
     fun ensureChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val localizedContext = LocaleHelper.applyStoredLanguage(context)
+            val localizedContext = LocaleHelper.contextForStoredLanguage(context)
             val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             if (manager.getNotificationChannel(CHANNEL_ID) == null) {
                 val channel = NotificationChannel(
@@ -36,7 +36,7 @@ object NotificationHelper {
         vibrateEnabled: Boolean
     ): androidx.core.app.NotificationCompat.Builder {
         ensureChannel(context)
-        val localizedContext = LocaleHelper.applyStoredLanguage(context)
+        val localizedContext = LocaleHelper.contextForStoredLanguage(context)
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_popup_reminder)
             .setContentTitle(localizedContext.getString(R.string.reminder_notification_title))

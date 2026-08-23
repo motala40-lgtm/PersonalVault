@@ -15,7 +15,7 @@ android {
         applicationId = "com.newlifetech.easyarchive"
         minSdk = 24
         targetSdk = 35
-        versionCode = 13
+        versionCode = 14
         versionName = "1.0"
     }
 
@@ -88,6 +88,10 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
+    // Provides AppCompatDelegate.setApplicationLocales() — the Play-Store-and-app-bundle-aware
+    // way to do in-app language switching (see LocaleHelper for why this replaced a manual
+    // Configuration/attachBaseContext approach).
+    implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
     // Lets us detect when the WHOLE app (not just one screen) goes to background,
     // so the vault can re-lock itself instead of staying unlocked forever.
