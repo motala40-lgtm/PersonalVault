@@ -89,15 +89,14 @@ class MainActivity : AppCompatActivity() {
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op either way */ }
 
-    override fun attachBaseContext(newBase: Context) {
-        // Side-effecting call (sets the app-wide per-app language via AppCompatDelegate)
-        // rather than wrapping the Context — see LocaleHelper for why.
-        LocaleHelper.applyStoredLanguage(newBase)
-        super.attachBaseContext(newBase)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Establishes English as the default on a genuinely first-ever launch (no-op on any
+        // later launch, once a language — ours or the person's own pick — is already set).
+        // Deliberately NOT in attachBaseContext(): see LocaleHelper.ensureDefaultLanguageIfNeverSet
+        // for why calling the locale-changing, recreate()-triggering API from there raced with
+        // the Activity's own construction and produced inconsistent results.
+        LocaleHelper.ensureDefaultLanguageIfNeverSet()
         CrashReporter.install(this)
 
         unlocked = !SecurityManager.isLockEnabled(this)

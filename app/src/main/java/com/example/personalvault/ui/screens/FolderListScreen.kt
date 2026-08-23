@@ -642,7 +642,7 @@ private fun languageNameRes(lang: AppLanguage): Int = when (lang) {
 @Composable
 private fun LanguageDialog(onDismiss: () -> Unit) {
     val context = LocalContext.current
-    var language by remember { mutableStateOf(AppPreferences.getLanguage(context)) }
+    var language by remember { mutableStateOf(LocaleHelper.currentLanguage(context)) }
 
     AlertDialog(
         onDismissRequest = onDismiss,

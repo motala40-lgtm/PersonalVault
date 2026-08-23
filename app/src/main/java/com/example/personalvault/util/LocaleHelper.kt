@@ -38,10 +38,44 @@ object LocaleHelper {
         AppLanguage.SV -> "sv"
     }
 
+    private fun languageForTag(tag: String): AppLanguage =
+        AppLanguage.entries.firstOrNull { tagFor(it) == tag } ?: AppLanguage.EN
+
+    /** The language actually in effect right now, per AppCompatDelegate — the real source of
+     *  truth, rather than our own stored preference (which apply() also updates, but which
+     *  could in principle drift out of sync). Falls back to [AppPreferences]'s stored value
+     *  if AppCompatDelegate has nothing set yet (shouldn't normally happen once onCreate has
+     *  run ensureDefaultLanguageIfNeverSet at least once). */
+    fun currentLanguage(context: Context): AppLanguage {
+        val current = AppCompatDelegate.getApplicationLocales()
+        return if (!current.isEmpty) languageForTag(current[0]!!.toLanguageTag())
+               else AppPreferences.getLanguage(context)
+    }
+
     /** Sets [language] as the app's per-app language for the whole process going forward.
      *  Triggers the same Activity recreation the old approach did. */
     fun apply(language: AppLanguage) {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tagFor(language)))
+    }
+
+    /**
+     * Establishes English as the default ONLY if no per-app language has ever been set yet
+     * (a genuinely first-ever launch) — safe to call every time onCreate() runs, since it's a
+     * no-op once any language (our default or the person's own pick) has been established.
+     *
+     * This intentionally does NOT run from attachBaseContext(): setApplicationLocales()
+     * triggers an Activity recreate(), and calling it from within attachBaseContext — itself
+     * part of the Activity's construction sequence, before the Activity instance is fully
+     * attached — raced with that reentrant recreate() and produced inconsistent results
+     * (sometimes silently falling back to the compiled default resource bucket, Persian,
+     * instead of applying the intended language). Calling this from onCreate(), after the
+     * Activity is fully attached, is the same well-supported pattern as a user tapping a
+     * language in the in-app picker.
+     */
+    fun ensureDefaultLanguageIfNeverSet() {
+        if (AppCompatDelegate.getApplicationLocales().isEmpty) {
+            apply(AppLanguage.EN)
+        }
     }
 
     /** Re-applies whichever language is currently stored in [AppPreferences]. Safe to call
@@ -61,7 +95,9 @@ object LocaleHelper {
      * one string's translation from resources already present on the device.
      */
     fun contextForStoredLanguage(context: Context): Context {
-        val tag = tagFor(AppPreferences.getLanguage(context))
+        val current = AppCompatDelegate.getApplicationLocales()
+        val tag = if (!current.isEmpty) current[0]!!.toLanguageTag()
+                  else tagFor(AppPreferences.getLanguage(context))
         val locale = java.util.Locale.forLanguageTag(tag)
         val config = android.content.res.Configuration(context.resources.configuration)
         config.setLocale(locale)
