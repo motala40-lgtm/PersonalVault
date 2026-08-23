@@ -60,22 +60,18 @@ object LocaleHelper {
 
     /**
      * Establishes English as the default ONLY if no per-app language has ever been set yet
-     * (a genuinely first-ever launch) — safe to call every time onCreate() runs, since it's a
-     * no-op once any language (our default or the person's own pick) has been established.
-     *
-     * This intentionally does NOT run from attachBaseContext(): setApplicationLocales()
-     * triggers an Activity recreate(), and calling it from within attachBaseContext — itself
-     * part of the Activity's construction sequence, before the Activity instance is fully
-     * attached — raced with that reentrant recreate() and produced inconsistent results
-     * (sometimes silently falling back to the compiled default resource bucket, Persian,
-     * instead of applying the intended language). Calling this from onCreate(), after the
-     * Activity is fully attached, is the same well-supported pattern as a user tapping a
-     * language in the in-app picker.
+     * (a genuinely first-ever launch). Returns true if it just did so (meaning an Activity
+     * recreate() is now in flight) — the caller should stop doing any further onCreate() work
+     * on this soon-to-be-destroyed instance when that happens. Returns false (safe to
+     * continue normally) once any language — our default or the person's own pick — is
+     * already established.
      */
-    fun ensureDefaultLanguageIfNeverSet() {
+    fun ensureDefaultLanguageIfNeverSet(): Boolean {
         if (AppCompatDelegate.getApplicationLocales().isEmpty) {
             apply(AppLanguage.EN)
+            return true
         }
+        return false
     }
 
     /** Re-applies whichever language is currently stored in [AppPreferences]. Safe to call

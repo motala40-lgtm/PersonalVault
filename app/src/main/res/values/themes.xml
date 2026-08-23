@@ -1,0 +1,11 @@
+<resources>
+    <!-- AppCompatActivity (MainActivity's base class, needed for AppCompatDelegate's in-app
+         language switching to correctly auto-recreate the Activity — see LocaleHelper)
+         requires the app's theme to descend from Theme.AppCompat; the app's actual visual
+         styling all comes from Compose's own Material3 theme (see ui/theme/Theme.kt), so this
+         only needs to satisfy that AppCompat requirement without adding any visible chrome. -->
+    <style name="Theme.EasyArchive" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+</resources>

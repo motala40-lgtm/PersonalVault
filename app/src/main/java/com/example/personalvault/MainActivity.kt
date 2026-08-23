@@ -91,13 +91,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Establishes English as the default on a genuinely first-ever launch (no-op on any
-        // later launch, once a language — ours or the person's own pick — is already set).
-        // Deliberately NOT in attachBaseContext(): see LocaleHelper.ensureDefaultLanguageIfNeverSet
-        // for why calling the locale-changing, recreate()-triggering API from there raced with
-        // the Activity's own construction and produced inconsistent results.
-        LocaleHelper.ensureDefaultLanguageIfNeverSet()
+        // Always first, unconditionally, so it's guaranteed to catch anything that follows —
+        // including the locale check right below, which (on a genuine first-ever launch) can
+        // itself trigger an Activity recreate() partway through this very function.
         CrashReporter.install(this)
+
+        if (LocaleHelper.ensureDefaultLanguageIfNeverSet()) {
+            // A recreate() is already in flight from the call above (setting the app's very
+            // first default language) — stop here rather than continuing to set up state and
+            // UI on this Activity instance, which is about to be torn down and replaced by a
+            // fresh onCreate() run anyway (where this same check becomes a no-op and normal
+            // startup proceeds). Continuing past this point was producing crashes: parts of
+            // onCreate() — permission requests, security checks, and especially setContent()
+            // building the whole Compose UI — could run against, or race with the teardown
+            // of, an Activity instance already being destroyed.
+            return
+        }
 
         unlocked = !SecurityManager.isLockEnabled(this)
         ProcessLifecycleOwner.get().lifecycle.addObserver(lockOnBackgroundObserver)

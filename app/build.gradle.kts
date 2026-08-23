@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.personalvault"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         // The public Google Play identity — permanent once published, and deliberately NOT
@@ -14,8 +14,8 @@ android {
         // original package so no source files need moving; only this outward-facing ID changes.
         applicationId = "com.newlifetech.easyarchive"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 18
+        targetSdk = 36
+        versionCode = 20
         versionName = "1.0"
     }
 
