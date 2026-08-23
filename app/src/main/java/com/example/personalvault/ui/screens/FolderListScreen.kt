@@ -48,6 +48,7 @@ import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.ui.theme.accentScreenBackground
 import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
+import com.example.personalvault.util.LocaleHelper
 import com.example.personalvault.util.GridColumns
 import com.example.personalvault.util.PastelPalette
 import com.example.personalvault.util.PastelPaletteDark
