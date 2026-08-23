@@ -1,6 +1,5 @@
 package com.example.personalvault.ui.screens
 
-import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -657,12 +656,12 @@ private fun LanguageDialog(onDismiss: () -> Unit) {
                                 if (language != lang) {
                                     language = lang
                                     AppPreferences.setLanguage(context, lang)
+                                    // setApplicationLocales() triggers the Activity recreate
+                                    // on its own — calling recreate() again ourselves on top
+                                    // of that caused a double-recreate race, which is exactly
+                                    // why some languages seemed to apply and others silently
+                                    // didn't (whichever recreate cycle "won" depended on timing).
                                     LocaleHelper.apply(lang)
-                                    // Safety net alongside AppCompatDelegate's own automatic
-                                    // recreate hook, so the UI refreshes immediately even if
-                                    // that hook's timing doesn't line up within this dialog's
-                                    // composition.
-                                    (context as? Activity)?.recreate()
                                 }
                             }
                         )
