@@ -162,7 +162,7 @@ fun FolderListScreen(
                     // The row of shortcut buttons (favorites, reminders, contacts, trash,
                     // settings, language) — moved here from the bottom bar per the design
                     // request, with the search field moved down to take its place instead.
-                    val topRowColor = if (isDarkTheme) BottomAppBarDefaults.containerColor else Color(0xFF4FC3F7)
+                    val topRowColor = if (isDarkTheme) BottomAppBarDefaults.containerColor else Color(0xFF2E5E8C)
                     val topRowContentColor = if (isDarkTheme) contentColorFor(topRowColor) else Color.White
                     Surface(color = topRowColor, contentColor = topRowContentColor) {
                         Row(
@@ -247,7 +247,7 @@ fun FolderListScreen(
                         }
                     },
                     shape = RoundedCornerShape(12.dp),
-                    containerColor = Color(0xFF7C4DFF),
+                    containerColor = Color(0xFF1B3A6B),
                     contentColor = Color.White
                 ) {
                     Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.new_folder))
