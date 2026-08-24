@@ -194,6 +194,7 @@
 
     <!-- Settings -->
     <string name="appearance">ظاهر</string>
+    <string name="theme_button_label">تم</string>
     <string name="accent_color">رنگ زمینه</string>
     <string name="custom_wallpaper_hint">یا به‌جاش یه عکس از گالری خودت به‌عنوان پس‌زمینه انتخاب کن</string>
     <string name="pick_wallpaper_button">انتخاب عکس از گالری</string>
