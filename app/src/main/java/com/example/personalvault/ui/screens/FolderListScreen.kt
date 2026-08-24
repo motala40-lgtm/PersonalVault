@@ -138,84 +138,106 @@ fun FolderListScreen(
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                TopAppBar(
-                    title = { Text(stringResource(R.string.app_title)) },
-                    actions = {
-                        IconButton(onClick = {
-                            folderGridColumns = AppPreferences.cycleFolderGridColumns(context)
-                        }) {
-                            Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
-                        }
-                        Image(
-                            painter = painterResource(R.drawable.logo_bayganikade),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .padding(end = 8.dp)
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
-                )
-            },
-            bottomBar = {
-                // A cheerful, fixed modern blue for the bottom bar — independent of the
-                // user's accent-color choice above, since this is a design accent rather
-                // than the theme background. Dark theme keeps the default bar color.
-                val bottomBarColor = if (isDarkTheme) BottomAppBarDefaults.containerColor else Color(0xFF4FC3F7)
-                val bottomBarContentColor = if (isDarkTheme) contentColorFor(bottomBarColor) else Color.White
-
-                BottomAppBar(
-                    containerColor = bottomBarColor,
-                    contentColor = bottomBarContentColor,
-                    actions = {
-                        AppIconChip(
-                            icon = Icons.Rounded.Favorite,
-                            baseColor = Color(0xFFE53935),
-                            contentDescriptionText = stringResource(R.string.nav_favorites),
-                            onClick = onOpenFavorites
-                        )
-                        AppIconChip(
-                            icon = Icons.Rounded.NotificationsActive,
-                            baseColor = Color(0xFFFFA726),
-                            contentDescriptionText = stringResource(R.string.nav_reminders),
-                            onClick = onOpenReminders
-                        )
-                        AppIconChip(
-                            icon = Icons.Rounded.Phone,
-                            baseColor = Color(0xFF43A047),
-                            contentDescriptionText = stringResource(R.string.nav_contacts),
-                            onClick = onOpenContacts
-                        )
-                        AppIconChip(
-                            icon = Icons.Rounded.DeleteOutline,
-                            baseColor = Color(0xFFD6336C),
-                            contentDescriptionText = stringResource(R.string.nav_trash),
-                            onClick = onOpenTrash
-                        )
-                        AppIconChip(
-                            icon = Icons.Rounded.Settings,
-                            baseColor = Color(0xFF37474F),
-                            contentDescriptionText = stringResource(R.string.nav_settings),
-                            onClick = onOpenSettings
-                        )
-                        EmojiIconChip(
-                            emoji = "\uD83C\uDF0D",
-                            baseColor = Color(0xFF1E88E5),
-                            contentDescriptionText = stringResource(R.string.app_language),
-                            onClick = { showLanguageDialog = true }
-                        )
-                    },
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { showAddDialog = true },
-                            shape = RoundedCornerShape(16.dp),
-                            containerColor = Color(0xFF7C4DFF),
-                            contentColor = Color.White
+                Column {
+                    TopAppBar(
+                        title = { Text(stringResource(R.string.app_title)) },
+                        actions = {
+                            IconButton(onClick = {
+                                folderGridColumns = AppPreferences.cycleFolderGridColumns(context)
+                            }) {
+                                Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
+                            }
+                            Image(
+                                painter = painterResource(R.drawable.logo_bayganikade),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .padding(end = 8.dp)
+                            )
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                    )
+                    // The row of shortcut buttons (favorites, reminders, contacts, trash,
+                    // settings, language) — moved here from the bottom bar per the design
+                    // request, with the search field moved down to take its place instead.
+                    val topRowColor = if (isDarkTheme) BottomAppBarDefaults.containerColor else Color(0xFF4FC3F7)
+                    val topRowContentColor = if (isDarkTheme) contentColorFor(topRowColor) else Color.White
+                    Surface(color = topRowColor, contentColor = topRowContentColor) {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.new_folder))
+                            AppIconChip(
+                                icon = Icons.Rounded.Favorite,
+                                baseColor = Color(0xFFE53935),
+                                contentDescriptionText = stringResource(R.string.nav_favorites),
+                                onClick = onOpenFavorites
+                            )
+                            AppIconChip(
+                                icon = Icons.Rounded.NotificationsActive,
+                                baseColor = Color(0xFFFFA726),
+                                contentDescriptionText = stringResource(R.string.nav_reminders),
+                                onClick = onOpenReminders
+                            )
+                            AppIconChip(
+                                icon = Icons.Rounded.Phone,
+                                baseColor = Color(0xFF43A047),
+                                contentDescriptionText = stringResource(R.string.nav_contacts),
+                                onClick = onOpenContacts
+                            )
+                            AppIconChip(
+                                icon = Icons.Rounded.DeleteOutline,
+                                baseColor = Color(0xFFD6336C),
+                                contentDescriptionText = stringResource(R.string.nav_trash),
+                                onClick = onOpenTrash
+                            )
+                            AppIconChip(
+                                icon = Icons.Rounded.Settings,
+                                baseColor = Color(0xFF37474F),
+                                contentDescriptionText = stringResource(R.string.nav_settings),
+                                onClick = onOpenSettings
+                            )
+                            EmojiIconChip(
+                                emoji = "\uD83C\uDF0D",
+                                baseColor = Color(0xFF1E88E5),
+                                contentDescriptionText = stringResource(R.string.app_language),
+                                onClick = { showLanguageDialog = true }
+                            )
                         }
                     }
-                )
+                }
+            },
+            bottomBar = {
+                // The search field — moved here from the top of the body, taking the bottom
+                // bar's old spot, per the design request.
+                Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 3.dp) {
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = {
+                            query = it
+                            onSearch(it)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        placeholder = { Text(stringResource(R.string.search_placeholder)) },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        shape = RoundedCornerShape(16.dp),
+                        singleLine = true
+                    )
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = { showAddDialog = true },
+                    shape = RoundedCornerShape(12.dp),
+                    containerColor = Color(0xFF7C4DFF),
+                    contentColor = Color.White
+                ) {
+                    Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.new_folder))
+                }
             }
         ) { padding ->
             Column(
@@ -223,20 +245,6 @@ fun FolderListScreen(
                     .padding(padding)
                     .fillMaxSize()
             ) {
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = {
-                        query = it
-                        onSearch(it)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    placeholder = { Text(stringResource(R.string.search_placeholder)) },
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                    shape = RoundedCornerShape(16.dp),
-                    singleLine = true
-                )
 
                 if (query.isNotBlank()) {
                     Text(
@@ -426,8 +434,8 @@ private fun AppIconChip(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = false)
-                .clip(RoundedCornerShape(12.dp))
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp), clip = false)
+                .clip(RoundedCornerShape(8.dp))
                 .background(Brush.verticalGradient(listOf(gradientTop, baseColor))),
             contentAlignment = Alignment.Center
         ) {
@@ -452,8 +460,8 @@ private fun EmojiIconChip(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = false)
-                .clip(RoundedCornerShape(12.dp))
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(8.dp), clip = false)
+                .clip(RoundedCornerShape(8.dp))
                 .background(Brush.verticalGradient(listOf(gradientTop, baseColor))),
             contentAlignment = Alignment.Center
         ) {
