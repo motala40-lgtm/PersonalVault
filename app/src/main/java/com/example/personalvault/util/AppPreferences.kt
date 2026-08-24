@@ -14,8 +14,18 @@ object AppPreferences {
     private const val KEY_FOLDER_GRID_COLUMNS = "folder_grid_columns"
     private const val KEY_ACCENT_COLOR = "accent_color_hex"
     private const val KEY_HAS_SEEN_ONBOARDING = "has_seen_onboarding"
+    private const val KEY_IS_PRO = "is_pro"
 
     private fun prefs(context: Context) = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    /** True once Cafe Bazaar's IAB confirms the Pro purchase — lifts the free-tier folder/file
+     *  limits (see [com.example.personalvault.util.TierLimits]). Defaults to false; nothing
+     *  sets this to true yet since the IAB purchase flow itself isn't wired up here yet. */
+    fun isPro(context: Context): Boolean = prefs(context).getBoolean(KEY_IS_PRO, false)
+
+    fun setIsPro(context: Context, isPro: Boolean) {
+        prefs(context).edit().putBoolean(KEY_IS_PRO, isPro).apply()
+    }
 
     /** True once the person has tapped "Get Started" on the first-launch welcome screen. */
     fun hasSeenOnboarding(context: Context): Boolean = prefs(context).getBoolean(KEY_HAS_SEEN_ONBOARDING, false)

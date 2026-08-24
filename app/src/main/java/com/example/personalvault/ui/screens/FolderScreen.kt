@@ -49,6 +49,7 @@ import com.example.personalvault.ui.components.EntryGridCard
 import com.example.personalvault.util.AppPreferences
 import com.example.personalvault.util.FileUtils
 import com.example.personalvault.util.GridColumns
+import com.example.personalvault.util.TierLimits
 import com.example.personalvault.viewmodel.VaultViewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -70,6 +71,7 @@ fun FolderScreen(
     val entries by remember(folder.id) { viewModel.entriesForFolder(folder.id) }.collectAsState()
     var pendingCameraFile by remember { mutableStateOf<File?>(null) }
     var showAddMenu by remember { mutableStateOf(false) }
+    var showUpgradePrompt by remember { mutableStateOf(false) }
     var showNoteDialog by remember { mutableStateOf(false) }
     var gridColumns by remember { mutableStateOf(AppPreferences.getGridColumns(context)) }
 
@@ -181,7 +183,13 @@ fun FolderScreen(
         floatingActionButton = {
             if (!selectionMode) {
                 Box {
-                    FloatingActionButton(onClick = { showAddMenu = true }) {
+                    FloatingActionButton(onClick = {
+                        if (TierLimits.fileLimitReached(entries.size, AppPreferences.isPro(context))) {
+                            showUpgradePrompt = true
+                        } else {
+                            showAddMenu = true
+                        }
+                    }) {
                         Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_content))
                     }
                     DropdownMenu(expanded = showAddMenu, onDismissRequest = { showAddMenu = false }) {
@@ -284,6 +292,19 @@ fun FolderScreen(
                 }
             }
         }
+    }
+
+    if (showUpgradePrompt) {
+        AlertDialog(
+            onDismissRequest = { showUpgradePrompt = false },
+            title = { Text(stringResource(R.string.upgrade_prompt_title)) },
+            text = { Text(stringResource(R.string.upgrade_prompt_file_body, TierLimits.FREE_MAX_FILES_PER_FOLDER)) },
+            confirmButton = {
+                TextButton(onClick = { showUpgradePrompt = false }) {
+                    Text(stringResource(R.string.upgrade_prompt_ok))
+                }
+            }
+        )
     }
 
     if (showNoteDialog) {

@@ -47,6 +47,7 @@ import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.ui.theme.accentScreenBackground
 import com.example.personalvault.util.AppLanguage
 import com.example.personalvault.util.AppPreferences
+import com.example.personalvault.util.TierLimits
 import com.example.personalvault.util.LocaleHelper
 import com.example.personalvault.util.GridColumns
 import com.example.personalvault.util.PastelPalette
@@ -78,6 +79,7 @@ fun FolderListScreen(
     val searchResults by viewModel.searchResults.collectAsState()
 
     var showAddDialog by remember { mutableStateOf(false) }
+    var showUpgradePrompt by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf("") }
 
     // Per-folder lock flow. Each holds the folder currently going through that step;
@@ -237,7 +239,13 @@ fun FolderListScreen(
             },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { showAddDialog = true },
+                    onClick = {
+                        if (TierLimits.folderLimitReached(folders.size, AppPreferences.isPro(context))) {
+                            showUpgradePrompt = true
+                        } else {
+                            showAddDialog = true
+                        }
+                    },
                     shape = RoundedCornerShape(12.dp),
                     containerColor = Color(0xFF7C4DFF),
                     contentColor = Color.White
@@ -325,6 +333,19 @@ fun FolderListScreen(
             onCreate = { name, color ->
                 viewModel.createFolder(name, color, "Folder")
                 showAddDialog = false
+            }
+        )
+    }
+
+    if (showUpgradePrompt) {
+        AlertDialog(
+            onDismissRequest = { showUpgradePrompt = false },
+            title = { Text(stringResource(R.string.upgrade_prompt_title)) },
+            text = { Text(stringResource(R.string.upgrade_prompt_folder_body, TierLimits.FREE_MAX_FOLDERS)) },
+            confirmButton = {
+                TextButton(onClick = { showUpgradePrompt = false }) {
+                    Text(stringResource(R.string.upgrade_prompt_ok))
+                }
             }
         )
     }

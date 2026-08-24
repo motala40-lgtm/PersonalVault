@@ -79,6 +79,10 @@
 
     <!-- Folder -->
     <string name="new_folder">پوشه جدید</string>
+    <string name="upgrade_prompt_title">ارتقا به نسخه‌ی کامل</string>
+    <string name="upgrade_prompt_folder_body">توی نسخه‌ی رایگان، حداکثر %1$d پوشه می‌تونید بسازید. برای ساخت پوشه‌ی بیشتر، نسخه‌ی کامل رو بخرید.</string>
+    <string name="upgrade_prompt_file_body">توی نسخه‌ی رایگان، هر پوشه حداکثر %1$d فایل می‌تونه داشته باشه. برای افزودن بیشتر، نسخه‌ی کامل رو بخرید.</string>
+    <string name="upgrade_prompt_ok">متوجه شدم</string>
     <string name="folder_name_label">نام پوشه</string>
 
     <!-- Lock screen -->

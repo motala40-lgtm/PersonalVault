@@ -77,6 +77,10 @@
 
     <!-- Folder -->
     <string name="new_folder">New Folder</string>
+    <string name="upgrade_prompt_title">Upgrade to Pro</string>
+    <string name="upgrade_prompt_folder_body">The free version allows up to %1$d folders. Upgrade to Pro to create more.</string>
+    <string name="upgrade_prompt_file_body">The free version allows up to %1$d files per folder. Upgrade to Pro to add more.</string>
+    <string name="upgrade_prompt_ok">Got it</string>
     <string name="folder_name_label">Folder name</string>
 
     <!-- Lock screen -->
