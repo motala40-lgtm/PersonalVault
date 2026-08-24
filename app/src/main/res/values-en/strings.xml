@@ -36,7 +36,7 @@
     <string name="help_screen_title">How to use the app</string>
 
     <string name="help_intro_title">Introduction</string>
-    <string name="help_intro_body">Easy Archive is a private app for securely keeping your photos, files, document scans, notes, and contacts — everything is stored only on your phone, never on a server or the internet.</string>
+    <string name="help_intro_body">Bayganikade is a private app for securely keeping your photos, files, document scans, notes, and contacts — everything is stored only on your phone, never on a server or the internet.</string>
 
     <string name="help_folders_title">Folders</string>
     <string name="help_folders_body">Create a new folder with the + button and pick one of eight pastel colors. Each folder card also shows how many items are inside.\n\nTo lock a folder: long-press it or tap its three-dot menu → "Lock folder". From the same menu you can change its password or remove the lock.\n\nForgot a folder\'s password? Tap "Forgot folder password" while opening it and answer the two security questions (set up in advance in Settings) — you\'ll immediately set a new password.</string>
@@ -67,7 +67,7 @@
     <string name="search_placeholder">Search title, text, file name...</string>
     <string name="search_results">Search results</string>
     <string name="no_folders_yet">No folders yet — tap + to create one</string>
-    <string name="app_title">Easy Archive</string>
+    <string name="app_title">Bayganikade</string>
     <string name="welcome_tagline">Complete security, fully offline</string>
     <string name="get_started">Get Started</string>
     <string name="learn_about_privacy">Learn more about our privacy</string>

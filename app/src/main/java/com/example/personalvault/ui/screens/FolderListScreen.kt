@@ -147,7 +147,7 @@ fun FolderListScreen(
                             Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
                         }
                         Image(
-                            painter = painterResource(R.drawable.logo_easy_archive),
+                            painter = painterResource(R.drawable.logo_bayganikade),
                             contentDescription = null,
                             modifier = Modifier
                                 .size(64.dp)

@@ -41,7 +41,7 @@ object CrashReporter {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         }.getOrNull() ?: "unknown"
         val report = buildString {
-            appendLine("Easy Archive crash report (device/app info only — no vault contents)")
+            appendLine("Bayganikade crash report (device/app info only — no vault contents)")
             appendLine("App version: $versionName")
             appendLine("Android version: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
             appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
@@ -70,7 +70,7 @@ object CrashReporter {
         return Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf("Newlifetech25@hotmail.com"))
-            putExtra(Intent.EXTRA_SUBJECT, "Easy Archive - Crash Report")
+            putExtra(Intent.EXTRA_SUBJECT, "Bayganikade - Crash Report")
             putExtra(Intent.EXTRA_TEXT, reportText)
         }
     }

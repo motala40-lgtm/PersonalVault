@@ -89,7 +89,7 @@ fun LockScreen(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.logo_easy_archive),
+                painter = painterResource(R.drawable.logo_bayganikade),
                 contentDescription = null,
                 modifier = Modifier.size(64.dp)
             )
