@@ -594,15 +594,6 @@ private fun FolderCard(
 private fun languageNameRes(lang: AppLanguage): Int = when (lang) {
     AppLanguage.FA -> R.string.language_fa
     AppLanguage.EN -> R.string.language_en
-    AppLanguage.FR -> R.string.language_fr
-    AppLanguage.DE -> R.string.language_de
-    AppLanguage.ES -> R.string.language_es
-    AppLanguage.AR -> R.string.language_ar
-    AppLanguage.RU -> R.string.language_ru
-    AppLanguage.ZH -> R.string.language_zh
-    AppLanguage.HI -> R.string.language_hi
-    AppLanguage.TR -> R.string.language_tr
-    AppLanguage.SV -> R.string.language_sv
 }
 
 @Composable

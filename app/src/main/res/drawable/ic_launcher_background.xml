@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Solid warm-copper background for the adaptive launcher icon. Kept as a plain flat
-     color (not the busy multi-tone gradient the old icon used) so the white foreground
-     glyph stays legible at small sizes and isn't muddied by the OS's automatic
-     background/theming treatment. -->
+<!-- Placeholder background for Bayganikade (the Cafe Bazaar edition) — a distinct deep-blue
+     rather than Easy Archive's copper/orange, just so the two apps' icons don't look
+     identical while final branding/visual design is still pending. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="#A04111" />
+    <solid android:color="#1B3A6B" />
 </shape>

@@ -27,15 +27,6 @@ object LocaleHelper {
     private fun tagFor(language: AppLanguage): String = when (language) {
         AppLanguage.FA -> "fa"
         AppLanguage.EN -> "en"
-        AppLanguage.FR -> "fr"
-        AppLanguage.DE -> "de"
-        AppLanguage.ES -> "es"
-        AppLanguage.AR -> "ar"
-        AppLanguage.RU -> "ru"
-        AppLanguage.ZH -> "zh"
-        AppLanguage.HI -> "hi"
-        AppLanguage.TR -> "tr"
-        AppLanguage.SV -> "sv"
     }
 
     private fun languageForTag(tag: String): AppLanguage =

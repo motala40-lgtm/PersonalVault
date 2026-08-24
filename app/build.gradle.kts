@@ -12,10 +12,10 @@ android {
         // The public Google Play identity — permanent once published, and deliberately NOT
         // "com.example.*" (which Play rejects). The internal `namespace` above stays as the
         // original package so no source files need moving; only this outward-facing ID changes.
-        applicationId = "com.newlifetech.easyarchive"
+        applicationId = "com.newlifetech.bayganikade"
         minSdk = 24
         targetSdk = 36
-        versionCode = 21
+        versionCode = 1
         versionName = "1.0"
     }
 
