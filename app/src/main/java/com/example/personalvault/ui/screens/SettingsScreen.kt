@@ -321,6 +321,11 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
             OutlinedButton(onClick = {
                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("mailto:$SUPPORT_EMAIL")
+                    // Restricts the system's "open with" chooser to actual email apps (Gmail,
+                    // Outlook, etc.) instead of showing every app that merely CLAIMS to
+                    // handle a mailto: link — like PayPal, which was showing up alongside
+                    // real email apps without this.
+                    type = "message/rfc822"
                 }
                 com.example.personalvault.markAwaitingExternalResult(context)
                 runCatching { context.startActivity(intent) }

@@ -211,8 +211,14 @@ fun FolderListScreen(
             },
             bottomBar = {
                 // The search field — moved here from the top of the body, taking the bottom
-                // bar's old spot, per the design request.
-                Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 3.dp) {
+                // bar's old spot, per the design request. BottomAppBar (used previously) hosts
+                // this exact padding automatically; a plain Surface doesn't, so it was
+                // rendering underneath the phone's system navigation bar without this.
+                Surface(
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 3.dp,
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
+                ) {
                     OutlinedTextField(
                         value = query,
                         onValueChange = {
