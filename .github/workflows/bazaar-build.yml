@@ -38,7 +38,36 @@ jobs:
           name: bayganikade-debug
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      # No release-signing step yet: Bayganikade needs its OWN separate keystore (never the
-      # Easy Archive one — a different product for a different store) before a signed release
-      # build makes sense. Add that back here once that keystore exists and its secrets are
-      # configured, following the same pattern as android-build.yml.
+      # Bayganikade's OWN separate keystore — never Easy Archive's. These secrets
+      # (BAYGANIKADE_*) are distinct repo secrets from the ones android-build.yml uses, set up
+      # the same way (see the main README's "Release signing setup" section) but under their
+      # own names so the two products' signing material can never get mixed up.
+      #
+      # app/build.gradle.kts (shared by both branches) reads the plain KEYSTORE_PATH /
+      # KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD env var names regardless of which product
+      # is building — here we just feed it from the BAYGANIKADE_* secrets instead of the
+      # Easy Archive ones android-build.yml uses.
+      - name: Decode release keystore
+        if: ${{ env.BAYGANIKADE_KEYSTORE_BASE64 != '' }}
+        env:
+          BAYGANIKADE_KEYSTORE_BASE64: ${{ secrets.BAYGANIKADE_KEYSTORE_BASE64 }}
+        run: echo "$BAYGANIKADE_KEYSTORE_BASE64" | base64 -d > app/release.jks
+
+      - name: Build signed release AAB
+        if: ${{ env.BAYGANIKADE_KEYSTORE_BASE64 != '' }}
+        env:
+          BAYGANIKADE_KEYSTORE_BASE64: ${{ secrets.BAYGANIKADE_KEYSTORE_BASE64 }}
+          KEYSTORE_PATH: release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.BAYGANIKADE_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.BAYGANIKADE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.BAYGANIKADE_KEY_PASSWORD }}
+        run: gradle bundleRelease --no-daemon
+
+      - name: Upload release AAB artifact
+        if: ${{ env.BAYGANIKADE_KEYSTORE_BASE64 != '' }}
+        env:
+          BAYGANIKADE_KEYSTORE_BASE64: ${{ secrets.BAYGANIKADE_KEYSTORE_BASE64 }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bayganikade-release-aab
+          path: app/build/outputs/bundle/release/app-release.aab
