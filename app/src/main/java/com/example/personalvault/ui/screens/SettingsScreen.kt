@@ -16,7 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -115,92 +119,125 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
 
             Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(8.dp))
-            ThemeMode.values().forEach { mode ->
-                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = themeMode == mode,
-                        onClick = {
-                            themeMode = mode
-                            AppPreferences.setThemeMode(context, mode)
-                            onThemeOrLanguageChanged()
-                        }
-                    )
-                    Text(
-                        when (mode) {
-                            ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
-                            ThemeMode.LIGHT -> stringResource(R.string.theme_light)
-                            ThemeMode.DARK -> stringResource(R.string.theme_dark)
-                        }
-                    )
-                }
-            }
 
-            Spacer(Modifier.height(28.dp))
+            // Theme and Background color are collapsed behind their own buttons rather than
+            // always shown expanded, so Settings reads as a much shorter, less overwhelming
+            // list at a glance — tap either button to expand just that one section.
+            var themeSectionExpanded by remember { mutableStateOf(false) }
+            var backgroundSectionExpanded by remember { mutableStateOf(false) }
 
-            Text(stringResource(R.string.accent_color), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            Spacer(Modifier.height(8.dp))
-            Row {
-                // "White" — the plain/no-gradient option — always comes first.
-                AccentSwatch(
-                    hex = null,
-                    selected = accentHex == null,
-                    onClick = {
-                        accentHex = null
-                        AppPreferences.setAccentColorHex(context, null)
-                        // A picked color/white must win over any leftover custom wallpaper —
-                        // otherwise the photo (which ScreenBackground checks first) keeps
-                        // showing and the person's color choice silently does nothing.
-                        wallpaperPath?.let { runCatching { java.io.File(it).delete() } }
-                        wallpaperPath = null
-                        AppPreferences.setCustomWallpaperPath(context, null)
-                        onThemeOrLanguageChanged()
-                    }
+            OutlinedButton(
+                onClick = { themeSectionExpanded = !themeSectionExpanded },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.theme_button_label), modifier = Modifier.weight(1f))
+                Icon(
+                    if (themeSectionExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = null
                 )
-                PastelPalette.forEach { hex ->
-                    AccentSwatch(
-                        hex = hex,
-                        selected = accentHex == hex,
-                        onClick = {
-                            accentHex = hex
-                            AppPreferences.setAccentColorHex(context, hex)
-                            wallpaperPath?.let { runCatching { java.io.File(it).delete() } }
-                            wallpaperPath = null
-                            AppPreferences.setCustomWallpaperPath(context, null)
-                            onThemeOrLanguageChanged()
+            }
+            AnimatedVisibility(visible = themeSectionExpanded) {
+                Column(Modifier.padding(top = 8.dp)) {
+                    ThemeMode.values().forEach { mode ->
+                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                            RadioButton(
+                                selected = themeMode == mode,
+                                onClick = {
+                                    themeMode = mode
+                                    AppPreferences.setThemeMode(context, mode)
+                                    onThemeOrLanguageChanged()
+                                }
+                            )
+                            Text(
+                                when (mode) {
+                                    ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
+                                    ThemeMode.LIGHT -> stringResource(R.string.theme_light)
+                                    ThemeMode.DARK -> stringResource(R.string.theme_dark)
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
 
             Spacer(Modifier.height(12.dp))
-            Text(
-                stringResource(R.string.custom_wallpaper_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Spacer(Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedButton(onClick = {
-                    com.example.personalvault.markAwaitingExternalResult(context)
-                    wallpaperPicker.launch(
-                        androidx.activity.result.PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
+
+            OutlinedButton(
+                onClick = { backgroundSectionExpanded = !backgroundSectionExpanded },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.accent_color), modifier = Modifier.weight(1f))
+                Icon(
+                    if (backgroundSectionExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = null
+                )
+            }
+            AnimatedVisibility(visible = backgroundSectionExpanded) {
+                Column(Modifier.padding(top = 8.dp)) {
+                    Row(Modifier.horizontalScroll(rememberScrollState())) {
+                        // "White" — the plain/no-gradient option — always comes first.
+                        AccentSwatch(
+                            hex = null,
+                            selected = accentHex == null,
+                            onClick = {
+                                accentHex = null
+                                AppPreferences.setAccentColorHex(context, null)
+                                // A picked color/white must win over any leftover custom wallpaper —
+                                // otherwise the photo (which ScreenBackground checks first) keeps
+                                // showing and the person's color choice silently does nothing.
+                                wallpaperPath?.let { runCatching { java.io.File(it).delete() } }
+                                wallpaperPath = null
+                                AppPreferences.setCustomWallpaperPath(context, null)
+                                onThemeOrLanguageChanged()
+                            }
                         )
+                        PastelPalette.forEach { hex ->
+                            AccentSwatch(
+                                hex = hex,
+                                selected = accentHex == hex,
+                                onClick = {
+                                    accentHex = hex
+                                    AppPreferences.setAccentColorHex(context, hex)
+                                    wallpaperPath?.let { runCatching { java.io.File(it).delete() } }
+                                    wallpaperPath = null
+                                    AppPreferences.setCustomWallpaperPath(context, null)
+                                    onThemeOrLanguageChanged()
+                                }
+                            )
+                        }
+                    }
+
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        stringResource(R.string.custom_wallpaper_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }) {
-                    Text(stringResource(R.string.pick_wallpaper_button))
-                }
-                if (wallpaperPath != null) {
-                    Spacer(Modifier.width(8.dp))
-                    TextButton(onClick = {
-                        wallpaperPath?.let { runCatching { java.io.File(it).delete() } }
-                        wallpaperPath = null
-                        AppPreferences.setCustomWallpaperPath(context, null)
-                        onThemeOrLanguageChanged()
-                    }) {
+                    Spacer(Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedButton(onClick = {
+                            com.example.personalvault.markAwaitingExternalResult(context)
+                            wallpaperPicker.launch(
+                                androidx.activity.result.PickVisualMediaRequest(
+                                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                                )
+                            )
+                        }) {
+                            Text(stringResource(R.string.pick_wallpaper_button))
+                        }
+                        if (wallpaperPath != null) {
+                            Spacer(Modifier.width(8.dp))
+                            TextButton(onClick = {
+                                wallpaperPath?.let { runCatching { java.io.File(it).delete() } }
+                                wallpaperPath = null
+                                AppPreferences.setCustomWallpaperPath(context, null)
+                                onThemeOrLanguageChanged()
+                            }) {
                         Text(stringResource(R.string.remove_wallpaper_button))
                     }
                 }
+                }
+            }
             }
 
             Spacer(Modifier.height(28.dp))
