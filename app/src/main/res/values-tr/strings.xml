@@ -15,6 +15,8 @@
     <string name="nav_reminders">Hatırlatıcılar</string>
     <string name="nav_contacts">Kişiler</string>
     <string name="add_contact">Kişi ekle</string>
+    <string name="add_contact_manually">Manuel ekle</string>
+    <string name="import_from_phone_contacts">Telefon kişilerinden içe aktar</string>
     <string name="edit_contact">Kişiyi düzenle</string>
     <string name="search_contacts_placeholder">İsim veya numara ara…</string>
     <string name="no_contacts_yet">Henüz kişi yok; + düğmesiyle bir tane ekle</string>

@@ -15,6 +15,8 @@
     <string name="nav_reminders">التذكيرات</string>
     <string name="nav_contacts">جهات الاتصال</string>
     <string name="add_contact">إضافة جهة اتصال</string>
+    <string name="add_contact_manually">إضافة يدوية</string>
+    <string name="import_from_phone_contacts">استيراد من جهات اتصال الهاتف</string>
     <string name="edit_contact">تعديل جهة الاتصال</string>
     <string name="search_contacts_placeholder">ابحث بالاسم أو الرقم…</string>
     <string name="no_contacts_yet">لا توجد جهات اتصال بعد؛ أضف واحدة بزر +</string>

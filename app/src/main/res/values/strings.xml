@@ -21,6 +21,8 @@
     <string name="nav_reminders">یادآوری‌ها</string>
     <string name="nav_contacts">دفترچه تلفن</string>
     <string name="add_contact">افزودن مخاطب</string>
+    <string name="add_contact_manually">افزودن دستی</string>
+    <string name="import_from_phone_contacts">وارد کردن از مخاطبین گوشی</string>
     <string name="edit_contact">ویرایش مخاطب</string>
     <string name="search_contacts_placeholder">جستجو در نام یا شماره…</string>
     <string name="no_contacts_yet">هنوز مخاطبی اضافه نکردی؛ با دکمه‌ی + یکی بساز</string>

@@ -2,6 +2,9 @@ package com.example.personalvault.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import android.provider.ContactsContract
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -36,8 +39,34 @@ fun ContactsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
     val contacts by viewModel.contacts.collectAsState()
     var query by remember { mutableStateOf("") }
     var showAddDialog by remember { mutableStateOf(false) }
+    var showAddMenu by remember { mutableStateOf(false) }
     var editingContact by remember { mutableStateOf<Contact?>(null) }
     var deletingContact by remember { mutableStateOf<Contact?>(null) }
+    // Pre-filled from a phone contact just picked, so ContactEditDialog can open with its
+    // name/number already in place (still editable) instead of a blank form.
+    var importedContact by remember { mutableStateOf<Contact?>(null) }
+
+    // Launching the system's phone-number picker this way (ACTION_PICK against the Phone
+    // content URI, then querying only the exact URI it hands back) reads just that one picked
+    // number without needing the broad READ_CONTACTS permission — the returned URI itself
+    // carries a temporary grant to that single row, the same way a file picker's result URI
+    // works without needing storage permissions.
+    val contactPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val uri: Uri? = result.data?.data
+        if (uri != null) {
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val nameIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                    val numberIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    val name = if (nameIdx >= 0) cursor.getString(nameIdx).orEmpty() else ""
+                    val number = if (numberIdx >= 0) cursor.getString(numberIdx).orEmpty() else ""
+                    importedContact = Contact(name = name, phone = number)
+                }
+            }
+        }
+    }
 
     // Small contact lists don't need a dedicated DB search query — filtering the already
     // loaded list client-side keeps this screen simple.
@@ -66,8 +95,30 @@ fun ContactsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { showAddDialog = true }) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_contact))
+            Box {
+                FloatingActionButton(onClick = { showAddMenu = true }) {
+                    Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_contact))
+                }
+                DropdownMenu(expanded = showAddMenu, onDismissRequest = { showAddMenu = false }) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.add_contact_manually)) },
+                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                        onClick = {
+                            showAddMenu = false
+                            showAddDialog = true
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.import_from_phone_contacts)) },
+                        leadingIcon = { Icon(Icons.Default.ImportContacts, contentDescription = null) },
+                        onClick = {
+                            showAddMenu = false
+                            com.example.personalvault.markAwaitingExternalResult(context)
+                            val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                            contactPickerLauncher.launch(intent)
+                        }
+                    )
+                }
             }
         }
     ) { padding ->
@@ -120,6 +171,20 @@ fun ContactsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
             onSave = { name, phone, phone2, email, note ->
                 viewModel.addContact(Contact(name = name, phone = phone, phone2 = phone2, email = email, note = note))
                 showAddDialog = false
+            }
+        )
+    }
+
+    // Opens pre-filled with the name/number just picked from the phone's own contacts, still
+    // fully editable before saving — matches the same review-before-save flow as adding a
+    // contact manually or editing an existing one.
+    importedContact?.let { picked ->
+        ContactEditDialog(
+            initial = picked,
+            onDismiss = { importedContact = null },
+            onSave = { name, phone, phone2, email, note ->
+                viewModel.addContact(Contact(name = name, phone = phone, phone2 = phone2, email = email, note = note))
+                importedContact = null
             }
         )
     }

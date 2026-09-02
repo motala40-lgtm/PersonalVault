@@ -19,6 +19,8 @@
     <string name="nav_reminders">Reminders</string>
     <string name="nav_contacts">Contacts</string>
     <string name="add_contact">Add contact</string>
+    <string name="add_contact_manually">Add manually</string>
+    <string name="import_from_phone_contacts">Import from phone contacts</string>
     <string name="edit_contact">Edit contact</string>
     <string name="search_contacts_placeholder">Search name or number…</string>
     <string name="no_contacts_yet">No contacts yet — add one with the + button</string>

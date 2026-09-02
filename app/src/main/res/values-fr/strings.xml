@@ -15,6 +15,8 @@
     <string name="nav_reminders">Rappels</string>
     <string name="nav_contacts">Contacts</string>
     <string name="add_contact">Ajouter un contact</string>
+    <string name="add_contact_manually">Ajouter manuellement</string>
+    <string name="import_from_phone_contacts">Importer depuis les contacts du téléphone</string>
     <string name="edit_contact">Modifier le contact</string>
     <string name="search_contacts_placeholder">Rechercher un nom ou un numéro…</string>
     <string name="no_contacts_yet">Aucun contact pour l\'instant — ajoutez-en un avec le bouton +</string>

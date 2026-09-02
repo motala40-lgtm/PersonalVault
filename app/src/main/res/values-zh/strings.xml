@@ -15,6 +15,8 @@
     <string name="nav_reminders">提醒</string>
     <string name="nav_contacts">通讯录</string>
     <string name="add_contact">添加联系人</string>
+    <string name="add_contact_manually">手动添加</string>
+    <string name="import_from_phone_contacts">从手机联系人导入</string>
     <string name="edit_contact">编辑联系人</string>
     <string name="search_contacts_placeholder">搜索姓名或号码…</string>
     <string name="no_contacts_yet">还没有联系人，点击 + 添加一个</string>

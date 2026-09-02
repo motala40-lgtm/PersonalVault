@@ -15,6 +15,8 @@
     <string name="nav_reminders">Напоминания</string>
     <string name="nav_contacts">Контакты</string>
     <string name="add_contact">Добавить контакт</string>
+    <string name="add_contact_manually">Добавить вручную</string>
+    <string name="import_from_phone_contacts">Импортировать из контактов телефона</string>
     <string name="edit_contact">Изменить контакт</string>
     <string name="search_contacts_placeholder">Поиск по имени или номеру…</string>
     <string name="no_contacts_yet">Контактов пока нет — добавьте кнопкой +</string>

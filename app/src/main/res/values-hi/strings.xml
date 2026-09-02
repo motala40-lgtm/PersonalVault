@@ -15,6 +15,8 @@
     <string name="nav_reminders">रिमाइंडर</string>
     <string name="nav_contacts">संपर्क</string>
     <string name="add_contact">संपर्क जोड़ें</string>
+    <string name="add_contact_manually">मैन्युअल रूप से जोड़ें</string>
+    <string name="import_from_phone_contacts">फ़ोन संपर्कों से आयात करें</string>
     <string name="edit_contact">संपर्क संपादित करें</string>
     <string name="search_contacts_placeholder">नाम या नंबर खोजें…</string>
     <string name="no_contacts_yet">अभी तक कोई संपर्क नहीं है; + बटन से एक जोड़ें</string>
