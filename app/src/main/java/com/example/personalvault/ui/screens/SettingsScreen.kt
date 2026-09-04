@@ -54,6 +54,10 @@ private const val SUPPORT_EMAIL = "Newlifetech25@hotmail.com"
 @Composable
 fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> Unit, onOpenHelp: () -> Unit, onThemeOrLanguageChanged: () -> Unit) {
     val context = LocalContext.current
+    // The branded copper/warm section-header color (colorScheme.primary in light mode) has
+    // poor contrast against the dark theme's background — this guarantees readable section
+    // titles in both themes instead of just in light mode.
+    val sectionHeaderColor = if (isDarkTheme) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.primary
     var themeMode by remember { mutableStateOf(AppPreferences.getThemeMode(context)) }
     var lockEnabled by remember { mutableStateOf(SecurityManager.isLockEnabled(context)) }
     var biometricEnabled by remember { mutableStateOf(SecurityManager.isBiometricEnabled(context)) }
@@ -117,7 +121,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                 .verticalScroll(rememberScrollState())
         ) {
 
-            Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.appearance), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = sectionHeaderColor)
             Spacer(Modifier.height(8.dp))
 
             // Theme and Background color are collapsed behind their own buttons rather than
@@ -242,7 +246,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
 
             Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.security), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.security), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = sectionHeaderColor)
             Spacer(Modifier.height(8.dp))
 
             Row(
@@ -303,7 +307,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
 
             Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.folder_recovery_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.folder_recovery_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = sectionHeaderColor)
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.folder_recovery_section_hint),
@@ -317,7 +321,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
 
             Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.backup_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.backup_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = sectionHeaderColor)
             Spacer(Modifier.height(4.dp))
             Text(stringResource(R.string.backup_section_hint), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(8.dp))
@@ -343,7 +347,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
 
             Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.help_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.help_section_title), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = sectionHeaderColor)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = onOpenHelp, modifier = Modifier.fillMaxWidth()) {
                 Icon(Icons.Default.Info, contentDescription = null)
@@ -353,7 +357,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
 
             Spacer(Modifier.height(28.dp))
 
-            Text(stringResource(R.string.support), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.support), style = MaterialTheme.typography.titleLarge, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, color = sectionHeaderColor)
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = {
                 val intent = Intent(Intent.ACTION_SENDTO).apply {

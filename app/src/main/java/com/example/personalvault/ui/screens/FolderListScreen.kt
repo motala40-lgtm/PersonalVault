@@ -139,20 +139,33 @@ fun FolderListScreen(
             containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
-                    title = { Text(stringResource(R.string.app_title)) },
-                    actions = {
-                        IconButton(onClick = {
-                            folderGridColumns = AppPreferences.cycleFolderGridColumns(context)
-                        }) {
-                            Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
+                    title = {
+                        // A manual Box (rather than TopAppBar's usual title+actions split) so
+                        // the language icon can sit at the true horizontal center of the whole
+                        // bar — independent of the title text's and the logo's widths — while
+                        // the title stays start-aligned and the logo end-aligned as before.
+                        Box(Modifier.fillMaxWidth()) {
+                            Text(
+                                stringResource(R.string.app_title),
+                                modifier = Modifier.align(Alignment.CenterStart)
+                            )
+                            IconButton(
+                                onClick = { showLanguageDialog = true },
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .size(64.dp)
+                            ) {
+                                Text("\uD83C\uDF0D", fontSize = 28.sp)
+                            }
+                            Image(
+                                painter = painterResource(R.drawable.logo_easy_archive),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .size(64.dp)
+                                    .padding(end = 8.dp)
+                            )
                         }
-                        Image(
-                            painter = painterResource(R.drawable.logo_easy_archive),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .padding(end = 8.dp)
-                        )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                 )
@@ -197,12 +210,6 @@ fun FolderListScreen(
                             baseColor = Color(0xFF37474F),
                             contentDescriptionText = stringResource(R.string.nav_settings),
                             onClick = onOpenSettings
-                        )
-                        EmojiIconChip(
-                            emoji = "\uD83C\uDF0D",
-                            baseColor = Color(0xFF1E88E5),
-                            contentDescriptionText = stringResource(R.string.app_language),
-                            onClick = { showLanguageDialog = true }
                         )
                     },
                     floatingActionButton = {
@@ -264,6 +271,11 @@ fun FolderListScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(stringResource(R.string.folders_title), style = MaterialTheme.typography.titleLarge)
+                        IconButton(onClick = {
+                            folderGridColumns = AppPreferences.cycleFolderGridColumns(context)
+                        }) {
+                            Icon(Icons.Default.GridView, contentDescription = stringResource(R.string.change_grid_size))
+                        }
                     }
                     Spacer(Modifier.height(8.dp))
 
