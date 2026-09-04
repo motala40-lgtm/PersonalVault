@@ -22,18 +22,35 @@ val Pink40 = Color(0xFF7D5260)
 
 private val DarkColors = darkColorScheme(
     primary = Purple80,
+    onPrimary = Color(0xFF381E72),
+    primaryContainer = Color(0xFF4F378B),
+    onPrimaryContainer = Color(0xFFEADDFF),
     secondary = PurpleGrey80,
+    onSecondary = Color(0xFF332D41),
+    secondaryContainer = Color(0xFF4A4458),
+    onSecondaryContainer = Color(0xFFE8DEF8),
     tertiary = Pink80,
+    onTertiary = Color(0xFF492532),
+    tertiaryContainer = Color(0xFF633B48),
+    onTertiaryContainer = Color(0xFFFFD8E4),
     // Every text/icon-on-surface role spelled out explicitly and kept near-white — this is
     // the actual fix for "text disappears in dark mode": we no longer lean on the library's
-    // own defaults for these roles at all.
+    // own defaults for these roles at all. This also covers button labels specifically:
+    // OutlinedButton/TextButton default their text color to colorScheme.primary, which is why
+    // onPrimary/primaryContainer/onPrimaryContainer above are now explicit too, not just the
+    // background/surface roles — a button whose container itself uses primaryContainer needs
+    // onPrimaryContainer to be readable, and that role has no good implicit default here.
     background = Color(0xFF121212),
     onBackground = Color(0xFFF5F5F5),
     surface = Color(0xFF1E1E1E),
     onSurface = Color(0xFFF5F5F5),
     surfaceVariant = Color(0xFF2A2A2A),
     onSurfaceVariant = Color(0xFFE0E0E0),
+    outline = Color(0xFF938F99),
+    outlineVariant = Color(0xFF49454F),
     error = Color(0xFFFF6B6B),
+    errorContainer = Color(0xFF8C1D18),
+    onErrorContainer = Color(0xFFFFDAD6),
     onError = Color(0xFF121212)
 )
 
