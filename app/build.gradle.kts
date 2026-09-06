@@ -15,7 +15,7 @@ android {
         applicationId = "com.newlifetech.easyarchive"
         minSdk = 24
         targetSdk = 36
-        versionCode = 30
+        versionCode = 31
         versionName = "1.0"
     }
 
@@ -100,6 +100,11 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.5.3")
     implementation("androidx.camera:camera-lifecycle:1.5.3")
     implementation("androidx.camera:camera-view:1.5.3")
+
+    // For reading EXIF rotation metadata when cropping wallet card photos to the guide
+    // frame (see CardCameraScreen.kt) — some devices leave the camera's rotation as EXIF
+    // metadata rather than baking it into the saved pixels.
+    implementation("androidx.exifinterface:exifinterface:1.4.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
     // Lets us detect when the WHOLE app (not just one screen) goes to background,
     // so the vault can re-lock itself instead of staying unlocked forever.
