@@ -13,7 +13,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -127,17 +132,40 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(cards, key = { it.id }) { card ->
-                        Column(
-                            Modifier
-                                .clickable { viewingCard = card }
-                        ) {
-                            AsyncImageCompat(
-                                path = card.frontImagePath,
-                                modifier = Modifier
+                        var menuExpanded by remember { mutableStateOf(false) }
+                        Column {
+                            Box(
+                                Modifier
                                     .fillMaxWidth()
                                     .aspectRatio(1.586f) // standard card ratio
-                                    .clip(RoundedCornerShape(12.dp))
-                            )
+                                    .clickable { viewingCard = card }
+                            ) {
+                                AsyncImageCompat(
+                                    path = card.frontImagePath,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(12.dp))
+                                )
+                                // Three-dot menu, top-right of the thumbnail — matches the
+                                // same style used for files inside regular folders.
+                                Box(modifier = Modifier.align(Alignment.TopEnd).padding(4.dp)) {
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)
+                                    ) {
+                                        IconButton(onClick = { menuExpanded = true }, modifier = Modifier.size(32.dp)) {
+                                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_options))
+                                        }
+                                    }
+                                    DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+                                        DropdownMenuItem(
+                                            text = { Text(stringResource(R.string.delete)) },
+                                            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null) },
+                                            onClick = { menuExpanded = false; deletingCard = card }
+                                        )
+                                    }
+                                }
+                            }
                             if (!card.label.isNullOrBlank()) {
                                 Spacer(Modifier.height(4.dp))
                                 Text(
@@ -240,36 +268,27 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
         )
     }
 
-    // Full-size viewer for an existing card.
+    // Full-screen zoomable viewer for an existing card — no dialog chrome; delete now lives
+    // in the grid's three-dot menu instead of as a button here.
     viewingCard?.let { card ->
-        AlertDialog(
-            onDismissRequest = { viewingCard = null },
-            title = { Text(card.label ?: stringResource(R.string.wallet_title)) },
-            text = {
-                Column {
-                    AsyncImageCompat(
-                        path = card.frontImagePath,
-                        modifier = Modifier.fillMaxWidth().aspectRatio(1.586f).clip(RoundedCornerShape(12.dp))
-                    )
-                    card.backImagePath?.let { back ->
-                        Spacer(Modifier.height(8.dp))
-                        AsyncImageCompat(
-                            path = back,
-                            modifier = Modifier.fillMaxWidth().aspectRatio(1.586f).clip(RoundedCornerShape(12.dp))
-                        )
-                    }
+        Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Color.Black)) {
+            Column(
+                Modifier.fillMaxSize().padding(top = 48.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                ZoomableCardImage(path = card.frontImagePath, modifier = Modifier.weight(1f))
+                card.backImagePath?.let { back ->
+                    Spacer(Modifier.height(8.dp))
+                    ZoomableCardImage(path = back, modifier = Modifier.weight(1f))
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    deletingCard = card
-                    viewingCard = null
-                }) { Text(stringResource(R.string.delete)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewingCard = null }) { Text(stringResource(R.string.cancel)) }
             }
-        )
+            IconButton(
+                onClick = { viewingCard = null },
+                modifier = Modifier.align(Alignment.TopStart).padding(16.dp)
+            ) {
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel), tint = androidx.compose.ui.graphics.Color.White)
+            }
+        }
     }
 
     deletingCard?.let { card ->
@@ -316,5 +335,32 @@ private fun AsyncImageCompat(path: String, modifier: Modifier = Modifier) {
         contentDescription = null,
         contentScale = androidx.compose.ui.layout.ContentScale.Crop,
         modifier = modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+    )
+}
+
+/** A single card photo the person can pinch-to-zoom and pan, for the full-screen viewer. */
+@Composable
+private fun ZoomableCardImage(path: String, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    coil.compose.AsyncImage(
+        model = FileUtils.resolveVaultFile(context, path),
+        contentDescription = null,
+        contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale,
+                translationX = offset.x,
+                translationY = offset.y
+            )
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, _ ->
+                    scale = (scale * zoom).coerceIn(1f, 5f)
+                    offset += pan
+                }
+            }
     )
 }
