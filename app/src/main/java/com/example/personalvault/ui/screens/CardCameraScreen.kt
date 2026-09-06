@@ -2,6 +2,7 @@ package com.example.personalvault.ui.screens
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Rational
 import android.util.Log
 import android.view.ViewGroup
 import androidx.camera.core.AspectRatio
@@ -9,6 +10,8 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
+import androidx.camera.core.UseCaseGroup
+import androidx.camera.core.ViewPort
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
@@ -93,11 +96,26 @@ fun CardCameraScreen(onCaptured: (File) -> Unit, onCancel: () -> Unit) {
                         imageCapture = capture
                         try {
                             cameraProvider.unbindAll()
+                            // ViewPort guarantees ImageCapture's saved output is cropped to
+                            // exactly the same camera-sensor region the person actually saw
+                            // in the PreviewView — without this, devices whose sensor's real
+                            // aspect ratio isn't quite 4:3 (very common — CameraX just picks
+                            // the closest supported resolution) would save a differently
+                            // framed/zoomed photo than what was shown on screen, which is
+                            // exactly what caused the wrong-crop/zoomed-in result before this.
+                            val viewPort = ViewPort.Builder(
+                                Rational(3, 4),
+                                previewView.display.rotation
+                            ).build()
+                            val useCaseGroup = UseCaseGroup.Builder()
+                                .addUseCase(preview)
+                                .addUseCase(capture)
+                                .setViewPort(viewPort)
+                                .build()
                             cameraProvider.bindToLifecycle(
                                 lifecycleOwner,
                                 CameraSelector.DEFAULT_BACK_CAMERA,
-                                preview,
-                                capture
+                                useCaseGroup
                             )
                         } catch (e: Exception) {
                             Log.e("CardCameraScreen", "Camera bind failed", e)
