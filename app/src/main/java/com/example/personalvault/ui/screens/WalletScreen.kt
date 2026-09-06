@@ -206,7 +206,7 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
                     TextButton(onClick = {
                         showAddChoiceMenu = false
                         resetAddFlow()
-                    }) { Text(stringResource(R.string.upgrade_prompt_ok)) }
+                    }) { Text(stringResource(R.string.cancel)) }
                 }
             }
         )
@@ -255,7 +255,7 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
                 TextButton(onClick = {
                     showLabelDialog = false
                     resetAddFlow()
-                }) { Text(stringResource(R.string.upgrade_prompt_ok)) }
+                }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
@@ -287,7 +287,7 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
                 }) { Text(stringResource(R.string.delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { viewingCard = null }) { Text(stringResource(R.string.upgrade_prompt_ok)) }
+                TextButton(onClick = { viewingCard = null }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
@@ -303,7 +303,7 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
                 }) { Text(stringResource(R.string.delete)) }
             },
             dismissButton = {
-                TextButton(onClick = { deletingCard = null }) { Text(stringResource(R.string.upgrade_prompt_ok)) }
+                TextButton(onClick = { deletingCard = null }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }
