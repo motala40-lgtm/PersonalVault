@@ -53,6 +53,12 @@ fun CardCameraScreen(onCaptured: (File) -> Unit, onCancel: () -> Unit) {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
+                    // Default PERFORMANCE mode renders via a SurfaceView, which uses its own
+                    // hardware-compositor layer and ignores normal View/Compose z-ordering —
+                    // that's exactly why the card-guide Canvas overlay below wasn't showing up
+                    // on top of the live preview. COMPATIBLE mode uses a TextureView instead,
+                    // which correctly blends with other content drawn on top of it.
+                    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                 }
                 val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
                 cameraProviderFuture.addListener({
