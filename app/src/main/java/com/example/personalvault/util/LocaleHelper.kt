@@ -16,16 +16,14 @@ import androidx.core.os.LocaleListCompat
  * the platform's own LocaleManager — a manually-wrapped Configuration context doesn't
  * correctly interact with that delivery path, so language resources that WERE installed on
  * the device could still fail to actually render, silently falling back to whatever the
- * device's raw system locale + the compiled default (untagged `values/`, which is Persian)
- * resolved to — matching the exact "only the device's system language and Persian work"
- * symptom this replaces. AppCompatDelegate's app-language API is the officially recommended,
+ * device's raw system locale + the compiled default (untagged `values/`) resolved to.
+ * AppCompatDelegate's app-language API is the officially recommended,
  * Play-Store-aware mechanism (backed by the real platform LocaleManager on Android 13+, with
  * an AndroidX-managed equivalent on older versions) and does not have this problem.
  */
 object LocaleHelper {
 
     private fun tagFor(language: AppLanguage): String = when (language) {
-        AppLanguage.FA -> "fa"
         AppLanguage.EN -> "en"
         AppLanguage.FR -> "fr"
         AppLanguage.DE -> "de"

@@ -604,7 +604,6 @@ private fun FolderCard(
 
 /** Maps each [AppLanguage] to the string resource holding its name, in its own native script. */
 private fun languageNameRes(lang: AppLanguage): Int = when (lang) {
-    AppLanguage.FA -> R.string.language_fa
     AppLanguage.EN -> R.string.language_en
     AppLanguage.FR -> R.string.language_fr
     AppLanguage.DE -> R.string.language_de

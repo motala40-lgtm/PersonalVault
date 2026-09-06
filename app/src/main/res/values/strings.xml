@@ -1,239 +1,228 @@
 <resources>
-    <string name="app_name">ایزی آرشیو</string>
-    <!-- Always English regardless of app/device language — this is the label shown under
-         the icon on the phone's home screen and app drawer. -->
+    <string name="app_name">Easy Archive</string>
     <string name="app_launcher_label" translatable="false">Easy Archive</string>
 
     <!-- Common -->
-    <string name="back">بازگشت</string>
-    <string name="cancel">انصراف</string>
-    <string name="crash_report_title">اپ بار قبل با خطا بسته شد</string>
-    <string name="crash_report_body">می‌خواید جزئیات فنی این خطا رو (فقط اطلاعات دستگاه و کد خطا، بدون هیچ محتوای گاوصندوق شما) از طریق ایمیل خودتون برای ما بفرستید تا کمک کنه اپ رو بهتر کنیم؟ چیزی خودکار ارسال نمی‌شه.</string>
-    <string name="crash_report_send">ارسال گزارش</string>
-    <string name="crash_report_decline">نه، ممنون</string>
-    <string name="save">ذخیره</string>
-    <string name="delete">حذف</string>
-    <string name="create">ساخت</string>
-    <string name="more_options">گزینه‌های بیشتر</string>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="crash_report_title">The app closed unexpectedly last time</string>
+    <string name="crash_report_body">Would you like to send the technical details of this error (device info and error code only — no vault content) via your own email, to help us improve the app? Nothing is sent automatically.</string>
+    <string name="crash_report_send">Send report</string>
+    <string name="crash_report_decline">No, thanks</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="create">Create</string>
+    <string name="more_options">More options</string>
 
     <!-- Navigation / section titles -->
-    <string name="nav_favorites">علاقه‌مندی‌ها</string>
-    <string name="nav_reminders">یادآوری‌ها</string>
-    <string name="nav_contacts">دفترچه تلفن</string>
-    <string name="add_contact">افزودن مخاطب</string>
-    <string name="add_contact_manually">افزودن دستی</string>
-    <string name="import_from_phone_contacts">وارد کردن از مخاطبین گوشی</string>
-    <string name="edit_contact">ویرایش مخاطب</string>
-    <string name="search_contacts_placeholder">جستجو در نام یا شماره…</string>
-    <string name="no_contacts_yet">هنوز مخاطبی اضافه نکردی؛ با دکمه‌ی + یکی بساز</string>
-    <string name="contact_name_label">نام</string>
-    <string name="contact_phone_label">شماره تلفن</string>
-    <string name="contact_phone2_label">شماره دوم (اختیاری)</string>
-    <string name="contact_email_label">ایمیل (اختیاری)</string>
-    <string name="contact_note_label">یادداشت (اختیاری)</string>
-    <string name="contact_name_required_error">نام لازمه</string>
-    <string name="delete_contact_title">این مخاطب حذف بشه؟</string>
-    <string name="call">تماس</string>
-    <string name="send_sms">پیامک</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_reminders">Reminders</string>
+    <string name="nav_contacts">Contacts</string>
+    <string name="add_contact">Add contact</string>
+    <string name="add_contact_manually">Add manually</string>
+    <string name="import_from_phone_contacts">Import from phone contacts</string>
+    <string name="edit_contact">Edit contact</string>
+    <string name="search_contacts_placeholder">Search name or number…</string>
+    <string name="no_contacts_yet">No contacts yet — add one with the + button</string>
+    <string name="contact_name_label">Name</string>
+    <string name="contact_phone_label">Phone number</string>
+    <string name="contact_phone2_label">Second number (optional)</string>
+    <string name="contact_email_label">Email (optional)</string>
+    <string name="contact_note_label">Note (optional)</string>
+    <string name="contact_name_required_error">Name is required</string>
+    <string name="delete_contact_title">Delete this contact?</string>
+    <string name="call">Call</string>
+    <string name="send_sms">Message</string>
 
     <!-- In-app help / user manual -->
-    <string name="help_screen_title">راهنمای استفاده از اپ</string>
+    <string name="help_screen_title">How to use the app</string>
 
-    <string name="help_intro_title">معرفی</string>
-    <string name="help_intro_body">ایزی آرشیو یه اپ خصوصیه برای نگهداری امن عکس، فایل، اسکن سند، یادداشت و مخاطبین شما — همه‌چیز فقط روی خودِ گوشی ذخیره می‌شه، نه روی سرور یا اینترنت.</string>
+    <string name="help_intro_title">Introduction</string>
+    <string name="help_intro_body">Easy Archive is a private app for securely keeping your photos, files, document scans, notes, and contacts — everything is stored only on your phone, never on a server or the internet.</string>
 
-    <string name="help_folders_title">پوشه‌ها</string>
-    <string name="help_folders_body">از دکمه‌ی + پایین صفحه، پوشه‌ی جدید بسازید و یکی از هشت رنگ پاستیلی رو انتخاب کنید. زیر اسم هر پوشه، تعداد آیتم‌های داخلش هم نشون داده می‌شه.\n\nبرای قفل کردن یه پوشه: لمس طولانی روی پوشه یا آیکون سه‌نقطه → «قفل کردن پوشه». از همون منو می‌تونید رمزش رو تغییر بدید یا قفلش رو بردارید.\n\nاگه رمز یه پوشه رو فراموش کردید: موقع باز کردن، «رمز پوشه رو فراموش کردم» رو بزنید و به دو سوال امنیتی (که باید از قبل در تنظیمات ثبت کرده باشید) پاسخ بدید — بلافاصله یه رمز جدید تنظیم می‌کنید.</string>
+    <string name="help_folders_title">Folders</string>
+    <string name="help_folders_body">Create a new folder with the + button and pick one of eight pastel colors. Each folder card also shows how many items are inside.\n\nTo lock a folder: long-press it or tap its three-dot menu → "Lock folder". From the same menu you can change its password or remove the lock.\n\nForgot a folder\'s password? Tap "Forgot folder password" while opening it and answer the two security questions (set up in advance in Settings) — you\'ll immediately set a new password.</string>
 
-    <string name="help_content_title">افزودن و مشاهده‌ی محتوا</string>
-    <string name="help_content_body">داخل هر پوشه، دکمه‌ی + چهار گزینه داره: افزودن عکس یا ویدیو (چندتایی هم می‌شه)، افزودن فایل، اسکن سند با دوربین، و نوشتن یادداشت.\n\nبا ضربه روی هر آیتم: عکس‌ها تمام‌صفحه با زوم و قابلیت سوایپ بین همه‌ی عکس‌های پوشه باز می‌شن، ویدیو با پخش‌کننده‌ی داخلی پخش می‌شه، یادداشت به‌صورت خواندنی نمایش داده می‌شه (با یه آیکون مداد برای ویرایش، و سوایپ بین یادداشت‌های پوشه)، و فایل/اسکن با اپ مناسب گوشی باز می‌شه.\n\nبا لمس طولانی، حالت انتخاب چندتایی فعال می‌شه. از منوی هر آیتم: سنجاق، علاقه‌مندی، تغییر نام، کپی، اشتراک‌گذاری، ذخیره در گوشی (با کیفیت اصلی)، یا حذف.</string>
+    <string name="help_content_title">Adding and viewing content</string>
+    <string name="help_content_body">Inside a folder, the + button offers four options: add photos or videos (multiple at once), add a file, scan a document with the camera, or write a text note.\n\nTapping an item: photos open full-screen with zoom and swipe between the folder\'s other photos, videos play with a built-in player, notes open read-only (with a pencil icon to edit, and swipe between the folder\'s other notes), and files/scans open in a suitable app on your phone.\n\nLong-press to enter multi-select mode. Each item\'s menu offers pin, favorite, rename, duplicate, share, save to device (at full original quality), or delete.</string>
 
-    <string name="help_favtrash_title">علاقه‌مندی‌ها و سطل زباله</string>
-    <string name="help_favtrash_body">آیتم‌های علاقه‌مندی‌شده (از هر پوشه‌ای) در بخش «علاقه‌مندی‌ها» جمع می‌شن. آیتم‌های حذف‌شده اول می‌رن سطل زباله و بعد از ۳۰ روز خودکار پاک می‌شن — تا قبلش می‌تونید بازیابی‌شون کنید.</string>
+    <string name="help_favtrash_title">Favorites and Trash</string>
+    <string name="help_favtrash_body">Favorited items (from any folder) are collected under "Favorites". Deleted items go to Trash first and are automatically removed after 30 days — you can restore them before then.</string>
 
-    <string name="help_reminders_title">یادآوری‌ها</string>
-    <string name="help_reminders_body">یادآوری زمان‌دار بسازید، در صورت نیاز به یه پوشه‌ی خاص وصلش کنید، و در صورت تمایل سالانه تکرارش کنید.</string>
+    <string name="help_reminders_title">Reminders</string>
+    <string name="help_reminders_body">Create time-based reminders, optionally link them to a specific folder, and repeat them yearly if you like.</string>
 
-    <string name="help_contacts_title">دفترچه تلفن</string>
-    <string name="help_contacts_body">یه دفترچه تلفن جدا از مخاطبین گوشی، فقط داخل اپ: افزودن مخاطب با نام، شماره، ایمیل و یادداشت؛ جستجو؛ تماس یا پیامک مستقیم؛ علاقه‌مند کردن مخاطب.</string>
+    <string name="help_contacts_title">Contacts</string>
+    <string name="help_contacts_body">A phonebook separate from your phone\'s contacts, kept only inside the app: add a contact with name, number, email, and note; search; call or message directly; mark favorites.</string>
 
-    <string name="help_settings_title">تنظیمات</string>
-    <string name="help_settings_body">تم روشن/تیره/سیستم و رنگ زمینه (یکی از هشت رنگ پاستیلی یا سفید) از بخش «ظاهر». به‌جای رنگ، می‌تونید یه عکس واضح از گالری خودتون رو هم به‌عنوان پس‌زمینه انتخاب کنید. این پس‌زمینه روی همه‌ی صفحه‌ها (اول، تنظیمات، علاقه‌مندی‌ها، سطل زباله، یادآوری‌ها، مخاطبین) یکسانه. اندازه‌ی نمایش پوشه‌ها (۱/۲/۳ ستونه) با آیکون کنار نوار جستجو در صفحه‌ی اول قابل‌تغییره. زبان (از بین ۱۱ زبون) با دکمه‌ی 🌍 پایین صفحه‌ی اول.\n\nامنیت: قفل کلی اپ با رمز عددی + سوال امنیتی، ورود با اثر انگشت، جلوگیری از اسکرین‌شات، و ثبت دو پاسخ برای بازیابی قفل پوشه‌ها.</string>
+    <string name="help_settings_title">Settings</string>
+    <string name="help_settings_body">Light/dark/system theme and background color (one of eight pastel colors, or white) live under "Appearance". Instead of a color, you can also pick a clear photo from your own gallery as the background — shared across every screen (home, settings, favorites, trash, reminders, contacts). Folder card size (1/2/3 columns) can be changed with the icon next to the search bar on the home screen. Switch language (11 available) with the 🌍 button on the home screen.\n\nSecurity: app-wide numeric password lock plus a security question, fingerprint unlock, screenshot blocking, and setting the two folder-recovery answers.</string>
 
-    <string name="help_backup_title">پشتیبان‌گیری کامل</string>
-    <string name="help_backup_body">«خروجی گرفتن از همه‌ی اطلاعات»: یه رمز برای همون فایل تعیین می‌کنید و یه فایل رمزگذاری‌شده می‌سازه که به هرجا (ایمیل، درایو، تلگرام) می‌تونید بفرستید.\n\n«بازیابی از فایل پشتیبان»: فایل و رمزش رو وارد می‌کنید؛ همه‌چیز جایگزین اطلاعات فعلی می‌شه. بعد از بازیابی، حتماً اپ رو کامل ببندید و دوباره باز کنید.</string>
+    <string name="help_backup_title">Full backup</string>
+    <string name="help_backup_body">"Export all data": choose a password for the file and it builds one encrypted file you can send anywhere (email, Drive, Telegram).\n\n"Restore from backup file": pick the file and enter its password; everything replaces your current data. After restoring, be sure to fully close and reopen the app.</string>
 
-    <string name="help_support_title">پشتیبانی</string>
-    <string name="help_support_body">برای هرگونه سؤال یا مشکل، از همین صفحه «تماس با پشتیبانی» رو بزنید یا با Newlifetech25@hotmail.com در ارتباط باشید.</string>
-    <string name="nav_trash">سطل زباله</string>
-    <string name="nav_settings">تنظیمات</string>
-    <string name="folders_title">پوشه‌ها</string>
-    <string name="search_placeholder">جستجو در عنوان، متن، نام فایل...</string>
-    <string name="search_results">نتایج جستجو</string>
-    <string name="no_folders_yet">هنوز پوشه‌ای نساختی؛ با دکمه‌ی + یکی بساز</string>
-    <string name="app_title">ایزی آرشیو</string>
-    <string name="welcome_tagline">امنیت کامل، کاملاً آفلاین</string>
-    <string name="get_started">شروع کنید</string>
-    <string name="learn_about_privacy">درباره حریم خصوصی ما بیشتر بدانید</string>
-    <string name="support">پشتیبانی</string>
-    <string name="contact_support">تماس با پشتیبانی</string>
-    <string name="version_label">نسخه %1$s</string>
+    <string name="help_support_title">Support</string>
+    <string name="help_support_body">For any question or issue, tap "Contact support" on this screen or reach out at Newlifetech25@hotmail.com.</string>
+    <string name="nav_trash">Trash</string>
+    <string name="nav_settings">Settings</string>
+    <string name="folders_title">Folders</string>
+    <string name="search_placeholder">Search title, text, file name...</string>
+    <string name="search_results">Search results</string>
+    <string name="no_folders_yet">No folders yet — tap + to create one</string>
+    <string name="app_title">Easy Archive</string>
+    <string name="welcome_tagline">Complete security, fully offline</string>
+    <string name="get_started">Get Started</string>
+    <string name="learn_about_privacy">Learn more about our privacy</string>
+    <string name="support">Support</string>
+    <string name="contact_support">Contact support</string>
+    <string name="version_label">Version %1$s</string>
 
     <!-- Folder -->
-    <string name="new_folder">پوشه جدید</string>
-    <string name="folder_name_label">نام پوشه</string>
+    <string name="new_folder">New Folder</string>
+    <string name="folder_name_label">Folder name</string>
 
     <!-- Lock screen -->
-    <string name="vault_locked">آرشیو قفل است</string>
-    <string name="password_label">رمز عبور</string>
-    <string name="wrong_password">رمز اشتباه است</string>
-    <string name="login">ورود</string>
-    <string name="biometric_login">ورود با اثر انگشت</string>
-    <string name="forgot_password">رمز رو فراموش کردم؟</string>
-    <string name="reset_password_title">بازنشانی رمز</string>
-    <string name="no_security_question_set">هنوز سوال امنیتی تنظیم نکردی. برای کمک به Newlifetech25@hotmail.com ایمیل بزن.</string>
-    <string name="security_answer_label">پاسخ</string>
-    <string name="wrong_security_answer">پاسخ اشتباه است</string>
-    <string name="confirm_action">تایید</string>
+    <string name="vault_locked">Vault is locked</string>
+    <string name="password_label">Password</string>
+    <string name="wrong_password">Incorrect password</string>
+    <string name="login">Unlock</string>
+    <string name="biometric_login">Sign in with fingerprint</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="reset_password_title">Reset password</string>
+    <string name="no_security_question_set">No security question set yet. Email Newlifetech25@hotmail.com for help.</string>
+    <string name="security_answer_label">Answer</string>
+    <string name="wrong_security_answer">Incorrect answer</string>
+    <string name="confirm_action">Confirm</string>
 
     <!-- Folder actions -->
-    <string name="copy_folder">کپی پوشه</string>
-    <string name="delete_folder">حذف پوشه</string>
-    <string name="share_folder">اشتراک‌گذاری پوشه</string>
-    <string name="delete_folder_title">این پوشه و همه‌ی محتوای آن حذف بشه؟</string>
-    <string name="folder_copy_suffix"> (کپی)</string>
-    <string name="folder_share_empty_notice">این پوشه چیزی برای اشتراک‌گذاری ندارد</string>
+    <string name="copy_folder">Copy folder</string>
+    <string name="delete_folder">Delete folder</string>
+    <string name="share_folder">Share folder</string>
+    <string name="delete_folder_title">Delete this folder and everything in it?</string>
+    <string name="folder_copy_suffix"> (Copy)</string>
+    <string name="folder_share_empty_notice">This folder has nothing to share</string>
 
     <!-- Folder lock -->
-    <string name="enter_folder_password">رمز این پوشه رو وارد کن</string>
-    <string name="lock_folder">قفل کردن پوشه</string>
-    <string name="remove_folder_lock">حذف قفل پوشه</string>
-    <string name="change_folder_password">تغییر رمز پوشه</string>
-    <string name="set_folder_password_title">تنظیم رمز پوشه</string>
-    <string name="forgot_folder_password">رمز پوشه رو فراموش کردم</string>
-    <string name="wrong_folder_recovery_answer">پاسخ‌ها درست نیستن</string>
-    <string name="no_folder_recovery_set_notice">برای بازیابی، اول باید از تنظیمات، پاسخ‌های بازیابی پوشه رو تنظیم کنی.</string>
-    <string name="folder_recovery_question_pet">نام اولین حیوان خانگی‌تان چیست؟</string>
-    <string name="folder_recovery_question_city">نام شهری که دوست دارید چیست؟</string>
-    <string name="folder_recovery_section_title">بازیابی قفل پوشه‌ها</string>
-    <string name="folder_recovery_section_hint">این پاسخ‌ها برای همه‌ی پوشه‌های قفل‌شده مشترکه و اگه رمز یه پوشه رو فراموش کنی، ازت پرسیده می‌شه.</string>
-    <string name="set_folder_recovery_button">تنظیم پاسخ‌های بازیابی</string>
-    <string name="folder_recovery_answers_required_error">پر کردن هر دو پاسخ لازمه</string>
-    <string name="backup_section_title">پشتیبان‌گیری کامل</string>
-    <string name="backup_section_hint">یه فایل رمزگذاری‌شده از همه‌ی پوشه‌ها، یادداشت‌ها و فایل‌ها می‌سازه که می‌تونی هرجا (ایمیل، درایو، تلگرام) بفرستی و بعداً روی هر گوشی‌ای برگردونی.</string>
-    <string name="export_backup_button">خروجی گرفتن از همه‌ی اطلاعات</string>
-    <string name="restore_backup_button">بازیابی از فایل پشتیبان</string>
-    <string name="set_backup_password_title">یه رمز برای این فایل پشتیبان تنظیم کن</string>
-    <string name="enter_backup_password_title">رمز این فایل پشتیبان رو وارد کن</string>
-    <string name="confirm_app_password_title">رمز اپتون رو تأیید کنید</string>
-    <string name="confirm_app_password_hint">فایل پشتیبان با همون رمزی که برای باز کردن اپ استفاده می‌کنید رمزگذاری می‌شه — این‌طوری لازم نیست یه رمز جدا و جدید رو به‌خاطر بسپارید.</string>
-    <string name="set_backup_password_no_recovery_hint">چون هنوز رمز کلی برای اپ تنظیم نکردید، باید یه رمز جدا برای این فایل پشتیبان بسازید. توجه: این رمز هیچ راه بازیابی‌ای نداره — اگه فراموشش کنید، فایل برای همیشه غیرقابل‌بازشدنه. توصیه می‌کنیم اول از تنظیمات، «قفل با رمز عبور» رو فعال کنید.</string>
-    <string name="enter_backup_password_hint">معمولاً همون رمزیه که برای باز کردن اپ استفاده می‌کنید (مگر اینکه این فایل رو قبل از عوض کردن رمزتون گرفته باشید).</string>
-    <string name="backup_export_failed">خروجی گرفتن با خطا مواجه شد</string>
-    <string name="backup_restore_success">بازیابی انجام شد. لطفاً اپ رو کامل ببند و دوباره باز کن.</string>    <string name="restore_restart_notice">همه‌ی اطلاعات با موفقیت بازیابی شد. برای دیدن اطلاعات جدید، اپ باید یک‌بار دوباره باز بشه.</string>
-    <string name="restart_now">راه‌اندازی مجدد</string>
-    <string name="backup_restore_wrong_password">رمز اشتباهه یا این فایل، فایل پشتیبان معتبری نیست</string>
-    <string name="backup_restore_invalid_file">این فایل، فایل پشتیبان معتبری نیست</string>
-    <string name="backup_restore_incomplete">این فایل پشتیبان کامل نرسیده (احتمالاً موقع انتقال قطع شده). گاوصندوق فعلی شما دست‌نخورده مونده — لطفاً فایل رو دوباره از مبدأ (مثلاً تلگرام یا درایو) کپی کنید و دوباره امتحان کنید.</string>
-    <string name="help_section_title">راهنمای استفاده</string>
-    <string name="open_help_button">راهنمای استفاده از اپ</string>
+    <string name="enter_folder_password">Enter this folder\'s password</string>
+    <string name="lock_folder">Lock folder</string>
+    <string name="remove_folder_lock">Remove folder lock</string>
+    <string name="change_folder_password">Change folder password</string>
+    <string name="set_folder_password_title">Set folder password</string>
+    <string name="forgot_folder_password">Forgot folder password</string>
+    <string name="wrong_folder_recovery_answer">Those answers don\'t match</string>
+    <string name="no_folder_recovery_set_notice">To recover, first set the folder recovery answers in Settings.</string>
+    <string name="folder_recovery_question_pet">What was the name of your first pet?</string>
+    <string name="folder_recovery_question_city">Name a city you like</string>
+    <string name="folder_recovery_section_title">Folder lock recovery</string>
+    <string name="folder_recovery_section_hint">These answers are shared across all locked folders — you\'ll be asked for them if you forget a folder\'s password.</string>
+    <string name="set_folder_recovery_button">Set recovery answers</string>
+    <string name="folder_recovery_answers_required_error">Both answers are required</string>
+    <string name="backup_section_title">Full backup</string>
+    <string name="backup_section_hint">Creates one encrypted file with all your folders, notes, and files, which you can send anywhere (email, Drive, Telegram) and restore later on any phone.</string>
+    <string name="export_backup_button">Export all data</string>
+    <string name="restore_backup_button">Restore from backup file</string>
+    <string name="set_backup_password_title">Set a password for this backup file</string>
+    <string name="enter_backup_password_title">Enter this backup file\'s password</string>
+    <string name="confirm_app_password_title">Confirm your app password</string>
+    <string name="confirm_app_password_hint">The backup will be encrypted with the same password you use to unlock the app — so you don\'t have to remember a separate new one.</string>
+    <string name="set_backup_password_no_recovery_hint">Since you haven\'t set an app-wide password yet, you\'ll need a separate password just for this backup file. Note: this password has no recovery option — if you forget it, the file becomes permanently unreadable. We recommend turning on "Lock with password" in Settings first.</string>
+    <string name="enter_backup_password_hint">This is usually the same password you use to unlock the app (unless this backup was made before you last changed your password).</string>
+    <string name="backup_export_failed">Export failed</string>
+    <string name="backup_restore_success">Restore complete. Please fully close and reopen the app.</string>    <string name="restore_restart_notice">All your data has been restored successfully. The app needs to reopen once to show it.</string>
+    <string name="restart_now">Restart now</string>
+    <string name="backup_restore_wrong_password">Wrong password, or this isn\'t a valid backup file</string>
+    <string name="backup_restore_invalid_file">This isn\'t a valid backup file</string>
+    <string name="backup_restore_incomplete">This backup file didn\'t arrive complete (likely cut short during a transfer). Your current vault was NOT touched — please re-copy the file from its source (e.g. Telegram or Drive) and try again.</string>
+    <string name="help_section_title">Help</string>
+    <string name="open_help_button">How to use the app</string>
 
     <!-- Folder screen (composer) -->
-    <string name="attach_image">پیوست عکس یا ویدیو</string>
-    <string name="attach_file">پیوست فایل</string>
-    <string name="scan_document">اسکن سند</string>
-    <string name="note_placeholder">یادداشت بنویس...</string>
-    <string name="note_label">یادداشت</string>
-    <string name="edit_note">ویرایش یادداشت</string>
-    <string name="send">ارسال</string>
-    <string name="add_content">افزودن</string>
-    <string name="change_grid_size">تغییر اندازه نمایش</string>
-    <string name="no_entries_yet">این پوشه هنوز خالیه؛ از دکمه‌ی + شروع کن</string>
+    <string name="attach_image">Attach photo or video</string>
+    <string name="attach_file">Attach file</string>
+    <string name="scan_document">Scan document</string>
+    <string name="note_placeholder">Write a note...</string>
+    <string name="note_label">Note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="send">Send</string>
+    <string name="add_content">Add</string>
+    <string name="change_grid_size">Change display size</string>
+    <string name="no_entries_yet">This folder is empty — tap + to start</string>
 
     <!-- Multi-selection -->
-    <string name="selected_count_format">%1$d مورد انتخاب شد</string>
-    <string name="cancel_selection">لغو انتخاب</string>
-    <string name="delete_selected">حذف موارد انتخابی</string>
+    <string name="selected_count_format">%1$d selected</string>
+    <string name="cancel_selection">Cancel selection</string>
+    <string name="delete_selected">Delete selected</string>
 
     <!-- Rename -->
-    <string name="rename">تغییر نام</string>
-    <string name="item_count">%d مورد</string>
-    <string name="duplicate">کپی</string>
-    <string name="rename_title">تغییر نام فایل</string>
-    <string name="rename_label">نام جدید</string>
+    <string name="rename">Rename</string>
+    <string name="item_count">%d items</string>
+    <string name="duplicate">Duplicate</string>
+    <string name="rename_title">Rename file</string>
+    <string name="rename_label">New name</string>
 
     <!-- Reminders -->
-    <string name="new_reminder">یادآوری جدید</string>
-    <string name="yearly_suffix"> (سالانه)</string>
-    <string name="event_title_label">عنوان مناسبت</string>
-    <string name="pick_date_time">انتخاب تاریخ و ساعت</string>
-    <string name="pick_date">انتخاب تاریخ (روز/ماه/سال)</string>
-    <string name="pick_time">انتخاب ساعت و دقیقه</string>
-    <string name="date_not_selected">تاریخی انتخاب نشده</string>
-    <string name="time_not_selected">ساعتی انتخاب نشده</string>
-    <string name="reminder_past_error">این زمان گذشته؛ یک تاریخ و ساعت در آینده انتخاب کن</string>
-    <string name="reminder_missing_fields_error">اول تاریخ و ساعت رو انتخاب کن</string>
-    <string name="exact_alarm_permission_notice">برای اینکه یادآوری‌ها دقیقاً سر وقت زنگ بزنن، باید اجازه‌ی «هشدار و یادآوری دقیق» رو در تنظیمات گوشی فعال کنی.</string>
-    <string name="open_settings">باز کردن تنظیمات</string>
-    <string name="repeat_yearly">تکرار هر سال</string>
-    <string name="sound_label">زنگ</string>
-    <string name="vibrate_label">ویبره</string>
+    <string name="new_reminder">New Reminder</string>
+    <string name="yearly_suffix"> (Yearly)</string>
+    <string name="event_title_label">Event title</string>
+    <string name="pick_date_time">Pick date and time</string>
+    <string name="pick_date">Pick date (day/month/year)</string>
+    <string name="pick_time">Pick time (hour/minute)</string>
+    <string name="date_not_selected">No date selected</string>
+    <string name="time_not_selected">No time selected</string>
+    <string name="reminder_past_error">That time is in the past; pick a future date and time</string>
+    <string name="reminder_missing_fields_error">Pick a date and time first</string>
+    <string name="exact_alarm_permission_notice">To make reminders ring at the exact time, allow \"Alarms &amp; reminders\" for this app in system settings.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="repeat_yearly">Repeat yearly</string>
+    <string name="sound_label">Sound</string>
+    <string name="vibrate_label">Vibrate</string>
 
     <!-- Trash -->
-    <string name="trash_auto_delete_notice">موارد بعد از ۳۰ روز به صورت خودکار برای همیشه حذف می‌شوند.</string>
-    <string name="restore">بازیابی</string>
-    <string name="delete_permanently">حذف قطعی</string>
+    <string name="trash_auto_delete_notice">Items are permanently deleted automatically after 30 days.</string>
+    <string name="restore">Restore</string>
+    <string name="delete_permanently">Delete permanently</string>
 
     <!-- Entry item -->
-    <string name="generic_file">فایل</string>
-    <string name="no_app_to_open_file">اپی برای باز کردن این فایل روی گوشیت پیدا نشد</string>
-    <string name="pin_label">پین</string>
-    <string name="favorite_label">علاقه‌مندی</string>
-    <string name="share">اشتراک‌گذاری</string>
-    <string name="save_to_device">ذخیره در گوشی</string>
-    <string name="save_to_device_success">فایل با کیفیت اصلی در گوشی ذخیره شد</string>
-    <string name="save_to_device_failed">ذخیره‌سازی فایل با خطا مواجه شد</string>
+    <string name="generic_file">File</string>
+    <string name="no_app_to_open_file">No app found on your phone to open this file</string>
+    <string name="pin_label">Pin</string>
+    <string name="favorite_label">Favorite</string>
+    <string name="share">Share</string>
+    <string name="save_to_device">Save to device</string>
+    <string name="save_to_device_success">Saved to your device at full original quality</string>
+    <string name="save_to_device_failed">Couldn\'t save the file</string>
 
     <!-- Settings -->
-    <string name="appearance">ظاهر</string>
-    <string name="theme_button_label">تم</string>
-    <string name="accent_color">رنگ زمینه</string>
-    <string name="custom_wallpaper_hint">یا به‌جاش یه عکس از گالری خودت به‌عنوان پس‌زمینه انتخاب کن</string>
-    <string name="pick_wallpaper_button">انتخاب عکس از گالری</string>
-    <string name="remove_wallpaper_button">حذف عکس</string>
-    <string name="theme_system">پیش‌فرض سیستم</string>
-    <string name="theme_light">روشن</string>
-    <string name="theme_dark">تیره</string>
-    <string name="app_language">زبان اپ</string>
-    <string name="language_fa" translatable="false">فارسی</string>
-    <string name="language_en" translatable="false">English</string>
-    <string name="language_fr" translatable="false">Français</string>
-    <string name="language_de" translatable="false">Deutsch</string>
-    <string name="language_es" translatable="false">Español</string>
-    <string name="language_ar" translatable="false">العربية</string>
-    <string name="language_ru" translatable="false">Русский</string>
-    <string name="language_zh" translatable="false">中文</string>
-    <string name="language_hi" translatable="false">हिन्दी</string>
-    <string name="language_tr" translatable="false">Türkçe</string>
-    <string name="language_sv" translatable="false">Svenska</string>
-    <string name="security">امنیت</string>
-    <string name="lock_with_password">قفل با رمز عبور</string>
-    <string name="change_password">تغییر رمز عبور</string>
-    <string name="block_screenshot">جلوگیری از اسکرین‌شات</string>
-    <string name="set_password_title">تنظیم رمز عبور</string>
-    <string name="password_min_digits_label">رمز عبور (حداقل ۴ رقم)</string>
-    <string name="confirm_password_label">تکرار رمز عبور</string>
-    <string name="password_min_error">رمز باید حداقل ۴ رقم باشد</string>
-    <string name="passwords_mismatch_error">رمزها یکسان نیستند</string>
-    <string name="security_question_hint">این سوال بعداً برای «رمز رو فراموش کردم؟» استفاده می‌شه</string>
-    <string name="security_question_label">سوال امنیتی</string>
-    <string name="preset_q_pet">اسم اولین حیوان خانگیتون چیه؟</string>
-    <string name="preset_q_city">توی کدوم شهر به‌دنیا اومدید؟</string>
-    <string name="preset_q_school">اسم اولین مدرسه‌تون چیه؟</string>
-    <string name="preset_q_mother_name">اسم کوچیک مادرتون چیه؟</string>
-    <string name="security_question_required_error">برای اولین بار، سوال و پاسخ امنیتی لازمه</string>
+    <string name="appearance">Appearance</string>
+    <string name="theme_button_label">Theme</string>
+    <string name="accent_color">Background color</string>
+    <string name="custom_wallpaper_hint">Or pick a photo from your own gallery to use as the background instead</string>
+    <string name="pick_wallpaper_button">Choose photo from gallery</string>
+    <string name="remove_wallpaper_button">Remove photo</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="app_language">App language</string>
+    <string name="language_fa">فارسی</string>
+    <string name="language_en">English</string>
+    <string name="security">Security</string>
+    <string name="lock_with_password">Lock with password</string>
+    <string name="change_password">Change password</string>
+    <string name="block_screenshot">Block screenshots</string>
+    <string name="set_password_title">Set password</string>
+    <string name="password_min_digits_label">Password (at least 4 digits)</string>
+    <string name="confirm_password_label">Confirm password</string>
+    <string name="password_min_error">Password must be at least 4 digits</string>
+    <string name="passwords_mismatch_error">Passwords do not match</string>
+    <string name="security_question_hint">Used later for \"Forgot password?\"</string>
+    <string name="security_question_label">Security question</string>
+    <string name="preset_q_pet">What was the name of your first pet?</string>
+    <string name="preset_q_city">What city were you born in?</string>
+    <string name="preset_q_school">What was the name of your first school?</string>
+    <string name="preset_q_mother_name">What is your mother\'s first name?</string>
+    <string name="security_question_required_error">A security question and answer are required the first time</string>
 
     <!-- Notifications -->
-    <string name="reminder_channel_description">یادآوری مناسبت‌ها و قرارها</string>
-    <string name="reminder_notification_title">یادآوری</string>
+    <string name="reminder_channel_description">Reminders for events and appointments</string>
+    <string name="reminder_notification_title">Reminder</string>
 </resources>
