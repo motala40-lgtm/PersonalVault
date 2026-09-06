@@ -203,7 +203,6 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="app_language">App language</string>
-    <string name="language_fa">فارسی</string>
     <string name="language_en">English</string>
     <string name="security">Security</string>
     <string name="lock_with_password">Lock with password</string>
