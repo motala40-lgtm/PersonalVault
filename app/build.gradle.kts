@@ -15,7 +15,7 @@ android {
         applicationId = "com.newlifetech.easyarchive"
         minSdk = 24
         targetSdk = 36
-        versionCode = 32
+        versionCode = 33
         versionName = "1.0"
     }
 
