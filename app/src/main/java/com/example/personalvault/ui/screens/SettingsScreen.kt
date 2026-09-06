@@ -134,7 +134,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                 onClick = { themeSectionExpanded = !themeSectionExpanded },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.theme_button_label), modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.theme_button_label), modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface)
                 Icon(
                     if (themeSectionExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = null
@@ -157,7 +157,8 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                                     ThemeMode.SYSTEM -> stringResource(R.string.theme_system)
                                     ThemeMode.LIGHT -> stringResource(R.string.theme_light)
                                     ThemeMode.DARK -> stringResource(R.string.theme_dark)
-                                }
+                                },
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
@@ -170,7 +171,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                 onClick = { backgroundSectionExpanded = !backgroundSectionExpanded },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.accent_color), modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.accent_color), modifier = Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurface)
                 Icon(
                     if (backgroundSectionExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
                     contentDescription = null
@@ -227,7 +228,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                                 )
                             )
                         }) {
-                            Text(stringResource(R.string.pick_wallpaper_button))
+                            Text(stringResource(R.string.pick_wallpaper_button), color = MaterialTheme.colorScheme.onSurface)
                         }
                         if (wallpaperPath != null) {
                             Spacer(Modifier.width(8.dp))
@@ -237,7 +238,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                                 AppPreferences.setCustomWallpaperPath(context, null)
                                 onThemeOrLanguageChanged()
                             }) {
-                        Text(stringResource(R.string.remove_wallpaper_button))
+                        Text(stringResource(R.string.remove_wallpaper_button), color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
                 }
@@ -254,7 +255,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.lock_with_password))
+                Text(stringResource(R.string.lock_with_password), color = MaterialTheme.colorScheme.onSurface)
                 Switch(
                     checked = lockEnabled,
                     onCheckedChange = { enabled ->
@@ -274,7 +275,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.biometric_login))
+                    Text(stringResource(R.string.biometric_login), color = MaterialTheme.colorScheme.onSurface)
                     Switch(
                         checked = biometricEnabled,
                         onCheckedChange = {
@@ -284,7 +285,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                     )
                 }
                 TextButton(onClick = { showPinDialog = true }) {
-                    Text(stringResource(R.string.change_password))
+                    Text(stringResource(R.string.change_password), color = MaterialTheme.colorScheme.onSurface)
                 }
             }
 
@@ -294,7 +295,7 @@ fun SettingsScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
-                Text(stringResource(R.string.block_screenshot))
+                Text(stringResource(R.string.block_screenshot), color = MaterialTheme.colorScheme.onSurface)
                 Switch(
                     checked = screenshotBlocked,
                     onCheckedChange = {
