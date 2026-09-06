@@ -198,4 +198,16 @@
     <!-- Notifications -->
     <string name="reminder_channel_description">事件和约会提醒</string>
     <string name="reminder_notification_title">提醒</string>
+    <string name="wallet_title">卡包</string>
+    <string name="wallet_add_card">添加卡片</string>
+    <string name="wallet_empty_hint">还没有卡片。点击 + 添加一张。</string>
+    <string name="wallet_add_front_photo">卡片正面</string>
+    <string name="wallet_add_back_photo">卡片背面</string>
+    <string name="wallet_take_photo">拍照</string>
+    <string name="wallet_choose_from_gallery">从相册选择</string>
+    <string name="wallet_skip_back_photo">不添加背面</string>
+    <string name="wallet_label_title">卡片标签（可选）</string>
+    <string name="wallet_label_hint">例如：身份证</string>
+    <string name="wallet_save_card">保存</string>
+    <string name="wallet_delete_confirm_title">删除这张卡片？</string>
 </resources>

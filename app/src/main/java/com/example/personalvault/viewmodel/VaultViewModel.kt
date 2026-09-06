@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.personalvault.data.Contact
+import com.example.personalvault.data.WalletCard
 import com.example.personalvault.data.Entry
 import com.example.personalvault.data.EntryType
 import com.example.personalvault.data.Folder
@@ -63,6 +64,9 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val contacts: StateFlow<List<Contact>> = repository.getAllContacts()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val walletCards: StateFlow<List<WalletCard>> = repository.getAllWalletCards()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private val _searchQuery = MutableStateFlow("")
@@ -195,5 +199,13 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     fun toggleContactFavorite(contact: Contact) {
         updateContact(contact.copy(isFavorite = !contact.isFavorite))
+    }
+
+    fun addWalletCard(card: WalletCard) {
+        launchTracked { repository.addWalletCard(card) }
+    }
+
+    fun deleteWalletCard(card: WalletCard) {
+        launchTracked { repository.deleteWalletCard(card) }
     }
 }

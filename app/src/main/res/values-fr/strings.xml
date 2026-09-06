@@ -198,4 +198,16 @@
     <!-- Notifications -->
     <string name="reminder_channel_description">Rappels d\'événements et de rendez-vous</string>
     <string name="reminder_notification_title">Rappel</string>
+    <string name="wallet_title">Portefeuille de cartes</string>
+    <string name="wallet_add_card">Ajouter une carte</string>
+    <string name="wallet_empty_hint">Aucune carte pour le moment. Appuyez sur + pour en ajouter une.</string>
+    <string name="wallet_add_front_photo">Recto de la carte</string>
+    <string name="wallet_add_back_photo">Verso de la carte</string>
+    <string name="wallet_take_photo">Prendre une photo</string>
+    <string name="wallet_choose_from_gallery">Choisir depuis la galerie</string>
+    <string name="wallet_skip_back_photo">Pas de verso</string>
+    <string name="wallet_label_title">Étiquette de la carte (facultatif)</string>
+    <string name="wallet_label_hint">ex. carte d'identité</string>
+    <string name="wallet_save_card">Enregistrer</string>
+    <string name="wallet_delete_confirm_title">Supprimer cette carte ?</string>
 </resources>

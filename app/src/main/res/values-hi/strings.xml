@@ -198,4 +198,16 @@
     <!-- Notifications -->
     <string name="reminder_channel_description">इवेंट और अपॉइंटमेंट के रिमाइंडर</string>
     <string name="reminder_notification_title">रिमाइंडर</string>
+    <string name="wallet_title">कार्ड वॉलेट</string>
+    <string name="wallet_add_card">कार्ड जोड़ें</string>
+    <string name="wallet_empty_hint">अभी तक कोई कार्ड नहीं है। जोड़ने के लिए + दबाएं।</string>
+    <string name="wallet_add_front_photo">कार्ड का सामने वाला हिस्सा</string>
+    <string name="wallet_add_back_photo">कार्ड का पिछला हिस्सा</string>
+    <string name="wallet_take_photo">फोटो लें</string>
+    <string name="wallet_choose_from_gallery">गैलरी से चुनें</string>
+    <string name="wallet_skip_back_photo">पिछला हिस्सा नहीं</string>
+    <string name="wallet_label_title">कार्ड लेबल (वैकल्पिक)</string>
+    <string name="wallet_label_hint">जैसे राष्ट्रीय पहचान पत्र</string>
+    <string name="wallet_save_card">सहेजें</string>
+    <string name="wallet_delete_confirm_title">यह कार्ड हटाएं?</string>
 </resources>

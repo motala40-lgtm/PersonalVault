@@ -43,6 +43,7 @@ sealed class Screen {
     object Trash : Screen()
     object Reminders : Screen()
     object Contacts : Screen()
+    object Wallet : Screen()
     object Help : Screen()
     object Settings : Screen()
 }
@@ -149,6 +150,7 @@ class MainActivity : AppCompatActivity() {
                             onOpenTrash = { screen = Screen.Trash },
                             onOpenReminders = { screen = Screen.Reminders },
                             onOpenContacts = { screen = Screen.Contacts },
+                            onOpenWallet = { screen = Screen.Wallet },
                             onOpenSettings = { screen = Screen.Settings },
                             onSearch = { viewModel.onSearchQueryChanged(it) }
                         )
@@ -173,6 +175,11 @@ class MainActivity : AppCompatActivity() {
                             onBack = { screen = Screen.FolderList }
                         )
                         is Screen.Contacts -> ContactsScreen(
+                            viewModel = viewModel,
+                            isDarkTheme = darkTheme,
+                            onBack = { screen = Screen.FolderList }
+                        )
+                        is Screen.Wallet -> WalletScreen(
                             viewModel = viewModel,
                             isDarkTheme = darkTheme,
                             onBack = { screen = Screen.FolderList }

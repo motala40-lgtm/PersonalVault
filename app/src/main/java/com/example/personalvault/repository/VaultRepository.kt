@@ -11,6 +11,7 @@ class VaultRepository(private val appContext: Context) {
     private val entryDao = db.entryDao()
     private val reminderDao = db.reminderDao()
     private val contactDao = db.contactDao()
+    private val walletCardDao = db.walletCardDao()
 
     // Deletes the on-disk file for an entry, if it has one (TEXT entries have no file).
     private fun deleteFileFor(entry: Entry) {
@@ -145,4 +146,10 @@ class VaultRepository(private val appContext: Context) {
     suspend fun addContact(contact: Contact) = contactDao.insertContact(contact)
     suspend fun updateContact(contact: Contact) = contactDao.updateContact(contact)
     suspend fun deleteContact(contact: Contact) = contactDao.deleteContact(contact)
+
+    // Wallet cards
+    fun getAllWalletCards(): Flow<List<WalletCard>> = walletCardDao.getAllCards()
+    suspend fun addWalletCard(card: WalletCard) = walletCardDao.insertCard(card)
+    suspend fun updateWalletCard(card: WalletCard) = walletCardDao.updateCard(card)
+    suspend fun deleteWalletCard(card: WalletCard) = walletCardDao.deleteCard(card)
 }

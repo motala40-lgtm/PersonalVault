@@ -233,4 +233,16 @@
     <!-- Notifications -->
     <string name="reminder_channel_description">Reminders for events and appointments</string>
     <string name="reminder_notification_title">Reminder</string>
+    <string name="wallet_title">کیف کارت‌ها</string>
+    <string name="wallet_add_card">افزودن کارت</string>
+    <string name="wallet_empty_hint">هنوز کارتی اضافه نکردید. برای شروع، دکمه‌ی + را بزنید.</string>
+    <string name="wallet_add_front_photo">عکس روی کارت</string>
+    <string name="wallet_add_back_photo">عکس پشت کارت</string>
+    <string name="wallet_take_photo">گرفتن عکس</string>
+    <string name="wallet_choose_from_gallery">انتخاب از گالری</string>
+    <string name="wallet_skip_back_photo">بدون پشت کارت</string>
+    <string name="wallet_label_title">برچسب کارت (اختیاری)</string>
+    <string name="wallet_label_hint">مثلاً کارت ملی</string>
+    <string name="wallet_save_card">ذخیره</string>
+    <string name="wallet_delete_confirm_title">این کارت حذف شود؟</string>
 </resources>

@@ -37,13 +37,31 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
     }
 }
 
-@Database(entities = [Folder::class, Entry::class, Reminder::class, Contact::class], version = 3, exportSchema = false)
+// Adds the "wallet_cards" table for the private card wallet mini-app.
+val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS wallet_cards (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                label TEXT,
+                frontImagePath TEXT NOT NULL,
+                backImagePath TEXT,
+                createdAt INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+    }
+}
+
+@Database(entities = [Folder::class, Entry::class, Reminder::class, Contact::class, WalletCard::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun folderDao(): FolderDao
     abstract fun entryDao(): EntryDao
     abstract fun reminderDao(): ReminderDao
     abstract fun contactDao(): ContactDao
+    abstract fun walletCardDao(): WalletCardDao
 
     companion object {
         @Volatile
@@ -56,7 +74,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "personal_vault.db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
                 INSTANCE = instance
                 instance

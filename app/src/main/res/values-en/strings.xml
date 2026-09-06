@@ -224,4 +224,16 @@
     <!-- Notifications -->
     <string name="reminder_channel_description">Reminders for events and appointments</string>
     <string name="reminder_notification_title">Reminder</string>
+    <string name="wallet_title">Card Wallet</string>
+    <string name="wallet_add_card">Add card</string>
+    <string name="wallet_empty_hint">No cards yet. Tap + to add one.</string>
+    <string name="wallet_add_front_photo">Front of card</string>
+    <string name="wallet_add_back_photo">Back of card</string>
+    <string name="wallet_take_photo">Take photo</string>
+    <string name="wallet_choose_from_gallery">Choose from gallery</string>
+    <string name="wallet_skip_back_photo">No back photo</string>
+    <string name="wallet_label_title">Card label (optional)</string>
+    <string name="wallet_label_hint">e.g. National ID</string>
+    <string name="wallet_save_card">Save</string>
+    <string name="wallet_delete_confirm_title">Delete this card?</string>
 </resources>

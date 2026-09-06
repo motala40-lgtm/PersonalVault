@@ -70,6 +70,7 @@ fun FolderListScreen(
     onOpenTrash: () -> Unit,
     onOpenReminders: () -> Unit,
     onOpenContacts: () -> Unit,
+    onOpenWallet: () -> Unit,
     onOpenSettings: () -> Unit,
     onSearch: (String) -> Unit
 ) {
@@ -198,6 +199,12 @@ fun FolderListScreen(
                             baseColor = Color(0xFF43A047),
                             contentDescriptionText = stringResource(R.string.nav_contacts),
                             onClick = onOpenContacts
+                        )
+                        AppIconChip(
+                            icon = Icons.Rounded.CreditCard,
+                            baseColor = Color(0xFF1E88E5),
+                            contentDescriptionText = stringResource(R.string.wallet_title),
+                            onClick = onOpenWallet
                         )
                         AppIconChip(
                             icon = Icons.Rounded.DeleteOutline,

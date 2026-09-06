@@ -198,4 +198,16 @@
     <!-- Notifications -->
     <string name="reminder_channel_description">Erinnerungen an Ereignisse und Termine</string>
     <string name="reminder_notification_title">Erinnerung</string>
+    <string name="wallet_title">Kartenmappe</string>
+    <string name="wallet_add_card">Karte hinzufügen</string>
+    <string name="wallet_empty_hint">Noch keine Karten. Tippen Sie auf +, um eine hinzuzufügen.</string>
+    <string name="wallet_add_front_photo">Vorderseite der Karte</string>
+    <string name="wallet_add_back_photo">Rückseite der Karte</string>
+    <string name="wallet_take_photo">Foto aufnehmen</string>
+    <string name="wallet_choose_from_gallery">Aus Galerie wählen</string>
+    <string name="wallet_skip_back_photo">Keine Rückseite</string>
+    <string name="wallet_label_title">Kartenbeschriftung (optional)</string>
+    <string name="wallet_label_hint">z. B. Personalausweis</string>
+    <string name="wallet_save_card">Speichern</string>
+    <string name="wallet_delete_confirm_title">Diese Karte löschen?</string>
 </resources>
