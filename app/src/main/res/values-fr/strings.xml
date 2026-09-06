@@ -207,7 +207,7 @@
     <string name="wallet_choose_from_gallery">Choisir depuis la galerie</string>
     <string name="wallet_skip_back_photo">Pas de verso</string>
     <string name="wallet_label_title">Étiquette de la carte (facultatif)</string>
-    <string name="wallet_label_hint">ex. carte d'identité</string>
+    <string name="wallet_label_hint">ex. carte d\'identité</string>
     <string name="wallet_save_card">Enregistrer</string>
     <string name="wallet_delete_confirm_title">Supprimer cette carte ?</string>
 </resources>
