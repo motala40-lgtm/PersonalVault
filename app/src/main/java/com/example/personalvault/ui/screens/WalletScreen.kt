@@ -26,13 +26,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.example.personalvault.R
 import com.example.personalvault.data.WalletCard
 import com.example.personalvault.ui.theme.ScreenBackground
 import com.example.personalvault.util.FileUtils
 import com.example.personalvault.viewmodel.VaultViewModel
-import java.io.File
 
 /**
  * A private, free-form card wallet — any kind of card (bank, ID, insurance, anything), stored
@@ -50,7 +48,7 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
     var captureTarget by remember { mutableStateOf<String?>(null) } // "front" | "back" | null
     var showAddChoiceMenu by remember { mutableStateOf(false) }
     var showLabelDialog by remember { mutableStateOf(false) }
-    var pendingCameraFile by remember { mutableStateOf<File?>(null) }
+    var showCameraScreen by remember { mutableStateOf(false) }
     var viewingCard by remember { mutableStateOf<WalletCard?>(null) }
     var deletingCard by remember { mutableStateOf<WalletCard?>(null) }
 
@@ -71,34 +69,16 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
         captureTarget = null
     }
 
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        val file = pendingCameraFile
-        if (success && file != null) {
-            if (captureTarget == "back") pendingBackPath = file.absolutePath else pendingFrontPath = file.absolutePath
-            if (captureTarget == "back") showLabelDialog = true
-        }
-        captureTarget = null
-    }
-
-    fun launchCameraCapture(target: String) {
-        captureTarget = target
-        val file = FileUtils.createImageCaptureFile(context)
-        pendingCameraFile = file
-        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
-        com.example.personalvault.markAwaitingExternalResult(context)
-        cameraLauncher.launch(uri)
-    }
-
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { granted -> if (granted) captureTarget?.let { launchCameraCapture(it) } }
+    ) { granted -> if (granted) showCameraScreen = true }
 
     fun requestCamera(target: String) {
         captureTarget = target
         val hasPermission = ContextCompat.checkSelfPermission(
             context, Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
-        if (hasPermission) launchCameraCapture(target) else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        if (hasPermission) showCameraScreen = true else cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
     fun requestGallery(target: String) {
@@ -304,6 +284,25 @@ fun WalletScreen(viewModel: VaultViewModel, isDarkTheme: Boolean, onBack: () -> 
             },
             dismissButton = {
                 TextButton(onClick = { deletingCard = null }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
+    }
+
+    if (showCameraScreen) {
+        CardCameraScreen(
+            onCaptured = { file ->
+                showCameraScreen = false
+                if (captureTarget == "back") {
+                    pendingBackPath = file.absolutePath
+                    showLabelDialog = true
+                } else {
+                    pendingFrontPath = file.absolutePath
+                }
+                captureTarget = null
+            },
+            onCancel = {
+                showCameraScreen = false
+                captureTarget = null
             }
         )
     }

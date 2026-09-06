@@ -15,7 +15,7 @@ android {
         applicationId = "com.newlifetech.easyarchive"
         minSdk = 24
         targetSdk = 36
-        versionCode = 28
+        versionCode = 29
         versionName = "1.0"
     }
 
@@ -92,6 +92,14 @@ dependencies {
     // way to do in-app language switching (see LocaleHelper for why this replaced a manual
     // Configuration/attachBaseContext approach).
     implementation("androidx.appcompat:appcompat:1.7.0")
+
+    // CameraX — for the custom in-app camera screen with a card-shaped guide overlay when
+    // photographing wallet cards (the system camera app, used elsewhere via TakePicture(),
+    // can't have a custom overlay drawn on top of it).
+    implementation("androidx.camera:camera-core:1.5.3")
+    implementation("androidx.camera:camera-camera2:1.5.3")
+    implementation("androidx.camera:camera-lifecycle:1.5.3")
+    implementation("androidx.camera:camera-view:1.5.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
     // Lets us detect when the WHOLE app (not just one screen) goes to background,
     // so the vault can re-lock itself instead of staying unlocked forever.
