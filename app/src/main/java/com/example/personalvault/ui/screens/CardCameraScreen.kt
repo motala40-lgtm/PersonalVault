@@ -17,6 +17,7 @@ import androidx.camera.core.ViewPort
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -81,7 +82,15 @@ fun CardCameraScreen(onCaptured: (File) -> Unit, onCancel: () -> Unit) {
         }
     }
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(Color.Black), // opaque — without this, the letterboxed margins around
+                                       // the 4:3 camera area let whatever's behind (e.g. the
+                                       // wallet's card grid, showing the previously-added card)
+                                       // show through, looking like a leftover photo.
+        contentAlignment = Alignment.Center
+    ) {
         // Constraining preview + capture to a matching landscape ratio means "what's shown"
         // and "what's saved" always match exactly — no separate letterboxing math needed.
         Box(Modifier.fillMaxHeight().aspectRatio(4f / 3f)) {
